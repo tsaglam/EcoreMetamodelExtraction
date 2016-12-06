@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -41,7 +42,7 @@ public class MainHandler extends AbstractHandler {
         IWorkspaceRoot root = workspace.getRoot();
         IProject[] projects = root.getProjects();
         for (IProject project : projects) {
-            if (isChoosen(project.getName())) {
+            if (isJavaProject(project) && isChoosen(project)) {
                 return project;
             }
         }
@@ -53,9 +54,23 @@ public class MainHandler extends AbstractHandler {
      * @param project is the name of the project.
      * @return true if the project is chosen.
      */
-    public boolean isChoosen(String project) {
+    private boolean isChoosen(IProject project) {
         String title = "EcoreMetamodellExtraction";
-        String message = "Choose " + project + "?";
+        String message = "Choose " + project.getName() + "?";
         return MessageDialog.openQuestion(window.getShell(), title, message);
+    }
+
+    /**
+     * Tests if the project is a Java project.
+     * @param project is the project to test.
+     * @return true if it is a Java project, false if it isn't or an exception arises.
+     */
+    private boolean isJavaProject(IProject project) {
+        try {
+            return project.isNatureEnabled("org.eclipse.jdt.core.javanature");
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
