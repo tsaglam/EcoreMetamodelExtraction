@@ -9,7 +9,7 @@
             id="EcoreMetamodelExtraction.commands.category">
       </category>
       <command
-            name="Sample Command"
+            name="Choose project..."
             categoryId="EcoreMetamodelExtraction.commands.category"
             id="EcoreMetamodelExtraction.commands.sampleCommand">
       </command>
