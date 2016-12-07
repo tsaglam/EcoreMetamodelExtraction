@@ -37,6 +37,7 @@ public class ProjectAnalyzer {
             System.out.println("Error while extracting the package structure: " + exception.getMessage());
         }
         // TODO implement analyze(IProject project)
+        currentModel.print();
     }
 
     /**

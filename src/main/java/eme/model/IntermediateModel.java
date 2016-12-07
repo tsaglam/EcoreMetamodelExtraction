@@ -45,4 +45,12 @@ public class IntermediateModel {
         }
         throw new RuntimeException("Could not find package " + newPackage.getPath() + " to add package " + newPackage.getName() + " to.");
     }
+
+    /**
+     * Prints the model.
+     */
+    public void print() {
+        System.out.println("IntermediateModel with Root [" + rootElement.toString() + "]");
+        System.out.println("   with packages " + packages.toString());
+    }
 }
