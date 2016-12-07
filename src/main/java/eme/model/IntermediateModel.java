@@ -8,24 +8,41 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class IntermediateModel {
-    private ExtractedElement rootElement;
+    private ExtractedPackage rootElement;
     private List<ExtractedPackage> packages;
 
     /**
-     * TODO comment constructor.
+     * Basic constructor.
      */
     public IntermediateModel() {
         packages = new LinkedList<ExtractedPackage>();
-        // TODO BUILD CLASS
     }
-    
+
     /**
-     * TODO comment constructor.
-     * @param rootElement
+     * Adds a new package to the intermediate model.
+     * @param newPackage is the new package to add.
      */
-    public IntermediateModel(ExtractedElement rootElement) {
-        super();
-        this.rootElement = rootElement;
+    public void add(ExtractedPackage newPackage) {
+        if (rootElement == null) { // if it is the first package
+            rootElement = newPackage; // add as root
+            newPackage.setAsRoot(); // mark as root
+        } else {
+            addToParent(newPackage);
+        }
+        packages.add(newPackage);
     }
-    
+
+    /**
+     * Adds a package to its parent by searching the parent in the list of packages.
+     * @param newPackage is the package which is added to the parent package.
+     */
+    private void addToParent(ExtractedPackage newPackage) {
+        for (ExtractedPackage extractedPackage : packages) { // for all packages
+            if (extractedPackage.getFullName().equals(newPackage.getPath())) { // if parent
+                extractedPackage.addSubpackage(newPackage); // add to parent
+                return; // can only have on parent
+            }
+        }
+        throw new RuntimeException("Could not find package " + newPackage.getPath() + " to add package " + newPackage.getName() + " to.");
+    }
 }
