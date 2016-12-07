@@ -23,12 +23,14 @@ import eme.model.IntermediateModel;
 public class EcoreMetamodelGenerator {
 
     private EcoreFactory ecoreFactory;
+    private String projectName;
 
     /**
      * Basic constructor.
      */
     public EcoreMetamodelGenerator() {
         ecoreFactory = EcoreFactory.eINSTANCE;
+        projectName = "unknown-project";
     }
 
     /**
@@ -38,8 +40,9 @@ public class EcoreMetamodelGenerator {
     public void generateFrom(IntermediateModel model) {
         ExtractedPackage root = model.getRoot();
         if (root == null) {
-
+            throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
+        projectName = model.getProjectName();
         EPackage eRoot = generateEPackage(root);
         savingAlgorithmPrototype(eRoot); // TODO create real saving method
     }
@@ -49,7 +52,7 @@ public class EcoreMetamodelGenerator {
         if (extractedPackage.isRoot()) {
             ePackage.setName("DEFAULT");
             ePackage.setNsPrefix("DEFAULT"); // TODO make those settable.
-            ePackage.setNsURI("http://www.eme.org/");
+            ePackage.setNsURI("http://www.eme.org/" + projectName);
         } else {
             ePackage.setName(extractedPackage.getName());
         }
@@ -62,7 +65,7 @@ public class EcoreMetamodelGenerator {
 
     private void savingAlgorithmPrototype(EPackage ePackage) {
         String ecoreFilePath = "/Users/Timur/Dropbox/Studium/Eclipse Workspace/runtime-eclipse_application/GeneratorOutput/model/";
-        String ecoreFileName = "Test-" + ePackage.hashCode();
+        String ecoreFileName = projectName + "-" + ePackage.hashCode();
         ePackage.eClass(); // Initialize the EPackage:
         Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
         Map<String, Object> map = registry.getExtensionToFactoryMap();

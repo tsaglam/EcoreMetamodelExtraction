@@ -31,7 +31,7 @@ public class ProjectAnalyzer {
      * @return an intermediate model that was extracted from the project.
      */
     public IntermediateModel analyze(IJavaProject project) {
-        currentModel = new IntermediateModel(); // create new model.
+        currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
             extractPackageStructure(project);
         } catch (JavaModelException exception) {

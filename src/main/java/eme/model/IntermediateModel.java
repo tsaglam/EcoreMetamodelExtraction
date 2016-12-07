@@ -8,14 +8,16 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class IntermediateModel {
+    private String projectName;
     private ExtractedPackage rootElement;
     private List<ExtractedPackage> packages;
 
     /**
      * Basic constructor.
      */
-    public IntermediateModel() {
+    public IntermediateModel(String projectName) {
         packages = new LinkedList<ExtractedPackage>();
+        this.projectName = projectName;
     }
 
     /**
@@ -30,6 +32,14 @@ public class IntermediateModel {
             addToParent(newPackage);
         }
         packages.add(newPackage);
+    }
+
+    /**
+     * Getter for the name of the project.
+     * @return the name.
+     */
+    public String getProjectName() {
+        return projectName;
     }
 
     /**
