@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  * the EcoreFactory class.
  * @author Timur Saglam
  */
-public class EcoreMetamodelGenerator {
+public class EcoreElementGenerator {
     private EcoreFactory ecoreFactory;
     private boolean printResults;
 
@@ -31,7 +31,7 @@ public class EcoreMetamodelGenerator {
      * Simple constructor, retrieves the instance of the EcoreFactory.
      * @param printResults determines whether the generator prints the products it creates.
      */
-    public EcoreMetamodelGenerator(boolean printResults) {
+    public EcoreElementGenerator(boolean printResults) {
         this.printResults = printResults;
         ecoreFactory = EcoreFactory.eINSTANCE;
     }
