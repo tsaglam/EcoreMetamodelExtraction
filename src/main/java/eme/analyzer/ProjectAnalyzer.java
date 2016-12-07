@@ -28,8 +28,9 @@ public class ProjectAnalyzer {
     /**
      * Analyzes a java project and builds an intermediate model.
      * @param project is the Java project to analyze.
+     * @return an intermediate model that was extracted from the project.
      */
-    public void analyze(IJavaProject project) {
+    public IntermediateModel analyze(IJavaProject project) {
         currentModel = new IntermediateModel(); // create new model.
         try {
             extractPackageStructure(project);
@@ -38,6 +39,7 @@ public class ProjectAnalyzer {
         }
         // TODO implement analyze(IProject project)
         currentModel.print();
+        return currentModel;
     }
 
     /**

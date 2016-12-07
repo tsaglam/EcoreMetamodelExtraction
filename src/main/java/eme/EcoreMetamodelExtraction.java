@@ -1,9 +1,12 @@
 package eme;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 import eme.analyzer.ProjectAnalyzer;
+import eme.generator.EcoreMetamodelGenerator;
+import eme.model.IntermediateModel;
 
 /**
  * Base class of the prototype for Ecore metamodel extraction.
@@ -11,12 +14,14 @@ import eme.analyzer.ProjectAnalyzer;
  */
 public class EcoreMetamodelExtraction {
     private ProjectAnalyzer analyzer;
+    private EcoreMetamodelGenerator generator;
 
     /**
      * Basic constructor.
      */
     public EcoreMetamodelExtraction() {
         analyzer = new ProjectAnalyzer();
+        generator = new EcoreMetamodelGenerator();
     }
 
     /**
@@ -25,7 +30,9 @@ public class EcoreMetamodelExtraction {
      */
     public void extractFrom(IProject project) {
         check(project); // check if valid.
-        analyzer.analyze(JavaCore.create(project));
+        IJavaProject javaProject = JavaCore.create(project); // create java project
+        IntermediateModel model = analyzer.analyze(javaProject);
+        generator.generateFrom(model);
         // TODO get model from analyzer
         // TODO save model to existing project or new project
     }

@@ -33,6 +33,29 @@ public class IntermediateModel {
     }
 
     /**
+     * Getter for the root package of the model.
+     * @return the root package.
+     */
+    public ExtractedPackage getRoot() {
+        return rootElement;
+    }
+
+    /**
+     * Prints the model.
+     */
+    public void print() {
+        System.out.println(toString());
+        System.out.println("   with packages " + packages.toString());
+        // TODO keep up to date.
+    }
+
+    @Override
+    public String toString() {
+        return "IntermediateModel[Packages=" + packages.size() + "]";
+        // TODO keep up to date.
+    }
+
+    /**
      * Adds a package to its parent by searching the parent in the list of packages.
      * @param newPackage is the package which is added to the parent package.
      */
@@ -44,13 +67,5 @@ public class IntermediateModel {
             }
         }
         throw new RuntimeException("Could not find package " + newPackage.getPath() + " to add package " + newPackage.getName() + " to.");
-    }
-
-    /**
-     * Prints the model.
-     */
-    public void print() {
-        System.out.println("IntermediateModel with Root [" + rootElement.toString() + "]");
-        System.out.println("   with packages " + packages.toString());
     }
 }

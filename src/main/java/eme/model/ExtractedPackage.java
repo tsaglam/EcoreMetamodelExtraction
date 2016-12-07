@@ -86,6 +86,14 @@ public class ExtractedPackage extends ExtractedElement {
         return packagePath;
     }
 
+    /**
+     * Getter for the subpackages.
+     * @return the subpackages.
+     */
+    public List<ExtractedPackage> getSubpackages() {
+        return subpackages;
+    }
+
     @Override
     public String toString() {
         return getFullName();
