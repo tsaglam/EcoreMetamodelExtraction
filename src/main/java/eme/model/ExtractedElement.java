@@ -10,12 +10,21 @@ import org.eclipse.emf.ecore.EcoreFactory;
  */
 public abstract class ExtractedElement {
     protected EcoreFactory ecoreFactory;
+    protected boolean root;
 
     /**
      * Gets the instance of the Ecore Factory.
      */
     public ExtractedElement() {
         ecoreFactory = EcoreFactory.eINSTANCE;
+        root = false;
+    }
+    
+    /**
+     * Sets the package as root package, marking it as default package by changing its name.
+     */
+    public void setAsRoot() {
+        root = true;
     }
 
     /**

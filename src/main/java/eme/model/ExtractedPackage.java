@@ -13,8 +13,6 @@ import org.eclipse.emf.ecore.EPackage;
 public class ExtractedPackage extends ExtractedElement {
     private String name; // name of the package
     private String packagePath; // names of all packages above this package in the hierarchy
-    private String prefix;
-    private String uri;
     private List<ExtractedPackage> subpackages;
 
     /**
@@ -50,9 +48,13 @@ public class ExtractedPackage extends ExtractedElement {
     @Override
     public EObject generateEcoreRepresentation() {
         EPackage ePackage = ecoreFactory.createEPackage();
-        ePackage.setName(name);
-        ePackage.setNsPrefix(prefix);
-        ePackage.setNsURI(uri);
+        if (root = true) {
+            ePackage.setName("DEFAULT");
+            ePackage.setNsPrefix("DEFAULT");
+            ePackage.setNsURI("http://www.eme.org/");
+        } else {
+            ePackage.setName(name);
+        }
         return ePackage;
     }
 
@@ -82,13 +84,6 @@ public class ExtractedPackage extends ExtractedElement {
      */
     public String getPath() {
         return packagePath;
-    }
-
-    /**
-     * Sets the package as root package, marking it as default package by changing its name.
-     */
-    public void setAsRoot() {
-        name += "DEFAULT";
     }
 
     @Override
