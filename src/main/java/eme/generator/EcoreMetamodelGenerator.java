@@ -68,9 +68,9 @@ public class EcoreMetamodelGenerator {
     }
 
     /**
-     * Prototypical method for saving an EPackage as ecore file. It currently uses an existing
-     * project and a fixed path. IMPORTANT: This method currently requires to have an EMF Project
-     * called "GeneratorOutput" in the workspace. The EMF project should contain a folder model. The
+     * IMPORTANT: Prototypical method for saving an EPackage as ecore file. The method currently
+     * uses an existing project and a fixed path. To work it requires to have an EMF Project called
+     * "GeneratorOutput" in the workspace. The EMF project should contain a folder model. The
      * generated Ecore files can be seen in this folder after refreshing the folder.
      */
     private void savingAlgorithmPrototype(EPackage ePackage) {
