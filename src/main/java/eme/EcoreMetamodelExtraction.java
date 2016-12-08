@@ -33,8 +33,6 @@ public class EcoreMetamodelExtraction {
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = analyzer.analyze(javaProject);
         generator.generateFrom(model);
-        // TODO get model from analyzer
-        // TODO save model to existing project or new project
     }
 
     /**

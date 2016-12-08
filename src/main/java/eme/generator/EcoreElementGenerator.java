@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  * the EcoreFactory class.
  * @author Timur Saglam
  */
-public class EcoreElementGenerator {
+public class EcoreElementGenerator { // TODO (LOW) remove this class.
     private EcoreFactory ecoreFactory;
     private boolean printResults;
 

@@ -44,14 +44,14 @@ public class EcoreMetamodelGenerator {
         }
         projectName = model.getProjectName();
         EPackage eRoot = generateEPackage(root);
-        savingAlgorithmPrototype(eRoot); // TODO create real saving method
+        savingAlgorithmPrototype(eRoot); // TODO (HIGH) create real saving method
     }
 
     private EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) {
             ePackage.setName("DEFAULT");
-            ePackage.setNsPrefix("DEFAULT"); // TODO make those settable.
+            ePackage.setNsPrefix("DEFAULT"); // TODO (MEDIUM) make those settable.
             ePackage.setNsURI("http://www.eme.org/" + projectName);
         } else {
             ePackage.setName(extractedPackage.getName());
@@ -59,7 +59,6 @@ public class EcoreMetamodelGenerator {
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
         }
-        System.out.println(ePackage); // TODO remove debug output
         return ePackage;
     }
 

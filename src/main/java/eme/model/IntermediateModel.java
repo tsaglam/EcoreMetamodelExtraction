@@ -56,13 +56,13 @@ public class IntermediateModel {
     public void print() {
         System.out.println(toString());
         System.out.println("   with packages " + packages.toString());
-        // TODO keep up to date.
+        // TODO (LOW) keep up to date.
     }
 
     @Override
     public String toString() {
         return "IntermediateModel[Packages=" + packages.size() + "]";
-        // TODO keep up to date.
+        // TODO (LOW) keep up to date.
     }
 
     /**

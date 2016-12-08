@@ -18,11 +18,13 @@ import eme.model.IntermediateModel;
 public class ProjectAnalyzer {
 
     private IntermediateModel currentModel;
+    private boolean printExtractedModel;
 
     /**
      * Basic constructor.
      */
     public ProjectAnalyzer() {
+        printExtractedModel = true;
     }
 
     /**
@@ -37,8 +39,9 @@ public class ProjectAnalyzer {
         } catch (JavaModelException exception) {
             System.out.println("Error while extracting the package structure: " + exception.getMessage());
         }
-        // TODO implement analyze(IProject project)
-        currentModel.print();
+        if (printExtractedModel) {
+            currentModel.print();
+        }
         return currentModel;
     }
 

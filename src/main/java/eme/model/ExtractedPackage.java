@@ -20,7 +20,7 @@ public class ExtractedPackage extends ExtractedElement {
      * @param fullName is the full name of the package.
      */
     public ExtractedPackage(String fullName) {
-        if (fullName.equals("")) { // TODO make this better
+        if (fullName.equals("")) { // TODO (MEDIUM) make this better
             name = "";
             packagePath = "";
         } else if (!fullName.contains(".")) {
