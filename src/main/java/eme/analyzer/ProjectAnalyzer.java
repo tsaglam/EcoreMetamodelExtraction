@@ -3,11 +3,14 @@ package eme.analyzer;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import eme.model.ExtractedClass;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
@@ -36,13 +39,26 @@ public class ProjectAnalyzer {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
             extractPackageStructure(project);
+            extractClasses(project);
         } catch (JavaModelException exception) {
-            System.out.println("Error while extracting the package structure: " + exception.getMessage());
+            System.out.println("Error while extracting the model: " + exception.getMessage());
         }
         if (printExtractedModel) {
             currentModel.print();
         }
         return currentModel;
+    }
+
+    public void extractClasses(IJavaProject project) throws JavaModelException {
+        for (IPackageFragment fragment : project.getPackageFragments()) {
+            if (isSourcePackage(fragment)) { // only source packages, no binary packages.
+                for (ICompilationUnit unit : fragment.getCompilationUnits()) {
+                    for (IType type : unit.getAllTypes()) {
+                        currentModel.add(new ExtractedClass(type.getFullyQualifiedName()));
+                    }
+                }
+            }
+        }
     }
 
     /**
