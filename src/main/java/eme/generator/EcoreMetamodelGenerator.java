@@ -2,18 +2,15 @@ package eme.generator;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
@@ -81,9 +78,6 @@ public class EcoreMetamodelGenerator {
         String ecoreFilePath = workspace.getRoot().getLocation().toFile().getPath() + "/GeneratorOutput/model/";
         String ecoreFileName = projectName + "-" + ePackage.hashCode();
         ePackage.eClass(); // Initialize the EPackage:
-        Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
-        Map<String, Object> map = registry.getExtensionToFactoryMap();
-        map.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());  // add default extension
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
         try {
