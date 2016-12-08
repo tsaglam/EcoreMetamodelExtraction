@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EPackage;
  */
 public class ExtractedPackage extends ExtractedElement {
     private String name; // name of the package
-    private String packagePath; // names of all packages above this package in the hierarchy
+    private String parent; // full name of parent package
     private List<ExtractedPackage> subpackages;
 
     /**
@@ -20,16 +20,13 @@ public class ExtractedPackage extends ExtractedElement {
      * @param fullName is the full name of the package.
      */
     public ExtractedPackage(String fullName) {
-        if (fullName.equals("")) { // TODO (MEDIUM) make this better
-            name = "";
-            packagePath = "";
-        } else if (!fullName.contains(".")) {
-            name = fullName;
-            packagePath = "";
-        } else {
+        if (!fullName.contains(".")) { // top level package
+            name = fullName; // normal name
+            parent = ""; // but no parent package
+        } else { // split name from parent package:
             int lastDot = fullName.lastIndexOf('.'); // index of dot that separates path and name
             name = fullName.substring(lastDot + 1); // get name
-            packagePath = fullName.substring(0, lastDot); // get path
+            parent = fullName.substring(0, lastDot); // get path
         }
         subpackages = new LinkedList<ExtractedPackage>();
     }
@@ -64,10 +61,10 @@ public class ExtractedPackage extends ExtractedElement {
      * separated by an dot.
      */
     public String getFullName() {
-        if (packagePath.equals("")) {
+        if (parent.equals("")) {
             return name;
         }
-        return packagePath + "." + name;
+        return parent + "." + name;
     }
 
     /**
@@ -79,11 +76,11 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the package path.
-     * @return the package path.
+     * Getter for the name of the packages parent.
+     * @return the parent name.
      */
-    public String getPath() {
-        return packagePath;
+    public String getParent() {
+        return parent;
     }
 
     /**

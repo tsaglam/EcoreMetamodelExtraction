@@ -70,12 +70,12 @@ public class IntermediateModel {
      * @param newPackage is the package which is added to the parent package.
      */
     private void addToParent(ExtractedPackage newPackage) {
-        for (ExtractedPackage extractedPackage : packages) { // for all packages
-            if (extractedPackage.getFullName().equals(newPackage.getPath())) { // if parent
-                extractedPackage.addSubpackage(newPackage); // add to parent
+        for (ExtractedPackage oldPackage : packages) { // for all packages
+            if (oldPackage.getFullName().equals(newPackage.getParent())) { // if parent
+                oldPackage.addSubpackage(newPackage); // add to parent
                 return; // can only have on parent
             }
         }
-        throw new RuntimeException("Could not find package " + newPackage.getPath() + " to add package " + newPackage.getName() + " to.");
+        throw new RuntimeException("Could not find package " + newPackage.getParent() + " to add package " + newPackage.getName() + " to.");
     }
 }
