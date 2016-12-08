@@ -3,9 +3,6 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-
 /**
  * Is the representation of a package in the intermediate model.
  * @author Timur Saglam
@@ -14,6 +11,7 @@ public class ExtractedPackage extends ExtractedElement {
     private String name; // name of the package
     private String parent; // full name of parent package
     private List<ExtractedPackage> subpackages;
+    protected boolean root;
 
     /**
      * Creates an extracted package.
@@ -29,6 +27,7 @@ public class ExtractedPackage extends ExtractedElement {
             parent = fullName.substring(0, lastDot); // get path
         }
         subpackages = new LinkedList<ExtractedPackage>();
+        root = false;
     }
 
     /**
@@ -37,22 +36,6 @@ public class ExtractedPackage extends ExtractedElement {
      */
     public void addSubpackage(ExtractedPackage subpackage) {
         subpackages.add(subpackage);
-    }
-
-    /**
-     * @see eme.model.ExtractedElement#generateEcoreRepresentation()
-     */
-    @Override
-    public EObject generateEcoreRepresentation() {
-        EPackage ePackage = ecoreFactory.createEPackage();
-        if (root = true) {
-            ePackage.setName("DEFAULT");
-            ePackage.setNsPrefix("DEFAULT");
-            ePackage.setNsURI("http://www.eme.org/");
-        } else {
-            ePackage.setName(name);
-        }
-        return ePackage;
     }
 
     /**
@@ -74,7 +57,7 @@ public class ExtractedPackage extends ExtractedElement {
     public String getName() {
         return name;
     }
-
+    
     /**
      * Getter for the name of the packages parent.
      * @return the parent name.
@@ -82,13 +65,28 @@ public class ExtractedPackage extends ExtractedElement {
     public String getParent() {
         return parent;
     }
-
+    
     /**
      * Getter for the subpackages.
      * @return the subpackages.
      */
     public List<ExtractedPackage> getSubpackages() {
         return subpackages;
+    }
+
+    /**
+     * Checks whether package is the root package.
+     * @return
+     */
+    public boolean isRoot() {
+        return root;
+    }
+
+    /**
+     * Sets the package as root package, marking it as default package by changing its name.
+     */
+    public void setAsRoot() {
+        root = true;
     }
 
     @Override

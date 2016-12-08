@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 /**
- * This is the abstract super class for all saving startegies.
+ * This is the abstract super class for all saving strategies.
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {

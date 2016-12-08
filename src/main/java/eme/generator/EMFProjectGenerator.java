@@ -2,7 +2,7 @@ package eme.generator;
 
 /**
  * This class creates and manages an EMF project. The project is important as an target for the
- * genrated ecore file.
+ * generated ecore file.
  * @author Timur Saglam
  */
 public class EMFProjectGenerator { // TODO (HIGH) implement the class EMFProjectGenerator.
