@@ -11,13 +11,24 @@ public class IntermediateModel {
     private String projectName;
     private ExtractedPackage rootElement;
     private List<ExtractedPackage> packages;
+    private List<ExtractedClass> classes;
 
     /**
      * Basic constructor.
      */
     public IntermediateModel(String projectName) {
         packages = new LinkedList<ExtractedPackage>();
+        classes = new LinkedList<ExtractedClass>();
         this.projectName = projectName;
+    }
+
+    /**
+     * Adds a new class to the intermediate model.
+     * @param newClass is the new class to add.
+     */
+    public void add(ExtractedClass newClass) {
+        classes.add(newClass); // add class to list of classes.
+        findPackage(newClass.getPackageName()).addClass(newClass); // add to package
     }
 
     /**
@@ -29,7 +40,7 @@ public class IntermediateModel {
             rootElement = newPackage; // add as root
             newPackage.setAsRoot(); // mark as root
         } else {
-            addToParent(newPackage);
+            findPackage(newPackage.getParentName()).addSubpackage(newPackage);
         }
         packages.add(newPackage);
     }
@@ -56,26 +67,32 @@ public class IntermediateModel {
     public void print() {
         System.out.println(toString());
         System.out.println("   with packages " + packages.toString());
+        System.out.println("   with classes " + classes.toString());
         // TODO (LOW) keep up to date.
     }
 
     @Override
     public String toString() {
-        return "IntermediateModel[Packages=" + packages.size() + "]";
+        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + "]";
         // TODO (LOW) keep up to date.
     }
 
     /**
-     * Adds a package to its parent by searching the parent in the list of packages.
-     * @param newPackage is the package which is added to the parent package.
+     * Finds a package with a specific full name. As an example, a package <code>model</code> which
+     * is subpackage of the package <code>main</code> can be found with the full name
+     * <code>main.model</code>.
+     * @param fullPackageName is the full name of the package.
+     * @return the RuntimeException with the matching full name.
+     * @throws RuntimeException if the package is not found. This means this method cannot be used
+     * to check whether there is a certain package in the model. It is explicitly used to find an
+     * existing package.
      */
-    private void addToParent(ExtractedPackage newPackage) {
-        for (ExtractedPackage oldPackage : packages) { // for all packages
-            if (oldPackage.getFullName().equals(newPackage.getParent())) { // if parent
-                oldPackage.addSubpackage(newPackage); // add to parent
-                return; // can only have on parent
+    private ExtractedPackage findPackage(String fullPackageName) {
+        for (ExtractedPackage aPackage : packages) { // for all packages
+            if (aPackage.getFullName().equals(fullPackageName)) { // if parent
+                return aPackage; // can only have on parent
             }
         }
-        throw new RuntimeException("Could not find package " + newPackage.getParent() + " to add package " + newPackage.getName() + " to.");
+        throw new RuntimeException("Could not find package " + fullPackageName);
     }
 }

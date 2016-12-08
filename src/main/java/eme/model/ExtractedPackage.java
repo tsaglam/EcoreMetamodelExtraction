@@ -11,6 +11,7 @@ public class ExtractedPackage extends ExtractedElement {
     private String name; // name of the package
     private String parent; // full name of parent package
     private List<ExtractedPackage> subpackages;
+    private List<ExtractedClass> classes;
     protected boolean root;
 
     /**
@@ -18,16 +19,20 @@ public class ExtractedPackage extends ExtractedElement {
      * @param fullName is the full name of the package.
      */
     public ExtractedPackage(String fullName) {
-        if (!fullName.contains(".")) { // top level package
-            name = fullName; // normal name
-            parent = ""; // but no parent package
-        } else { // split name from parent package:
-            int lastDot = fullName.lastIndexOf('.'); // index of dot that separates path and name
-            name = fullName.substring(lastDot + 1); // get name
-            parent = fullName.substring(0, lastDot); // get path
-        }
+        name = createName(fullName);
+        parent = createPath(fullName);
         subpackages = new LinkedList<ExtractedPackage>();
+        classes = new LinkedList<ExtractedClass>();
         root = false;
+    }
+
+    /**
+     * Adds a new class to the package.
+     * @param newClass is the new class of the package.
+     */
+    public void addClass(ExtractedClass newClass) {
+        System.out.println("Added " + newClass + " to package " + name); // TODO (HIGH) remove debug output
+        classes.add(newClass);
     }
 
     /**
@@ -36,6 +41,14 @@ public class ExtractedPackage extends ExtractedElement {
      */
     public void addSubpackage(ExtractedPackage subpackage) {
         subpackages.add(subpackage);
+    }
+
+    /**
+     * Getter for the classes.
+     * @return the classes.
+     */
+    public List<ExtractedClass> getClasses() {
+        return classes;
     }
 
     /**
@@ -57,15 +70,15 @@ public class ExtractedPackage extends ExtractedElement {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Getter for the name of the packages parent.
      * @return the parent name.
      */
-    public String getParent() {
+    public String getParentName() {
         return parent;
     }
-    
+
     /**
      * Getter for the subpackages.
      * @return the subpackages.
