@@ -17,7 +17,7 @@ public class EcoreMetamodelExtraction {
     private EcoreMetamodelGenerator generator;
 
     /**
-     * Basic constructor.
+     * Basic constructor. Builds parser and generator.
      */
     public EcoreMetamodelExtraction() {
         parser = new JavaProjectParser();
