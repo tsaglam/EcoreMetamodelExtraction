@@ -1,17 +1,21 @@
 package eme.generator;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import eme.model.ExtractedClass;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
@@ -64,19 +68,35 @@ public class EcoreMetamodelGenerator {
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
         }
+        for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
+            ePackage.getEClassifiers().add(generateEClass(extractedClass));
+        }
         return ePackage;
+    }
+
+    /**
+     * TODO (HIGH) comment method generateEClass.
+     * @param extractedClass
+     * @return
+     */
+    private EClass generateEClass(ExtractedClass extractedClass) {
+        EClass eClass = ecoreFactory.createEClass();
+        eClass.setName(extractedClass.getName());
+        // eClass.setAbstract(isAbstract); TODO (MEDIUM) build EClas with attributes
+        // eClass.setInterface(isInterface);
+        return eClass;
     }
 
     /**
      * IMPORTANT: Prototypical method for saving an EPackage as ecore file. The method currently
      * uses an existing project and a fixed path. To work it requires to have an EMF Project called
-     * "GeneratorOutput" in the workspace. The EMF project should contain a folder model. The
+     * "EME-Generator-Output" in the workspace. The EMF project should contain a folder model. The
      * generated Ecore files can be seen in this folder after refreshing the folder.
      */
     private void savingAlgorithmPrototype(EPackage ePackage) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        String ecoreFilePath = workspace.getRoot().getLocation().toFile().getPath() + "/GeneratorOutput/model/";
-        String ecoreFileName = projectName + "-" + ePackage.hashCode();
+        String ecoreFilePath = workspace.getRoot().getLocation().toFile().getPath() + "/EME-Generator-Output/model/";
+        String ecoreFileName = projectName + "-" + LocalDate.now() + "-" + LocalTime.now();
         ePackage.eClass(); // Initialize the EPackage:
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
