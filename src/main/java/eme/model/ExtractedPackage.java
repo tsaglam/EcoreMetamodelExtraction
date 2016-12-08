@@ -31,7 +31,6 @@ public class ExtractedPackage extends ExtractedElement {
      * @param newClass is the new class of the package.
      */
     public void addClass(ExtractedClass newClass) {
-        System.out.println("Added " + newClass + " to package " + name); // TODO (HIGH) remove debug output
         classes.add(newClass);
     }
 
