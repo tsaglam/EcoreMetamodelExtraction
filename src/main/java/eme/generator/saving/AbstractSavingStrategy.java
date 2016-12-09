@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
-
+    // TODO (MEDIUM) ideas for saving strategies: generator project, same project as source, create new project
     protected String projectName;
 
     /**

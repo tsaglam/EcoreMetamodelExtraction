@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -16,6 +17,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
@@ -67,24 +70,53 @@ public class EcoreMetamodelGenerator {
         }
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
-        }
+        } // TODO (MEDIUM) Remove duplicate code.
         for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
             ePackage.getEClassifiers().add(generateEClass(extractedClass));
+        }
+        for (ExtractedInterface extractedInterface : extractedPackage.getInterfaces()) {
+            ePackage.getEClassifiers().add(generateEClass(extractedInterface));
+        }
+        for (ExtractedEnumeration extractedEnum : extractedPackage.getEnumerations()) {
+            ePackage.getEClassifiers().add(generateEEnum(extractedEnum));
         }
         return ePackage;
     }
 
     /**
-     * TODO (HIGH) comment method generateEClass.
-     * @param extractedClass
-     * @return
+     * Generates an EClass from an ExtractedClass.
+     * @param extractedClass is the ExtractedClass.
+     * @return the EClass.
      */
     private EClass generateEClass(ExtractedClass extractedClass) {
         EClass eClass = ecoreFactory.createEClass();
         eClass.setName(extractedClass.getName());
-        // eClass.setAbstract(isAbstract); TODO (MEDIUM) build EClas with attributes
-        // eClass.setInterface(isInterface);
+        eClass.setAbstract(extractedClass.isAbstract());
         return eClass;
+    }
+
+    /**
+     * Generates an EClass from an ExtractedInterface.
+     * @param extractedInterface is the ExtractedInterface.
+     * @return the EClass.
+     */
+    private EClass generateEClass(ExtractedInterface extractedInterface) {
+        EClass eClass = ecoreFactory.createEClass();
+        eClass.setName(extractedInterface.getName());
+        eClass.setAbstract(true);
+        eClass.setInterface(true);
+        return eClass;
+    }
+
+    /**
+     * Generates an EEnum from an ExtractedEnumeration.
+     * @param extractedEnum is the ExtractedEnumeration.
+     * @return the EEnum.
+     */
+    private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
+        EEnum eEnum = ecoreFactory.createEEnum();
+        eEnum.setName(extractedEnum.getName());
+        return eEnum;
     }
 
     /**
