@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -13,6 +14,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
@@ -64,13 +67,21 @@ public class JavaProjectParser {
     }
 
     /**
-     * Extracts all classes for a given ICpmpilationUnit.
-     * @param compilationUnit is the given ICpmpilationUnit.
+     * Parses ICompilationUnit. Detects (abstract) classes, interfaces and enums.
+     * @param compilationUnit is the given ICompilationUnit.
      * @throws JavaModelException if there are problems with the project.
      */
     public void parseICompilationUnit(ICompilationUnit compilationUnit) throws JavaModelException {
         for (IType type : compilationUnit.getAllTypes()) { // for all types
-            currentModel.add(new ExtractedClass(type.getFullyQualifiedName())); // add to model
+            String name = type.getFullyQualifiedName();
+            if (type.isClass()) {
+                boolean isAbstract = Flags.isAbstract(type.getFlags());
+                currentModel.add(new ExtractedClass(name, isAbstract));
+            } else if (type.isInterface()) {
+                currentModel.add(new ExtractedInterface(name));
+            } else if (type.isEnum()) {
+                currentModel.add(new ExtractedEnumeration(name));
+            }
         }
     }
 

@@ -8,10 +8,12 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class IntermediateModel {
+    private List<ExtractedClass> classes;
+    private List<ExtractedEnumeration> enumerations;
+    private List<ExtractedInterface> interfaces;
+    private List<ExtractedPackage> packages;
     private String projectName;
     private ExtractedPackage rootElement;
-    private List<ExtractedPackage> packages;
-    private List<ExtractedClass> classes;
 
     /**
      * Basic constructor.
@@ -19,6 +21,8 @@ public class IntermediateModel {
     public IntermediateModel(String projectName) {
         packages = new LinkedList<ExtractedPackage>();
         classes = new LinkedList<ExtractedClass>();
+        interfaces = new LinkedList<ExtractedInterface>();
+        enumerations = new LinkedList<ExtractedEnumeration>();
         this.projectName = projectName;
     }
 
@@ -28,7 +32,25 @@ public class IntermediateModel {
      */
     public void add(ExtractedClass newClass) {
         classes.add(newClass); // add class to list of classes.
-        findPackage(newClass.getPackageName()).addClass(newClass); // add to package
+        findParent(newClass).add(newClass); // add to package
+    }
+
+    /**
+     * Adds a new enumeration to the intermediate model.
+     * @param newEnum is the new enumeration to add.
+     */
+    public void add(ExtractedEnumeration newEnum) {
+        enumerations.add(newEnum); // add class to list of classes.
+        findParent(newEnum).add(newEnum); // add to package
+    }
+
+    /**
+     * Adds a new class to the intermediate model.
+     * @param newInterface is the new class to add.
+     */
+    public void add(ExtractedInterface newInterface) {
+        interfaces.add(newInterface); // add class to list of classes.
+        findParent(newInterface).add(newInterface); // add to package
     }
 
     /**
@@ -40,7 +62,7 @@ public class IntermediateModel {
             rootElement = newPackage; // add as root
             newPackage.setAsRoot(); // mark as root
         } else {
-            findPackage(newPackage.getParentName()).addSubpackage(newPackage);
+            findParent(newPackage).add(newPackage);
         }
         packages.add(newPackage);
     }
@@ -68,31 +90,33 @@ public class IntermediateModel {
         System.out.println(toString());
         System.out.println("   with packages " + packages.toString());
         System.out.println("   with classes " + classes.toString());
+        System.out.println("   with interfaces " + interfaces.toString());
+        System.out.println("   with enumerations " + enumerations.toString());
         // TODO (LOW) keep up to date.
     }
 
     @Override
     public String toString() {
-        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + "]";
+        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + ", Interfaces=" + interfaces.size() + ", Enums="
+                + enumerations.size() + "]";
         // TODO (LOW) keep up to date.
     }
 
     /**
-     * Finds a package with a specific full name. As an example, a package <code>model</code> which
-     * is subpackage of the package <code>main</code> can be found with the full name
-     * <code>main.model</code>.
-     * @param fullPackageName is the full name of the package.
-     * @return the RuntimeException with the matching full name.
+     * Finds a package for a specific ExtractedElement according to its parents name.
+     * @param element is the ExtractedElement.
+     * @return the package with the matching full name.
      * @throws RuntimeException if the package is not found. This means this method cannot be used
      * to check whether there is a certain package in the model. It is explicitly used to find an
      * existing package.
      */
-    private ExtractedPackage findPackage(String fullPackageName) {
+    private ExtractedPackage findParent(ExtractedElement element) {
+        String parent = element.getParentName();
         for (ExtractedPackage aPackage : packages) { // for all packages
-            if (aPackage.getFullName().equals(fullPackageName)) { // if parent
+            if (aPackage.getFullName().equals(parent)) { // if parent
                 return aPackage; // can only have on parent
             }
         }
-        throw new RuntimeException("Could not find package " + fullPackageName);
+        throw new RuntimeException("Could not find package " + parent);
     }
 }
