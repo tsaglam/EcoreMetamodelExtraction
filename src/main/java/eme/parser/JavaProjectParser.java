@@ -54,41 +54,40 @@ public class JavaProjectParser {
     }
 
     /**
-     * Extracts all compilation units from a list of package fragments. It then parses all
-     * ICompilationUnits.
-     * @param extractedFragments is the list of compilation units.
-     * @throws JavaModelException if there are problems with the project.
+     * Returns the full qualified name of an IType.
+     * @param type is the IType.
+     * @return the full qualified name.
      */
-    public void parseIPackageFragments(List<IPackageFragment> extractedFragments) throws JavaModelException {
-        for (IPackageFragment fragment : extractedFragments) { // for every package fragment
-            for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
-                parseICompilationUnit(unit); // extract classes
-            }
-        }
+    private String getName(IType type) {
+        return type.getFullyQualifiedName(); // just to make the call shorter
     }
 
     /**
-     * Parses ICompilationUnit. Detects (abstract) classes, interfaces and enums.
-     * @param compilationUnit is the given ICompilationUnit.
-     * @throws JavaModelException if there are problems with the project.
+     * Checks if a packet fragment is a source package.
      */
-    public void parseICompilationUnit(ICompilationUnit compilationUnit) throws JavaModelException {
-        for (IType type : compilationUnit.getAllTypes()) { // for all types
-            String name = type.getFullyQualifiedName();
-            if (type.isClass()) {
-                boolean isAbstract = Flags.isAbstract(type.getFlags());
-                currentModel.add(new ExtractedClass(name, isAbstract));
-            } else if (type.isInterface()) {
-                currentModel.add(new ExtractedInterface(name));
-            } else if (type.isEnum()) {
-                parseEnumeration(type);
-            }
-        }
+    private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
+        return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
     }
 
-    public ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        String name = type.getFullyQualifiedName(); // get enum name
-        ExtractedEnumeration enumeration = new ExtractedEnumeration(name); // new enum
+    /**
+     * Parses an IType that has been identified as class.
+     * @param type is the IType.
+     * @return the ExtractedClass.
+     */
+    private ExtractedClass parseClass(IType type) throws JavaModelException {
+        boolean isAbstract = Flags.isAbstract(type.getFlags());
+        ExtractedClass extractedClass = new ExtractedClass(getName(type), isAbstract);
+        currentModel.add(extractedClass);
+        return extractedClass;
+    }
+
+    /**
+     * Parse an IType that has been identified as enumeration.
+     * @param type is the IType.
+     * @return the ExtractedInterface.
+     */
+    private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
+        ExtractedEnumeration enumeration = new ExtractedEnumeration(getName(type)); // new enum
         for (IField field : type.getFields()) { // for every enumeral
             enumeration.addEnumeral(field.getElementName()); // add to enum
         }
@@ -97,12 +96,27 @@ public class JavaProjectParser {
     }
 
     /**
+     * Parses ICompilationUnit. Detects (abstract) classes, interfaces and enumerations.
+     * @param compilationUnit is the given ICompilationUnit.
+     */
+    private void parseICompilationUnit(ICompilationUnit compilationUnit) throws JavaModelException {
+        for (IType type : compilationUnit.getAllTypes()) { // for all types
+            if (type.isClass()) {
+                parseClass(type);
+            } else if (type.isInterface()) {
+                parseInterface(type);
+            } else if (type.isEnum()) {
+                parseEnumeration(type);
+            }
+        }
+    }
+
+    /**
      * The method takes an IJavaProject and extracts the package structure of the project. It
      * continues by parsing the IPackageFragments.
      * @param project is the IJavaProject that gets parsed.
-     * @throws JavaModelException if there are problems with the project.
      */
-    public void parseIJavaProject(IJavaProject project) throws JavaModelException {
+    private void parseIJavaProject(IJavaProject project) throws JavaModelException {
         SortedSet<String> packageNames = new TreeSet<String>(); // set to avoid duplicates
         List<IPackageFragment> extractedFragments = new LinkedList<IPackageFragment>();
         for (IPackageFragment fragment : project.getPackageFragments()) {
@@ -118,9 +132,26 @@ public class JavaProjectParser {
     }
 
     /**
-     * Checks if a packet fragment is a source package.
+     * Parses an IType that has been identified as interface.
+     * @param type is the IType.
+     * @return the ExtractedInterface.
      */
-    private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
-        return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
+    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
+        ExtractedInterface extractedInterface = new ExtractedInterface(getName(type));
+        currentModel.add(extractedInterface);
+        return extractedInterface;
+    }
+
+    /**
+     * Extracts all compilation units from a list of package fragments. It then parses all
+     * ICompilationUnits.
+     * @param extractedFragments is the list of compilation units.
+     */
+    private void parseIPackageFragments(List<IPackageFragment> extractedFragments) throws JavaModelException {
+        for (IPackageFragment fragment : extractedFragments) { // for every package fragment
+            for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
+                parseICompilationUnit(unit); // extract classes
+            }
+        }
     }
 }
