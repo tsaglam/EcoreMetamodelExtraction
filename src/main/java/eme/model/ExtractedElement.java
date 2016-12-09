@@ -6,6 +6,50 @@ package eme.model;
  * @author Timur Saglam
  */
 public abstract class ExtractedElement {
+    protected String name;
+    protected String parent;
+
+    /**
+     * Basic constructor which extracts the name and the parents name from the full name.
+     * @param fullName is the full name.
+     */
+    public ExtractedElement(String fullName) {
+        name = createName(fullName);
+        parent = createPath(fullName);
+    }
+
+    /**
+     * Getter for the full package name.
+     * @return the full name of the package, consisting out of the package path and the package name
+     * separated by an dot.
+     */
+    public String getFullName() {
+        if (parent.equals("")) {
+            return name;
+        }
+        return parent + "." + name;
+    }
+
+    /**
+     * Getter for the package name.
+     * @return the package name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Getter for the name of the packages parent.
+     * @return the parent name.
+     */
+    public String getParentName() {
+        return parent;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
     /**
      * Calculates the index of the separator of a full qualified name.

@@ -8,10 +8,10 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedPackage extends ExtractedElement {
-    private String name; // name of the package
-    private String parent; // full name of parent package
     private List<ExtractedPackage> subpackages;
     private List<ExtractedClass> classes;
+    private List<ExtractedInterface> interfaces;
+    private List<ExtractedEnumeration> enumerations;
     protected boolean root;
 
     /**
@@ -19,10 +19,11 @@ public class ExtractedPackage extends ExtractedElement {
      * @param fullName is the full name of the package.
      */
     public ExtractedPackage(String fullName) {
-        name = createName(fullName);
-        parent = createPath(fullName);
+        super(fullName);
         subpackages = new LinkedList<ExtractedPackage>();
         classes = new LinkedList<ExtractedClass>();
+        interfaces = new LinkedList<ExtractedInterface>();
+        enumerations = new LinkedList<ExtractedEnumeration>();
         root = false;
     }
 
@@ -30,15 +31,31 @@ public class ExtractedPackage extends ExtractedElement {
      * Adds a new class to the package.
      * @param newClass is the new class of the package.
      */
-    public void addClass(ExtractedClass newClass) {
+    public void add(ExtractedClass newClass) {
         classes.add(newClass);
+    }
+
+    /**
+     * Adds a new enumeration to the package.
+     * @param newInterface is the new interface of the package.
+     */
+    public void add(ExtractedEnumeration newEnumeration) {
+        enumerations.add(newEnumeration);
+    }
+
+    /**
+     * Adds a new interface to the package.
+     * @param newInterface is the new interface of the package.
+     */
+    public void add(ExtractedInterface newInterface) {
+        interfaces.add(newInterface);
     }
 
     /**
      * Adds a new subpackage to the package.
      * @param subpackage is the new subpackage of the package.
      */
-    public void addSubpackage(ExtractedPackage subpackage) {
+    public void add(ExtractedPackage subpackage) {
         subpackages.add(subpackage);
     }
 
@@ -51,31 +68,19 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the full package name.
-     * @return the full name of the package, consisting out of the package path and the package name
-     * separated by an dot.
+     * Getter for the enumerations.
+     * @return the enumerations.
      */
-    public String getFullName() {
-        if (parent.equals("")) {
-            return name;
-        }
-        return parent + "." + name;
+    public List<ExtractedEnumeration> getEnumerations() {
+        return enumerations;
     }
 
     /**
-     * Getter for the package name.
-     * @return the package name.
+     * Getter for the interfaces.
+     * @return the interfaces.
      */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Getter for the name of the packages parent.
-     * @return the parent name.
-     */
-    public String getParentName() {
-        return parent;
+    public List<ExtractedInterface> getInterfaces() {
+        return interfaces;
     }
 
     /**
