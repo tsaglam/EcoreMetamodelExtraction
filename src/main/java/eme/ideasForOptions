@@ -1,3 +1,8 @@
 List of options:
 
-1. Name DEFAULT Package after project.
+1. Use Custom name for top level package (project/DEFAULT name if false)
+	1.1 Set custom name
+2. Extract Abstract methods as normal ones or not at all
+3. Extract static classes as normal ones or not at all
+4. Extract static methods as normal or not at all
+5. Extract nested types or not at all

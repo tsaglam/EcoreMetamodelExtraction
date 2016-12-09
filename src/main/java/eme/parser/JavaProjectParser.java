@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -42,7 +43,7 @@ public class JavaProjectParser {
     public IntermediateModel buildModel(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
-            parseIJavaProject(project);
+            parseIJavaProject(project); // TODO (HIGH) use recursive functions for this call
         } catch (JavaModelException exception) {
             System.out.println("Error while extracting the model: " + exception.getMessage());
         }
@@ -80,9 +81,19 @@ public class JavaProjectParser {
             } else if (type.isInterface()) {
                 currentModel.add(new ExtractedInterface(name));
             } else if (type.isEnum()) {
-                currentModel.add(new ExtractedEnumeration(name));
+                parseEnumeration(type);
             }
         }
+    }
+
+    public ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
+        String name = type.getFullyQualifiedName(); // get enum name
+        ExtractedEnumeration enumeration = new ExtractedEnumeration(name); // new enum
+        for (IField field : type.getFields()) { // for every enumeral
+            enumeration.addEnumeral(field.getElementName()); // add to enum
+        }
+        currentModel.add(enumeration);
+        return enumeration;
     }
 
     /**

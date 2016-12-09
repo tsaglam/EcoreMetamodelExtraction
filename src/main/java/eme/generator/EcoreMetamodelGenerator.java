@@ -10,6 +10,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -114,8 +115,14 @@ public class EcoreMetamodelGenerator {
      * @return the EEnum.
      */
     private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
-        EEnum eEnum = ecoreFactory.createEEnum();
-        eEnum.setName(extractedEnum.getName());
+        EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
+        eEnum.setName(extractedEnum.getName()); // set name
+        for (String enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
+            EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
+            literal.setName(enumeral); // set name.
+            literal.setValue(eEnum.getELiterals().size()); // set ordinal.
+            eEnum.getELiterals().add(literal); // add literal to enumm.
+        }
         return eEnum;
     }
 
