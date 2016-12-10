@@ -6,3 +6,5 @@ List of options:
 3. Extract static classes as normal ones or not at all
 4. Extract static methods as normal or not at all
 5. Extract nested types or not at all
+6. debug output?
+7. extract empty packages?

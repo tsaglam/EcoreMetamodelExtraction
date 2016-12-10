@@ -26,6 +26,7 @@ import eme.model.IntermediateModel;
  */
 public class JavaProjectParser {
     private IntermediateModel currentModel;
+    private ExtractedPackage currentPackage;
     private boolean printExtractedModel;
 
     /**
@@ -43,12 +44,13 @@ public class JavaProjectParser {
     public IntermediateModel buildModel(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
-            parseIJavaProject(project); // TODO (HIGH) use recursive functions for this call
+            parseIJavaProject(project); // parse project TODO (HIGH) use recursive functions for
+                                        // this call
         } catch (JavaModelException exception) {
             System.out.println("Error while extracting the model: " + exception.getMessage());
         }
-        if (printExtractedModel) {
-            currentModel.print();
+        if (printExtractedModel) { // if printing is enabled TODO (MEDIUM) check in model class
+            currentModel.print(); // print intermediate model.
         }
         return currentModel;
     }
@@ -72,27 +74,25 @@ public class JavaProjectParser {
     /**
      * Parses an IType that has been identified as class.
      * @param type is the IType.
-     * @return the ExtractedClass.
      */
-    private ExtractedClass parseClass(IType type) throws JavaModelException {
+    private void parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass extractedClass = new ExtractedClass(getName(type), isAbstract);
         currentModel.add(extractedClass);
-        return extractedClass;
+        currentPackage.add(extractedClass);
     }
 
     /**
      * Parse an IType that has been identified as enumeration.
      * @param type is the IType.
-     * @return the ExtractedInterface.
      */
-    private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
+    private void parseEnumeration(IType type) throws JavaModelException {
         ExtractedEnumeration enumeration = new ExtractedEnumeration(getName(type)); // new enum
         for (IField field : type.getFields()) { // for every enumeral
             enumeration.addEnumeral(field.getElementName()); // add to enum
         }
         currentModel.add(enumeration);
-        return enumeration;
+        currentPackage.add(enumeration);
     }
 
     /**
@@ -113,7 +113,9 @@ public class JavaProjectParser {
 
     /**
      * The method takes an IJavaProject and extracts the package structure of the project. It
-     * continues by parsing the IPackageFragments.
+     * continues by parsing the IPackageFragments. The method creates the packages from a set of
+     * package names to avoid the problem of duplicate default packages. But all other parsing calls
+     * are done with a list of fragments.
      * @param project is the IJavaProject that gets parsed.
      */
     private void parseIJavaProject(IJavaProject project) throws JavaModelException {
@@ -122,33 +124,33 @@ public class JavaProjectParser {
         for (IPackageFragment fragment : project.getPackageFragments()) {
             if (isSourcePackage(fragment)) { // only source packages, no binary packages.
                 extractedFragments.add(fragment); // reuse fragments for class extraction
-                packageNames.add(fragment.getElementName()); // add to list.
+                packageNames.add(fragment.getElementName()); // add name to set.
             }
         }
         for (String name : packageNames) {
-            currentModel.add(new ExtractedPackage(name)); // build model packages
+            currentModel.add(new ExtractedPackage(name)); // build model packages first
         }
-        parseIPackageFragments(extractedFragments); // continue parsing
+        parseIPackageFragments(extractedFragments); // then continue parsing
     }
 
     /**
      * Parses an IType that has been identified as interface.
      * @param type is the IType.
-     * @return the ExtractedInterface.
      */
-    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
+    private void parseInterface(IType type) throws JavaModelException {
         ExtractedInterface extractedInterface = new ExtractedInterface(getName(type));
         currentModel.add(extractedInterface);
-        return extractedInterface;
+        currentPackage.add(extractedInterface);
     }
 
     /**
      * Extracts all compilation units from a list of package fragments. It then parses all
-     * ICompilationUnits.
+     * ICompilationUnits while updating the current package.
      * @param extractedFragments is the list of compilation units.
      */
     private void parseIPackageFragments(List<IPackageFragment> extractedFragments) throws JavaModelException {
         for (IPackageFragment fragment : extractedFragments) { // for every package fragment
+            currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
                 parseICompilationUnit(unit); // extract classes
             }

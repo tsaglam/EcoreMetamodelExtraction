@@ -32,7 +32,6 @@ public class IntermediateModel {
      */
     public void add(ExtractedClass newClass) {
         classes.add(newClass); // add class to list of classes.
-        findParent(newClass).add(newClass); // add to package
     }
 
     /**
@@ -41,7 +40,6 @@ public class IntermediateModel {
      */
     public void add(ExtractedEnumeration newEnum) {
         enumerations.add(newEnum); // add class to list of classes.
-        findParent(newEnum).add(newEnum); // add to package
     }
 
     /**
@@ -50,7 +48,6 @@ public class IntermediateModel {
      */
     public void add(ExtractedInterface newInterface) {
         interfaces.add(newInterface); // add class to list of classes.
-        findParent(newInterface).add(newInterface); // add to package
     }
 
     /**
@@ -62,9 +59,26 @@ public class IntermediateModel {
             rootElement = newPackage; // add as root
             newPackage.setAsRoot(); // mark as root
         } else {
-            findParent(newPackage).add(newPackage);
+            getPackage(newPackage.getParentName()).add(newPackage);
         }
         packages.add(newPackage);
+    }
+
+    /**
+     * Returns the package of the intermediate model whose full name matches the given full name.
+     * @param fullName is the given full name.
+     * @return the package with the matching name.
+     * @throws RuntimeException if the package is not found. This means this method cannot be used
+     * to check whether there is a certain package in the model. It is explicitly used to find an
+     * existing package.
+     */
+    public ExtractedPackage getPackage(String fullName) {
+        for (ExtractedPackage aPackage : packages) { // for all packages
+            if (aPackage.getFullName().equals(fullName)) { // if parent
+                return aPackage; // can only have on parent
+            }
+        }
+        throw new RuntimeException("Could not find package " + fullName);
     }
 
     /**
@@ -100,23 +114,5 @@ public class IntermediateModel {
         return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + ", Interfaces=" + interfaces.size() + ", Enums="
                 + enumerations.size() + "]";
         // TODO (LOW) keep up to date.
-    }
-
-    /**
-     * Finds a package for a specific ExtractedElement according to its parents name.
-     * @param element is the ExtractedElement.
-     * @return the package with the matching full name.
-     * @throws RuntimeException if the package is not found. This means this method cannot be used
-     * to check whether there is a certain package in the model. It is explicitly used to find an
-     * existing package.
-     */
-    private ExtractedPackage findParent(ExtractedElement element) {
-        String parent = element.getParentName();
-        for (ExtractedPackage aPackage : packages) { // for all packages
-            if (aPackage.getFullName().equals(parent)) { // if parent
-                return aPackage; // can only have on parent
-            }
-        }
-        throw new RuntimeException("Could not find package " + parent);
     }
 }
