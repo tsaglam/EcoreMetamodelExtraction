@@ -8,13 +8,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * @author Timur Saglam
  */
 public class SameProjectSavingStrategy extends AbstractSavingStrategy {
+    private String projectName;
 
     /**
-     * Basic constructor. Takes the name of the project.
-     * @param projectName is the name of the project where the metamodel was extracted.
+     * Basic constructor.
      */
-    public SameProjectSavingStrategy(String projectName) {
-        super(projectName, true); // refresh folder.
+    public SameProjectSavingStrategy() {
+        super(true); // refresh folder.
     }
 
     /*
@@ -38,7 +38,7 @@ public class SameProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
      */
     @Override
-    protected void beforeSaving() {
-        // Is not needed for this strategy.
+    protected void beforeSaving(String projectName) {
+        this.projectName = projectName;
     }
 }

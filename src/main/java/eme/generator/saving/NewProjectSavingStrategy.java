@@ -8,20 +8,21 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * @author Timur Saglam
  */
 public class NewProjectSavingStrategy extends AbstractSavingStrategy {
+    private String projectName;
 
     /**
-     * Basic constructor. Takes the name of the project.
-     * @param projectName is the name of the project where the metamodel was extracted.
+     * Basic constructor.
      */
-    public NewProjectSavingStrategy(String projectName) {
-        super(projectName, true);
+    public NewProjectSavingStrategy() {
+        super(true);
     }
 
     /*
      * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
      */
     @Override
-    protected void beforeSaving() {
+    protected void beforeSaving(String projectName) {
+        this.projectName = projectName;
         // TODO (HIGH) Create new empty EMF project called (projectName)Model
     }
 

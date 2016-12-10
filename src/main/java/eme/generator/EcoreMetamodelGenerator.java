@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import eme.generator.saving.AbstractSavingStrategy;
+import eme.generator.saving.NewProjectSavingStrategy;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
@@ -35,7 +37,9 @@ import eme.model.IntermediateModel;
 public class EcoreMetamodelGenerator {
 
     private EcoreFactory ecoreFactory;
+    private EPackage ecoreMetamodel;
     private String projectName;
+    private AbstractSavingStrategy savingStrategy;
 
     /**
      * Basic constructor.
@@ -43,6 +47,7 @@ public class EcoreMetamodelGenerator {
     public EcoreMetamodelGenerator() {
         ecoreFactory = EcoreFactory.eINSTANCE;
         projectName = "unknown-project";
+        savingStrategy = new NewProjectSavingStrategy();
     }
 
     /**
@@ -55,38 +60,16 @@ public class EcoreMetamodelGenerator {
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
-        EPackage eRoot = generateEPackage(root); // generate ecore class structure.
-        savingAlgorithmPrototype(eRoot); // TODO (HIGH) create real saving method
+        ecoreMetamodel = generateEPackage(root); // generate ecore class structure.
+        savingAlgorithmPrototype(ecoreMetamodel); // TODO (HIGH) remove this later and use save
+                                                  // method
     }
 
     /**
-     * Generates an EPackage from an extractedPackage. Recursively calls this method to all
-     * contained elements.
-     * @param extractedPackage is the package the EPackage gets generated from.
-     * @return the generated EPackage.
+     * Saves the metamodel as an .ecore file.
      */
-    private EPackage generateEPackage(ExtractedPackage extractedPackage) {
-        EPackage ePackage = ecoreFactory.createEPackage();
-        if (extractedPackage.isRoot()) {
-            ePackage.setName("DEFAULT");
-            ePackage.setNsPrefix("DEFAULT"); // TODO (MEDIUM) make those settable.
-            ePackage.setNsURI("http://www.eme.org/" + projectName);
-        } else {
-            ePackage.setName(extractedPackage.getName());
-        }
-        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
-            ePackage.getESubpackages().add(generateEPackage(subpackage));
-        } // TODO (MEDIUM) Remove duplicate code.
-        for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
-            ePackage.getEClassifiers().add(generateEClass(extractedClass));
-        }
-        for (ExtractedInterface extractedInterface : extractedPackage.getInterfaces()) {
-            ePackage.getEClassifiers().add(generateEClass(extractedInterface));
-        }
-        for (ExtractedEnumeration extractedEnum : extractedPackage.getEnumerations()) {
-            ePackage.getEClassifiers().add(generateEEnum(extractedEnum));
-        }
-        return ePackage;
+    public void saveMetamodel() {
+        savingStrategy.save(ecoreMetamodel, projectName);
     }
 
     /**
@@ -132,9 +115,39 @@ public class EcoreMetamodelGenerator {
     }
 
     /**
+     * Generates an EPackage from an extractedPackage. Recursively calls this method to all
+     * contained elements.
+     * @param extractedPackage is the package the EPackage gets generated from.
+     * @return the generated EPackage.
+     */
+    private EPackage generateEPackage(ExtractedPackage extractedPackage) {
+        EPackage ePackage = ecoreFactory.createEPackage();
+        if (extractedPackage.isRoot()) {
+            ePackage.setName("DEFAULT");
+            ePackage.setNsPrefix("DEFAULT"); // TODO (MEDIUM) make those settable.
+            ePackage.setNsURI("http://www.eme.org/" + projectName);
+        } else {
+            ePackage.setName(extractedPackage.getName());
+        }
+        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
+            ePackage.getESubpackages().add(generateEPackage(subpackage));
+        } // TODO (MEDIUM) Remove duplicate code.
+        for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
+            ePackage.getEClassifiers().add(generateEClass(extractedClass));
+        }
+        for (ExtractedInterface extractedInterface : extractedPackage.getInterfaces()) {
+            ePackage.getEClassifiers().add(generateEClass(extractedInterface));
+        }
+        for (ExtractedEnumeration extractedEnum : extractedPackage.getEnumerations()) {
+            ePackage.getEClassifiers().add(generateEEnum(extractedEnum));
+        }
+        return ePackage;
+    }
+
+    /**
      * IMPORTANT: Prototypical method for saving an EPackage as ecore file. The method currently
      * uses an existing project and a fixed path. To work it requires to have an EMF Project called
-     * "EME-Generator-Output" in the workspace.
+     * "EME-Generator-Output" in the workspace. TODO (HIGH) remove this when custom saving works.
      */
     private void savingAlgorithmPrototype(EPackage ePackage) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();

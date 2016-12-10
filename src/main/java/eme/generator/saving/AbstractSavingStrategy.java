@@ -20,17 +20,14 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
-    protected String projectName;
     private boolean saveInProject;
 
     /**
      * Basic constructor. Takes the name of the project.
-     * @param projectName is the name of the project where the metamodel was extracted.
      * @param saveInProject determines whether the folder where the file is saved should be
      * refreshed in the Eclipse IDE. Set this true if the file is saved in a project in the IDE.
      */
-    public AbstractSavingStrategy(String projectName, boolean saveInProject) {
-        this.projectName = projectName;
+    public AbstractSavingStrategy(boolean saveInProject) {
         this.saveInProject = saveInProject;
     }
 
@@ -38,8 +35,8 @@ public abstract class AbstractSavingStrategy {
      * Saves an EPackage as an Ecore file.
      * @param ePackage is the EPackage to save.
      */
-    public void save(EPackage ePackage) {
-        beforeSaving();
+    public void save(EPackage ePackage, String projectName) {
+        beforeSaving(projectName);
         ePackage.eClass(); // Initialize the EPackage:
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
@@ -76,8 +73,9 @@ public abstract class AbstractSavingStrategy {
 
     /**
      * Can be used to prepare the saving itself.
+     * @param projectName is the name of the project of the model that gets saved.
      */
-    protected abstract void beforeSaving();
+    protected abstract void beforeSaving(String projectName);
 
     /**
      * Determines the path where the ecore file is saved.

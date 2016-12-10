@@ -14,11 +14,10 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
     private String path;
 
     /**
-     * Basic constructor. Takes the name of the project.
-     * @param projectName is the name of the project where the metamodel was extracted.
+     * Basic constructor.
      */
-    public CustomPathSavingStrategy(String projectName) {
-        super(projectName, false); // don't refresh folder
+    public CustomPathSavingStrategy() {
+        super(false); // don't refresh folder
     }
 
     /*
@@ -41,7 +40,7 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
      * Opens a saving dialog and sets the path and the name.
      */
     @Override
-    protected void beforeSaving() {
+    protected void beforeSaving(String projectName) {
         Display display = Display.getCurrent();
         Shell shell = new Shell(display);
         shell.open();
