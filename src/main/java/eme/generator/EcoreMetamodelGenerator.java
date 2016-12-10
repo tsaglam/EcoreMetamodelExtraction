@@ -5,8 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
@@ -129,8 +134,7 @@ public class EcoreMetamodelGenerator {
     /**
      * IMPORTANT: Prototypical method for saving an EPackage as ecore file. The method currently
      * uses an existing project and a fixed path. To work it requires to have an EMF Project called
-     * "EME-Generator-Output" in the workspace. The EMF project should contain a folder model. The
-     * generated Ecore files can be seen in this folder after refreshing the folder.
+     * "EME-Generator-Output" in the workspace.
      */
     private void savingAlgorithmPrototype(EPackage ePackage) {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -148,6 +152,14 @@ public class EcoreMetamodelGenerator {
         try { // save the content:
             resource.save(Collections.EMPTY_MAP);
         } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        IWorkspaceRoot root = workspace.getRoot();
+        IContainer folder = root.getContainerForLocation(new Path(ecoreFilePath));
+        try {
+            folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+        } catch (CoreException exception) {
             exception.printStackTrace();
         }
     }
