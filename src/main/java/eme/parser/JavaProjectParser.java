@@ -41,11 +41,10 @@ public class JavaProjectParser {
      * @param project is the Java project to analyze.
      * @return an intermediate model that was extracted from the project.
      */
-    public IntermediateModel buildModel(IJavaProject project) {
+    public IntermediateModel buildIntermediateModel(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
-            parseIJavaProject(project); // parse project TODO (HIGH) use recursive functions for
-                                        // this call
+            parseIJavaProject(project); // parse project
         } catch (JavaModelException exception) {
             System.out.println("Error while extracting the model: " + exception.getMessage());
         }

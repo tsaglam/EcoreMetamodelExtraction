@@ -54,19 +54,18 @@ public class EcoreMetamodelGenerator {
      * Method starts the Ecore metamodel generation.
      * @param model is the intermediate model that is the source for the generator.
      */
-    public void generateFrom(IntermediateModel model) {
+    public void generateMetamodelFrom(IntermediateModel model) {
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
         ecoreMetamodel = generateEPackage(root); // generate ecore class structure.
-        savingAlgorithmPrototype(ecoreMetamodel); // TODO (HIGH) remove this later and use save
-                                                  // method
+        savingAlgorithmPrototype(ecoreMetamodel); // TODO (HIGH) remove this later and use save()
     }
 
     /**
-     * Saves the metamodel as an .ecore file.
+     * Saves the metamodel as an Ecore file.
      */
     public void saveMetamodel() {
         savingStrategy.save(ecoreMetamodel, projectName);
