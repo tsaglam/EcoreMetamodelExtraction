@@ -37,7 +37,7 @@ public class ExtractedPackage extends ExtractedElement {
 
     /**
      * Adds a new enumeration to the package.
-     * @param newInterface is the new interface of the package.
+     * @param newEnumeration is the new enumeration of the package.
      */
     public void add(ExtractedEnumeration newEnumeration) {
         enumerations.add(newEnumeration);
@@ -93,7 +93,7 @@ public class ExtractedPackage extends ExtractedElement {
 
     /**
      * Checks whether package is the root package.
-     * @return
+     * @return true if the package is the root package.
      */
     public boolean isRoot() {
         return root;

@@ -11,6 +11,7 @@ public class ExtractedClass extends ExtractedType {
     /**
      * Basic constructor.
      * @param fullName is the full name, containing name and package name.
+     * @param isAbstract determines whether the class is abstract or not.
      */
     public ExtractedClass(String fullName, boolean isAbstract) {
         super(fullName);

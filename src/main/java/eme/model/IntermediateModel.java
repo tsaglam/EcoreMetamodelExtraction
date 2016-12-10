@@ -17,6 +17,7 @@ public class IntermediateModel {
 
     /**
      * Basic constructor.
+     * @param projectName is the name of the project the model was extracted from.
      */
     public IntermediateModel(String projectName) {
         packages = new LinkedList<ExtractedPackage>();
@@ -111,8 +112,8 @@ public class IntermediateModel {
 
     @Override
     public String toString() {
-        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + ", Interfaces=" + interfaces.size() + ", Enums="
-                + enumerations.size() + "]";
+        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() 
+                + ", Interfaces=" + interfaces.size() + ", Enums=" + enumerations.size() + "]";
         // TODO (LOW) keep up to date.
     }
 }

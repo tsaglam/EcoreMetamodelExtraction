@@ -34,6 +34,7 @@ public abstract class AbstractSavingStrategy {
     /**
      * Saves an EPackage as an Ecore file.
      * @param ePackage is the EPackage to save.
+     * @param projectName is the name of the project the EPAckage was generated from.
      */
     public void save(EPackage ePackage, String projectName) {
         beforeSaving(projectName);
