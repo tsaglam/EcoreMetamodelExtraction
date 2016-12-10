@@ -20,16 +20,18 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
-    // TODO (MEDIUM) ideas for saving strategies: generator project, same project as source, create
-    // new project
     protected String projectName;
+    private boolean saveInProject;
 
     /**
      * Basic constructor. Takes the name of the project.
      * @param projectName is the name of the project where the metamodel was extracted.
+     * @param saveInProject determines whether the folder where the file is saved should be
+     * refreshed in the Eclipse IDE. Set this true if the file is saved in a project in the IDE.
      */
-    public AbstractSavingStrategy(String projectName) {
+    public AbstractSavingStrategy(String projectName, boolean saveInProject) {
         this.projectName = projectName;
+        this.saveInProject = saveInProject;
     }
 
     /**
@@ -37,13 +39,12 @@ public abstract class AbstractSavingStrategy {
      * @param ePackage is the EPackage to save.
      */
     public void save(EPackage ePackage) {
-        String ecoreFilePath = projectPath() + "/" + projectName() + "/" + folder() + "/";
-        String ecoreFileName = fileName();
+        beforeSaving();
         ePackage.eClass(); // Initialize the EPackage:
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
         try {
-            resource = resourceSet.createResource(URI.createFileURI(ecoreFilePath + ecoreFileName + ".ecore"));
+            resource = resourceSet.createResource(URI.createFileURI(filePath() + fileName() + ".ecore"));
         } catch (IllegalArgumentException exception) {
             exception.printStackTrace();
         }
@@ -53,7 +54,9 @@ public abstract class AbstractSavingStrategy {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-        refreshFolder(ecoreFilePath);
+        if (saveInProject) {
+            refreshFolder(filePath());
+        }
     }
 
     /**
@@ -72,25 +75,18 @@ public abstract class AbstractSavingStrategy {
     }
 
     /**
-     * Determines the path where the target project lies. Usually the workspace path.
-     * @return the project path.
+     * Can be used to prepare the saving itself.
      */
-    protected abstract String projectPath();
+    protected abstract void beforeSaving();
 
     /**
-     * Determines the name of the target project.
-     * @return the project name.
+     * Determines the path where the ecore file is saved.
+     * @return the file path.
      */
-    protected abstract String projectName();
+    protected abstract String filePath();
 
     /**
-     * Determines the target folder.
-     * @return the target folder. Empty string if the project folder is the target folder.
-     */
-    protected abstract String folder();
-
-    /**
-     * Determines how the Ecore file will be named.
+     * Determines the name of the ecore file.
      * @return the file name.
      */
     protected abstract String fileName();
