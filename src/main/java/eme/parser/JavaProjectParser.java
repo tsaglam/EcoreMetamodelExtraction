@@ -59,7 +59,7 @@ public class JavaProjectParser {
      * @param type is the IType.
      * @return the full qualified name.
      */
-    private String getName(IType type) {
+    private String getName(IType type) { // TODO (HIGH) remove?
         return type.getFullyQualifiedName(); // just to make the call shorter
     }
 
@@ -88,7 +88,9 @@ public class JavaProjectParser {
     private void parseEnumeration(IType type) throws JavaModelException {
         ExtractedEnumeration enumeration = new ExtractedEnumeration(getName(type)); // new enum
         for (IField field : type.getFields()) { // for every enumeral
-            enumeration.addEnumeral(field.getElementName()); // add to enum
+            if (Flags.isEnum(field.getFlags())) {
+                enumeration.addEnumeral(field.getElementName()); // add to enum
+            }
         }
         currentModel.add(enumeration);
         currentPackage.add(enumeration);
