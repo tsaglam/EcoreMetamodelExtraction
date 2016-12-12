@@ -1,29 +1,13 @@
 package eme.generator;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collections;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import eme.generator.saving.AbstractSavingStrategy;
-import eme.generator.saving.NewProjectSavingStrategy;
+import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
@@ -36,6 +20,9 @@ import eme.model.IntermediateModel;
  */
 public class EcoreMetamodelGenerator {
 
+    private static String TOP_LEVEL_PACKAGE_NAME = "DEFAULT";
+    private static String TOP_LEVEL_PACKAGE_PREFIX = "DEFAULT";
+    private static String TOP_LEVEL_PACKAGE_URI_BASE = "http://www.eme.org/";
     private EcoreFactory ecoreFactory;
     private EPackage ecoreMetamodel;
     private String projectName;
@@ -47,7 +34,18 @@ public class EcoreMetamodelGenerator {
     public EcoreMetamodelGenerator() {
         ecoreFactory = EcoreFactory.eINSTANCE;
         projectName = "unknown-project";
-        savingStrategy = new NewProjectSavingStrategy();
+        savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
+    }
+
+    /**
+     * Changes the saving strategy to a new one.
+     * @param newStrategy is the new saving strategy.
+     */
+    public void changeSavingStrategy(AbstractSavingStrategy newStrategy) {
+        if (newStrategy == null) {
+            throw new IllegalArgumentException("The new strategy cannot be null!");
+        }
+        savingStrategy = newStrategy;
     }
 
     /**
@@ -61,7 +59,6 @@ public class EcoreMetamodelGenerator {
         }
         projectName = model.getProjectName(); // get project name.
         ecoreMetamodel = generateEPackage(root); // generate ecore class structure.
-        savingAlgorithmPrototype(ecoreMetamodel); // TODO (HIGH) remove this later and use save()
     }
 
     /**
@@ -122,11 +119,12 @@ public class EcoreMetamodelGenerator {
     private EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) {
-            ePackage.setName("DEFAULT");
-            ePackage.setNsPrefix("DEFAULT"); // TODO (MEDIUM) make those settable.
-            ePackage.setNsURI("http://www.eme.org/" + projectName);
+            ePackage.setName(TOP_LEVEL_PACKAGE_NAME);
+            ePackage.setNsPrefix(TOP_LEVEL_PACKAGE_PREFIX);
+            ePackage.setNsURI(TOP_LEVEL_PACKAGE_URI_BASE + projectName);
         } else {
             ePackage.setName(extractedPackage.getName());
+            // TODO (MEDIUM) NsPrefix & NsURI?
         }
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
@@ -142,38 +140,4 @@ public class EcoreMetamodelGenerator {
         }
         return ePackage;
     }
-
-    /**
-     * IMPORTANT: Prototypical method for saving an EPackage as ecore file. The method currently
-     * uses an existing project and a fixed path. To work it requires to have an EMF Project called
-     * "EME-Generator-Output" in the workspace. TODO (HIGH) remove this when custom saving works.
-     */
-    private void savingAlgorithmPrototype(EPackage ePackage) {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        String ecoreFilePath = workspace.getRoot().getLocation().toFile().getPath() + "/EME-Generator-Output/model/";
-        String ecoreFileName = projectName + "-" + LocalDate.now() + "-" + LocalTime.now();
-        ePackage.eClass(); // Initialize the EPackage:
-        ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
-        Resource resource = null; // create a resource:
-        try {
-            resource = resourceSet.createResource(URI.createFileURI(ecoreFilePath + ecoreFileName + ".ecore"));
-        } catch (IllegalArgumentException exception) {
-            exception.printStackTrace();
-        }
-        resource.getContents().add(ePackage); // add the EPackage as root.
-        try { // save the content:
-            resource.save(Collections.EMPTY_MAP);
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
-        IWorkspaceRoot root = workspace.getRoot();
-        IContainer folder = root.getContainerForLocation(new Path(ecoreFilePath));
-        try {
-            folder.refreshLocal(IResource.DEPTH_INFINITE, null);
-        } catch (CoreException exception) {
-            exception.printStackTrace();
-        }
-    }
-
 }

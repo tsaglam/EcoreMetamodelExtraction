@@ -34,7 +34,7 @@ public class EcoreMetamodelExtraction {
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = parser.buildIntermediateModel(javaProject);
         generator.generateMetamodelFrom(model);
-        // generator.saveMetamodel(); // TODO (MEDIUM) Saving as own step.
+        generator.saveMetamodel();
     }
 
     /**
