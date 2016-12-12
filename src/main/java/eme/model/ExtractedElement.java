@@ -8,6 +8,7 @@ package eme.model;
 public abstract class ExtractedElement {
     protected String name;
     protected String parent;
+    protected boolean selected; // selection for saving.
 
     /**
      * Basic constructor which extracts the name and the parents name from the full name.
@@ -16,6 +17,7 @@ public abstract class ExtractedElement {
     public ExtractedElement(String fullName) {
         name = createName(fullName);
         parent = createPath(fullName);
+        selected = true;
     }
 
     /**
@@ -44,6 +46,22 @@ public abstract class ExtractedElement {
      */
     public String getParentName() {
         return parent;
+    }
+
+    /**
+     * Checks whether the element is selected.
+     * @return true if selected.
+     */
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Sets whether is element is selected or not.
+     * @param selected true to select the element, false to unselect.
+     */
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

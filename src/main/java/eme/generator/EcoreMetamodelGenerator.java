@@ -51,14 +51,16 @@ public class EcoreMetamodelGenerator {
     /**
      * Method starts the Ecore metamodel generation.
      * @param model is the intermediate model that is the source for the generator.
+     * @return the root element of the metamodel, an EPackage.
      */
-    public void generateMetamodelFrom(IntermediateModel model) {
+    public EPackage generateMetamodelFrom(IntermediateModel model) {
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
         ecoreMetamodel = generateEPackage(root); // generate ecore class structure.
+        return ecoreMetamodel;
     }
 
     /**
@@ -128,7 +130,7 @@ public class EcoreMetamodelGenerator {
         }
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
-        } // TODO (MEDIUM) Remove duplicate code.
+        } // TODO (MEDIUM) Improve code style.
         for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
             ePackage.getEClassifiers().add(generateEClass(extractedClass));
         }
