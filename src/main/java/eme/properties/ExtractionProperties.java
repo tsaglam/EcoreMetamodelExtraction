@@ -24,7 +24,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public String getDefaultPackageName() {
-        return properties.getProperty("DefaultPackageName");
+        return properties.getProperty("DefaultPackageName", "DEFAULT");
     }
 
     /**
@@ -32,7 +32,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public boolean getExtractAbstractMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractAbstractMethods"));
+        return Boolean.parseBoolean(properties.getProperty("ExtractAbstractMethods", "false"));
     }
 
     /**
@@ -40,7 +40,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public boolean getExtractEmptyPackages() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractEmptyPackages"));
+        return Boolean.parseBoolean(properties.getProperty("ExtractEmptyPackages", "true"));
     }
 
     /**
@@ -48,7 +48,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public boolean getExtractNestedTypes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes"));
+        return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes", "true"));
     }
 
     /**
@@ -56,7 +56,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public boolean getExtractStaticAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractStaticAttributes"));
+        return Boolean.parseBoolean(properties.getProperty("ExtractStaticAttributes", "false"));
     }
 
     /**
@@ -64,7 +64,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public boolean getExtractStaticMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractStaticMethods"));
+        return Boolean.parseBoolean(properties.getProperty("ExtractStaticMethods", "false"));
     }
 
     /**
@@ -72,7 +72,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public String getSavingStrategy() {
-        return properties.getProperty("SavingStrategy");
+        return properties.getProperty("SavingStrategy", "OutputProject");
     }
 
     @Override
