@@ -1,11 +1,16 @@
 package eme.properties;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.Properties;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /**
  * The class is the super class for the class ExtractionProperties. It separates the loading, saving
@@ -15,8 +20,7 @@ import java.util.Properties;
  */
 public abstract class AbstractProperties {
     private static String FILE_COMMENT;
-    private static String FILE_NAME;
-    protected final String path;
+    private final URL fileURL;
     protected Properties properties;
 
     /**
@@ -24,15 +28,12 @@ public abstract class AbstractProperties {
      * @param name is the name of the properties file.
      * @param comment is the comment of the properties file.
      */
-    public AbstractProperties(String name, String comment) { // TODO (HIGH) fix problem with path
-        FILE_NAME = name;
+    public AbstractProperties(String name, String comment) {
         FILE_COMMENT = comment;
-        path = System.getProperty("user.dir") + "/" + FILE_NAME; // create path.
-        if (propertyFileExists()) {
-            load(); // load if file exists.
-        } else {
-            create(); // create if not.
-        }
+        Bundle bundle = Platform.getBundle("EcoreMetamodelExtraction");
+        Path path = new Path(name);
+        fileURL = FileLocator.find(bundle, path, null);
+        load(); // load if file exists.
     }
 
     /**
@@ -40,7 +41,7 @@ public abstract class AbstractProperties {
      */
     public void save() {
         try {
-            FileOutputStream out = new FileOutputStream(path); // create output stream
+            OutputStream out = fileURL.openConnection().getOutputStream(); // create output stream
             properties.store(out, FILE_COMMENT); // store with stream
             out.close(); // close stream
         } catch (FileNotFoundException exception) {
@@ -51,37 +52,17 @@ public abstract class AbstractProperties {
     }
 
     /**
-     * Checks whether the properties file already exists (and is not a folder).
-     * @return true if the file exists.
+     * Sets all the properties to their default values.
      */
-    private boolean propertyFileExists() {
-        File f = new File(path);
-        return f.exists() && !f.isDirectory();
-    }
-
-    /**
-     * creates new properties file.
-     */
-    protected void create() {
-        File file = new File(path); // create file object
-        file.getParentFile().mkdirs(); // be sure that the parent directory exists
-        try {
-            file.createNewFile(); // write file to disk
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-        load(); // then load the properties file.
-        setDefaultValues(); // set defaults.
-        save(); // save to file.
-    }
+    abstract public void setDefaultValues();
 
     /**
      * Loads the settings from the properties file.
      */
-    protected void load() {
+    private void load() {
         try {
             properties = new Properties(); // create properties object
-            FileInputStream in = new FileInputStream(path); // create input stream
+            InputStream in = fileURL.openStream(); // create input stream
             properties.load(in); // load from stream
             in.close(); // close stream
         } catch (FileNotFoundException exception) {
@@ -90,9 +71,4 @@ public abstract class AbstractProperties {
             exception.printStackTrace();
         }
     }
-
-    /**
-     * Sets all the properties to their default values.
-     */
-    abstract protected void setDefaultValues();
 }

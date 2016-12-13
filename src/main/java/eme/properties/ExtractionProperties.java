@@ -8,10 +8,6 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
     private static final String FILE_COMMENT = "Use this file to configure the Ecore metamodel extraction.";
     private static final String FILE_NAME = "user.properties";
 
-    public static void main(String[] args) {
-        new ExtractionProperties(); // TODO (LOW) remove main method.
-    }
-
     /**
      * Basic constructor. Calls the super class constructor which manages the file.
      */
@@ -76,7 +72,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
     }
 
     @Override
-    protected void setDefaultValues() {
+    public void setDefaultValues() {
         properties.setProperty("DefaultPackageName", "DEFAULT");
         properties.setProperty("ExtractEmptyPackages", "true");
         properties.setProperty("ExtractNestedTypes", "true");
