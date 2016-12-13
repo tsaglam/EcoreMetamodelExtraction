@@ -104,6 +104,19 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
+     * Checks whether package is empty.
+     * @return true if the package is empty.
+     */
+    public boolean isEmpty() {
+        for (ExtractedPackage subpackage : subpackages) {
+            if (!subpackage.isEmpty()) {
+                return false;
+            }
+        }
+        return (classes.size() + interfaces.size() + enumerations.size()) == 0;
+    }
+
+    /**
      * Checks whether package is the root package.
      * @return true if the package is the root package.
      */

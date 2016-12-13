@@ -41,19 +41,23 @@ public class EClassGenerator {
      */
     public EPackage generateEPackage(ExtractedPackage extractedPackage, String projectName) {
         EPackage ePackage = ecoreFactory.createEPackage();
-        if (extractedPackage.isRoot()) {
+        if (extractedPackage.isRoot()) { // set root name & prefix:
             ePackage.setName(properties.getDefaultPackageName());
             ePackage.setNsPrefix(properties.getDefaultPackageName());
-        } else {
+        } else { // set name & prefix for non root packages:
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());
         }
-        ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName());
-        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
-            ePackage.getESubpackages().add(generateEPackage(subpackage, projectName));
+        ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName()); // Set URI
+        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
+            if (!subpackage.isEmpty() || properties.getExtractEmptyPackages()) { // if is allowed to
+                ePackage.getESubpackages().add(generateEPackage(subpackage, projectName)); // extract
+            }
         }
-        for (ExtractedType type : extractedPackage.getTypes()) {
-            ePackage.getEClassifiers().add(generateEClassifier(type));
+        for (ExtractedType type : extractedPackage.getTypes()) { // for all types
+            if (!type.isNested() || properties.getExtractNestedTypes()) { // if is allowed to
+                ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
+            }
         }
         return ePackage;
     }
@@ -114,5 +118,4 @@ public class EClassGenerator {
         }
         return eEnum;
     }
-
 }
