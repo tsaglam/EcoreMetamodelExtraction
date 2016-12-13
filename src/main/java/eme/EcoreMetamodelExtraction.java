@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.JavaCore;
 import eme.generator.EcoreMetamodelGenerator;
 import eme.model.IntermediateModel;
 import eme.parser.JavaProjectParser;
+import eme.properties.ExtractionProperties;
 
 /**
  * Base class of the prototype for Ecore metamodel extraction.

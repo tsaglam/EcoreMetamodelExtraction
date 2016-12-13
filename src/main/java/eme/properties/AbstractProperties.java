@@ -1,4 +1,4 @@
-package eme;
+package eme.properties;
 
 import java.io.File;
 import java.io.FileInputStream;

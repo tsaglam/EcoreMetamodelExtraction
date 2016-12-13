@@ -1,4 +1,4 @@
-package eme;
+package eme.properties;
 
 /**
  * This class manages the extraction properties in the user.properties file.

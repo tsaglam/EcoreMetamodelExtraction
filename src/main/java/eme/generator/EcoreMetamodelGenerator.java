@@ -6,7 +6,6 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
-import eme.ExtractionProperties;
 import eme.generator.saving.AbstractSavingStrategy;
 import eme.generator.saving.CustomPathSavingStrategy;
 import eme.generator.saving.NewProjectSavingStrategy;
@@ -17,6 +16,7 @@ import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
+import eme.properties.ExtractionProperties;
 
 /**
  * This class generates an Ecore Metamodel from an Intermediate Model.
