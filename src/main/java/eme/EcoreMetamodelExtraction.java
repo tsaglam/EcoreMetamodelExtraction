@@ -52,6 +52,14 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
+     * Grants access to the properties.
+     * @return the ExtractionProperties.
+     */
+    public ExtractionProperties getProperties() {
+        return properties;
+    }
+
+    /**
      * Checks whether a specific project is valid (neither null nor nonexistent)
      * @param project is the specific IJavaProject.
      */

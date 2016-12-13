@@ -52,16 +52,7 @@ public class JavaProjectParser {
             currentModel.print(); // print intermediate model.
         }
         return currentModel;
-    }
-
-    /**
-     * Returns the full qualified name of an IType.
-     * @param type is the IType.
-     * @return the full qualified name.
-     */
-    private String getName(IType type) { // TODO (HIGH) remove?
-        return type.getFullyQualifiedName(); // just to make the call shorter
-    }
+    } // TODO (MEDIUM) improve code style, maybe split class etc.
 
     /**
      * Checks if a packet fragment is a source package.
@@ -76,7 +67,7 @@ public class JavaProjectParser {
      */
     private void parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
-        ExtractedClass extractedClass = new ExtractedClass(getName(type), isAbstract);
+        ExtractedClass extractedClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
         currentModel.add(extractedClass);
         currentPackage.add(extractedClass);
     }
@@ -86,7 +77,7 @@ public class JavaProjectParser {
      * @param type is the IType.
      */
     private void parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration enumeration = new ExtractedEnumeration(getName(type)); // new enum
+        ExtractedEnumeration enumeration = new ExtractedEnumeration(type.getFullyQualifiedName());
         for (IField field : type.getFields()) { // for every enumeral
             if (Flags.isEnum(field.getFlags())) {
                 enumeration.addEnumeral(field.getElementName()); // add to enum
@@ -139,7 +130,7 @@ public class JavaProjectParser {
      * @param type is the IType.
      */
     private void parseInterface(IType type) throws JavaModelException {
-        ExtractedInterface extractedInterface = new ExtractedInterface(getName(type));
+        ExtractedInterface extractedInterface = new ExtractedInterface(type.getFullyQualifiedName());
         currentModel.add(extractedInterface);
         currentPackage.add(extractedInterface);
     }

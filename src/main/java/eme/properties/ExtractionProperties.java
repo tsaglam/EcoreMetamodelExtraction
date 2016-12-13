@@ -15,7 +15,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
     /**
      * Basic constructor. Calls the super class constructor which manages the file.
      */
-    public ExtractionProperties() { // TODO (HIGH) fix problem with path when ran as plugin
+    public ExtractionProperties() {
         super(FILE_NAME, FILE_COMMENT);
     }
 
