@@ -13,15 +13,17 @@ import eme.parser.JavaProjectParser;
  * @author Timur Saglam
  */
 public class EcoreMetamodelExtraction {
+    private ExtractionProperties properties;
     private JavaProjectParser parser;
     private EcoreMetamodelGenerator generator;
-
+    
     /**
      * Basic constructor. Builds parser and generator.
      */
     public EcoreMetamodelExtraction() {
+        properties = new ExtractionProperties();
         parser = new JavaProjectParser();
-        generator = new EcoreMetamodelGenerator();
+        generator = new EcoreMetamodelGenerator(properties);
     }
 
     /**

@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.ExtractionProperties;
 import eme.generator.saving.AbstractSavingStrategy;
 import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.model.ExtractedClass;
@@ -20,8 +21,7 @@ import eme.model.IntermediateModel;
  */
 public class EcoreMetamodelGenerator {
 
-    private static String TOP_LEVEL_PACKAGE_NAME = "DEFAULT"; // TODO (MEDIUM) use property
-    private static String TOP_LEVEL_PACKAGE_PREFIX = "DEFAULT";
+    private ExtractionProperties properties;
     private EcoreFactory ecoreFactory;
     private EPackage ecoreMetamodel;
     private String projectName;
@@ -30,7 +30,8 @@ public class EcoreMetamodelGenerator {
     /**
      * Basic constructor.
      */
-    public EcoreMetamodelGenerator() {
+    public EcoreMetamodelGenerator(ExtractionProperties properties) {
+        this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
         projectName = "unknown-project";
         savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
@@ -120,13 +121,13 @@ public class EcoreMetamodelGenerator {
     private EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) {
-            ePackage.setName(TOP_LEVEL_PACKAGE_NAME);
-            ePackage.setNsPrefix(TOP_LEVEL_PACKAGE_PREFIX);
+            ePackage.setName(properties.defaultPackageName());
+            ePackage.setNsPrefix(properties.defaultPackageName());
         } else {
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());
         }
-        ePackage.setNsURI(projectName+"/"+extractedPackage.getFullName());
+        ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName());
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
         } // TODO (MEDIUM) Improve code style.
