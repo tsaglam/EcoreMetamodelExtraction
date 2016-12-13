@@ -20,9 +20,8 @@ import eme.model.IntermediateModel;
  */
 public class EcoreMetamodelGenerator {
 
-    private static String TOP_LEVEL_PACKAGE_NAME = "DEFAULT";
+    private static String TOP_LEVEL_PACKAGE_NAME = "DEFAULT"; // TODO (MEDIUM) use property
     private static String TOP_LEVEL_PACKAGE_PREFIX = "DEFAULT";
-    private static String TOP_LEVEL_PACKAGE_URI_BASE = "http://www.eme.org/";
     private EcoreFactory ecoreFactory;
     private EPackage ecoreMetamodel;
     private String projectName;
@@ -123,11 +122,11 @@ public class EcoreMetamodelGenerator {
         if (extractedPackage.isRoot()) {
             ePackage.setName(TOP_LEVEL_PACKAGE_NAME);
             ePackage.setNsPrefix(TOP_LEVEL_PACKAGE_PREFIX);
-            ePackage.setNsURI(TOP_LEVEL_PACKAGE_URI_BASE + projectName);
         } else {
             ePackage.setName(extractedPackage.getName());
-            // TODO (MEDIUM) NsPrefix & NsURI?
+            ePackage.setNsPrefix(extractedPackage.getName());
         }
+        ePackage.setNsURI(projectName+"/"+extractedPackage.getFullName());
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
         } // TODO (MEDIUM) Improve code style.
