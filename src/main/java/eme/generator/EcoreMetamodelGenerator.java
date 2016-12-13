@@ -8,7 +8,10 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.ExtractionProperties;
 import eme.generator.saving.AbstractSavingStrategy;
+import eme.generator.saving.CustomPathSavingStrategy;
+import eme.generator.saving.NewProjectSavingStrategy;
 import eme.generator.saving.OutputProjectSavingStrategy;
+import eme.generator.saving.SameProjectSavingStrategy;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
@@ -34,7 +37,16 @@ public class EcoreMetamodelGenerator {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
         projectName = "unknown-project";
-        savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
+        String strategy = properties.getSavingStrategy();
+        if (strategy.equals("OutputProject")) {
+            savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
+        } else if (strategy.equals("SameProject")) {
+            savingStrategy = new SameProjectSavingStrategy();
+        } else if (strategy.equals("CustomPath")) {
+            savingStrategy = new CustomPathSavingStrategy();
+        } else {
+            savingStrategy = new NewProjectSavingStrategy();
+        }
     }
 
     /**
@@ -121,8 +133,8 @@ public class EcoreMetamodelGenerator {
     private EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) {
-            ePackage.setName(properties.defaultPackageName());
-            ePackage.setNsPrefix(properties.defaultPackageName());
+            ePackage.setName(properties.getDefaultPackageName());
+            ePackage.setNsPrefix(properties.getDefaultPackageName());
         } else {
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());

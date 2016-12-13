@@ -14,13 +14,17 @@ import java.util.Properties;
 public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
     private static final String FILE_COMMENT = "Use this file to configure the Ecore metamodel extraction.";
     private static final String FILE_NAME = "user.properties";
+    public static void main(String[] args) {
+        new ExtractionProperties(); // TODO (LOW) remove main method.
+    }
     private final String path;
+
     private Properties properties;
 
     /**
      * Basic constructor. Loads the properties file, creates a new one if the file does not exist.
      */
-    public ExtractionProperties() {
+    public ExtractionProperties() { // TODO (HIGH) fix problem with path when ran as plugin
         path = System.getProperty("user.dir") + "/" + FILE_NAME; // create path.
         if (propertyFileExists()) {
             load(); // load if file exists.
@@ -33,7 +37,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property DefaultPackageName.
      * @return the value.
      */
-    public String defaultPackageName() {
+    public String getDefaultPackageName() {
         return properties.getProperty("DefaultPackageName");
     }
 
@@ -41,7 +45,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property ExtractAbstractMethods.
      * @return the value.
      */
-    public boolean extractAbstractMethods() {
+    public boolean getExtractAbstractMethods() {
         return Boolean.parseBoolean(properties.getProperty("ExtractAbstractMethods"));
     }
 
@@ -49,7 +53,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property ExtractEmptyPackages.
      * @return the value.
      */
-    public boolean extractEmptyPackages() {
+    public boolean getExtractEmptyPackages() {
         return Boolean.parseBoolean(properties.getProperty("ExtractEmptyPackages"));
     }
 
@@ -57,7 +61,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property ExtractNestedTypes.
      * @return the value.
      */
-    public boolean extractNestedTypes() {
+    public boolean getExtractNestedTypes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes"));
     }
 
@@ -65,7 +69,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property ExtractStaticAttributes.
      * @return the value.
      */
-    public boolean extractStaticAttributes() {
+    public boolean getExtractStaticAttributes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractStaticAttributes"));
     }
 
@@ -73,8 +77,16 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
      * Returns the value of the property ExtractStaticMethods.
      * @return the value.
      */
-    public boolean extractStaticMethods() {
+    public boolean getExtractStaticMethods() {
         return Boolean.parseBoolean(properties.getProperty("ExtractStaticMethods"));
+    }
+
+    /**
+     * Returns the value of the property SavingStrategy.
+     * @return the value.
+     */
+    public String getSavingStrategy() {
+        return properties.getProperty("SavingStrategy");
     }
 
     /**
@@ -105,6 +117,7 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
         }
         load(); // then load the properties file.
         setDefaultValues(); // set defaults.
+        save(); // save to file.
     }
 
     /**
@@ -142,5 +155,6 @@ public class ExtractionProperties { // TODO (MEDIUM) add setters for properties.
         properties.setProperty("ExtractAbstractMethods", "false");
         properties.setProperty("ExtractStaticMethods", "false");
         properties.setProperty("ExtractStaticAttributes", "false");
+        properties.setProperty("SavingStrategy", "OutputProject");
     }
 }
