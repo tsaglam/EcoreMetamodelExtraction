@@ -1,33 +1,24 @@
 package eme.generator;
 
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.generator.saving.AbstractSavingStrategy;
 import eme.generator.saving.CustomPathSavingStrategy;
 import eme.generator.saving.NewProjectSavingStrategy;
 import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.generator.saving.SameProjectSavingStrategy;
-import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumeration;
-import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
-import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
 /**
- * This class generates an Ecore Metamodel from an Intermediate Model.
+ * This class generates an Ecore Metamodel from an Intermediate Model. It also allows to save a
+ * generated metamodel as an Ecore file using a specific saving strategy.
  * @author Timur Saglam
  */
 public class EcoreMetamodelGenerator {
 
-    private ExtractionProperties properties;
-    private EcoreFactory ecoreFactory;
+    private EClassGenerator eClassGenerator;
     private EPackage ecoreMetamodel;
     private String projectName;
     private AbstractSavingStrategy savingStrategy;
@@ -36,9 +27,7 @@ public class EcoreMetamodelGenerator {
      * Basic constructor.
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
-        this.properties = properties;
-        ecoreFactory = EcoreFactory.eINSTANCE;
-        projectName = "unknown-project";
+        eClassGenerator = new EClassGenerator(properties);
         String strategy = properties.getSavingStrategy();
         if (strategy.equals("OutputProject")) {
             savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
@@ -73,7 +62,7 @@ public class EcoreMetamodelGenerator {
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
-        ecoreMetamodel = generateEPackage(root); // generate ecore class structure.
+        ecoreMetamodel = eClassGenerator.generateEPackage(root, projectName); // generate model.
         return ecoreMetamodel;
     }
 
@@ -81,88 +70,9 @@ public class EcoreMetamodelGenerator {
      * Saves the metamodel as an Ecore file.
      */
     public void saveMetamodel() {
+        if (ecoreMetamodel == null) {
+            throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
+        }
         savingStrategy.save(ecoreMetamodel, projectName);
-    }
-
-    /**
-     * Generates a EClassifier from an ExtractedType.
-     * @param type is the ExtractedType.
-     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
-     */
-    private EClassifier generateEClassifier(ExtractedType type) {
-        EClassifier eClassifier = null;
-        if (type.getClass() == ExtractedInterface.class) {
-            eClassifier = generateEClass((ExtractedInterface) type);
-        } else if (type.getClass() == ExtractedClass.class) {
-            eClassifier = generateEClass((ExtractedClass) type);
-        } else if (type.getClass() == ExtractedEnumeration.class) {
-            eClassifier = generateEEnum((ExtractedEnumeration) type);
-        }
-        eClassifier.setName(type.getName());
-        return eClassifier;
-    }
-
-    /**
-     * Generates an EClass from an ExtractedClass.
-     * @param extractedClass is the ExtractedClass.
-     * @return the EClass.
-     */
-    private EClass generateEClass(ExtractedClass extractedClass) {
-        EClass eClass = ecoreFactory.createEClass();
-        eClass.setAbstract(extractedClass.isAbstract());
-        return eClass;
-    }
-
-    /**
-     * Generates an EClass from an ExtractedInterface.
-     * @param extractedInterface is the ExtractedInterface.
-     * @return the EClass.
-     */
-    private EClass generateEClass(ExtractedInterface extractedInterface) {
-        EClass eClass = ecoreFactory.createEClass();
-        eClass.setAbstract(true);
-        eClass.setInterface(true);
-        return eClass;
-    }
-
-    /**
-     * Generates an EEnum from an ExtractedEnumeration.
-     * @param extractedEnum is the ExtractedEnumeration.
-     * @return the EEnum.
-     */
-    private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
-        EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
-        for (String enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
-            EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
-            literal.setName(enumeral); // set name.
-            literal.setValue(eEnum.getELiterals().size()); // set ordinal.
-            eEnum.getELiterals().add(literal); // add literal to enumm.
-        }
-        return eEnum;
-    }
-
-    /**
-     * Generates an EPackage from an extractedPackage. Recursively calls this method to all
-     * contained elements.
-     * @param extractedPackage is the package the EPackage gets generated from.
-     * @return the generated EPackage.
-     */
-    private EPackage generateEPackage(ExtractedPackage extractedPackage) {
-        EPackage ePackage = ecoreFactory.createEPackage();
-        if (extractedPackage.isRoot()) {
-            ePackage.setName(properties.getDefaultPackageName());
-            ePackage.setNsPrefix(properties.getDefaultPackageName());
-        } else {
-            ePackage.setName(extractedPackage.getName());
-            ePackage.setNsPrefix(extractedPackage.getName());
-        }
-        ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName());
-        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
-            ePackage.getESubpackages().add(generateEPackage(subpackage));
-        }
-        for (ExtractedType type : extractedPackage.getTypes()) {
-            ePackage.getEClassifiers().add(generateEClassifier(type));
-        }
-        return ePackage;
     }
 }
