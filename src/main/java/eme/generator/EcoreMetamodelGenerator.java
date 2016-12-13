@@ -1,6 +1,7 @@
 package eme.generator;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
@@ -15,6 +16,7 @@ import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
+import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
@@ -83,13 +85,30 @@ public class EcoreMetamodelGenerator {
     }
 
     /**
+     * Generates a EClassifier from an ExtractedType.
+     * @param type is the ExtractedType.
+     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
+     */
+    private EClassifier generateEClassifier(ExtractedType type) {
+        EClassifier eClassifier = null;
+        if (type.getClass() == ExtractedInterface.class) {
+            eClassifier = generateEClass((ExtractedInterface) type);
+        } else if (type.getClass() == ExtractedClass.class) {
+            eClassifier = generateEClass((ExtractedClass) type);
+        } else if (type.getClass() == ExtractedEnumeration.class) {
+            eClassifier = generateEEnum((ExtractedEnumeration) type);
+        }
+        eClassifier.setName(type.getName());
+        return eClassifier;
+    }
+
+    /**
      * Generates an EClass from an ExtractedClass.
      * @param extractedClass is the ExtractedClass.
      * @return the EClass.
      */
     private EClass generateEClass(ExtractedClass extractedClass) {
         EClass eClass = ecoreFactory.createEClass();
-        eClass.setName(extractedClass.getName());
         eClass.setAbstract(extractedClass.isAbstract());
         return eClass;
     }
@@ -101,7 +120,6 @@ public class EcoreMetamodelGenerator {
      */
     private EClass generateEClass(ExtractedInterface extractedInterface) {
         EClass eClass = ecoreFactory.createEClass();
-        eClass.setName(extractedInterface.getName());
         eClass.setAbstract(true);
         eClass.setInterface(true);
         return eClass;
@@ -114,7 +132,6 @@ public class EcoreMetamodelGenerator {
      */
     private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
         EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
-        eEnum.setName(extractedEnum.getName()); // set name
         for (String enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
             EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
             literal.setName(enumeral); // set name.
@@ -142,15 +159,9 @@ public class EcoreMetamodelGenerator {
         ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName());
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) {
             ePackage.getESubpackages().add(generateEPackage(subpackage));
-        } // TODO (MEDIUM) Improve code style.
-        for (ExtractedClass extractedClass : extractedPackage.getClasses()) {
-            ePackage.getEClassifiers().add(generateEClass(extractedClass));
         }
-        for (ExtractedInterface extractedInterface : extractedPackage.getInterfaces()) {
-            ePackage.getEClassifiers().add(generateEClass(extractedInterface));
-        }
-        for (ExtractedEnumeration extractedEnum : extractedPackage.getEnumerations()) {
-            ePackage.getEClassifiers().add(generateEEnum(extractedEnum));
+        for (ExtractedType type : extractedPackage.getTypes()) {
+            ePackage.getEClassifiers().add(generateEClassifier(type));
         }
         return ePackage;
     }

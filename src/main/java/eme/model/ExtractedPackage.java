@@ -92,6 +92,18 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
+     * Getter for the types (interfaces, classes and enumerations).
+     * @return the types.
+     */
+    public List<ExtractedType> getTypes() {
+        List<ExtractedType> types = new LinkedList<>();
+        types.addAll(classes);
+        types.addAll(interfaces);
+        types.addAll(enumerations);
+        return types;
+    }
+
+    /**
      * Checks whether package is the root package.
      * @return true if the package is the root package.
      */
