@@ -68,7 +68,7 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
      * @return the value.
      */
     public String getSavingStrategy() {
-        return properties.getProperty("SavingStrategy", "OutputProject");
+        return properties.getProperty("SavingStrategy", "NewProject");
     }
 
     @Override

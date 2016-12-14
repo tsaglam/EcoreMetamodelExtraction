@@ -18,6 +18,7 @@ import eme.properties.ExtractionProperties;
  */
 public class EcoreMetamodelGenerator {
 
+    private final static String OUTPUT_PROJECT = "EME-Generator-Output";
     private EClassGenerator eClassGenerator;
     private EPackage ecoreMetamodel;
     private String projectName;
@@ -30,7 +31,7 @@ public class EcoreMetamodelGenerator {
         eClassGenerator = new EClassGenerator(properties);
         String strategy = properties.getSavingStrategy();
         if (strategy.equals("OutputProject")) {
-            savingStrategy = new OutputProjectSavingStrategy("EME-Generator-Output");
+            savingStrategy = new OutputProjectSavingStrategy(OUTPUT_PROJECT);
         } else if (strategy.equals("SameProject")) {
             savingStrategy = new SameProjectSavingStrategy();
         } else if (strategy.equals("CustomPath")) {
