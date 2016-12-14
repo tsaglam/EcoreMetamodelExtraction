@@ -71,6 +71,15 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
         return properties.getProperty("SavingStrategy", "NewProject");
     }
 
+    /**
+     * Sets the value of the property DefaultPackageName.
+     * @param value is the new value.
+     */
+    public void setDefaultPackageName(String value) {
+
+        properties.setProperty("DefaultPackageName", value);
+    }
+
     @Override
     public void setDefaultValues() {
         properties.setProperty("DefaultPackageName", "DEFAULT");
@@ -79,6 +88,54 @@ public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) 
         properties.setProperty("ExtractAbstractMethods", "false");
         properties.setProperty("ExtractStaticMethods", "false");
         properties.setProperty("ExtractStaticAttributes", "false");
-        properties.setProperty("SavingStrategy", "OutputProject");
+        properties.setProperty("SavingStrategy", "NewProject");
+    }
+
+    /**
+     * Sets the value of the property ExtractAbstractMethods.
+     * @param value is the new value.
+     */
+    public void setExtractAbstractMethods(boolean value) {
+        properties.setProperty("ExtractAbstractMethods", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractEmptyPackages.
+     * @param value is the new value.
+     */
+    public void setExtractEmptyPackages(boolean value) {
+        properties.setProperty("ExtractEmptyPackages", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractNestedTypes.
+     * @param value is the new value.
+     */
+    public void setExtractNestedTypes(boolean value) {
+        properties.setProperty("ExtractNestedTypes", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractStaticAttributes.
+     * @param value is the new value.
+     */
+    public void setExtractStaticAttributes(boolean value) {
+        properties.setProperty("ExtractStaticAttributes", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractStaticMethods.
+     * @param value is the new value.
+     */
+    public void setExtractStaticMethods(boolean value) {
+        properties.setProperty("ExtractStaticMethods", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property SavingStrategy.
+     * @param value is the new value.
+     */
+    public void setSavingStrategy(String value) {
+        properties.setProperty("SavingStrategy", value);
     }
 }

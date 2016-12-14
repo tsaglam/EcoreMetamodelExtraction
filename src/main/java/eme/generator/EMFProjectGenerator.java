@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * Utility class for creating an empty EMF project.
  * @author Timur Saglam
  */
-public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project creation.
+public abstract class EMFProjectGenerator {
 
     /**
      * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that
