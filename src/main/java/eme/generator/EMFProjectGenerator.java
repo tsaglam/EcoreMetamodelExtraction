@@ -92,9 +92,6 @@ public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project cre
         return project;
     }
 
-    /**
-     * Creates file.
-     */
     private static IFile createFile(String name, IContainer container, String content, String charSet) throws CoreException, IOException {
         IFile file = container.getFile(new Path(name));
         InputStream stream = new ByteArrayInputStream(content.getBytes(file.getCharset()));
@@ -110,9 +107,6 @@ public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project cre
         return file;
     }
 
-    /**
-     * Creates manifest file.
-     */
     private static void createManifest(String projectName, IProject project) {
         StringBuilder manifestContent = new StringBuilder("Manifest-Version: 1.0\n");
         manifestContent.append("Bundle-ManifestVersion: 2\n");
@@ -130,9 +124,6 @@ public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project cre
         }
     }
 
-    /**
-     * Prints exception stack trace with custom message.
-     */
     private static void printException(Exception exception, String action) {
         System.err.println("Error while " + action + ":");
         exception.printStackTrace();
