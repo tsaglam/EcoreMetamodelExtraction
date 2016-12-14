@@ -26,7 +26,9 @@ import org.eclipse.jdt.core.JavaCore;
 public class EMFProjectGenerator { // TODO (MEDIUM) improve project creation.
 
     /**
-     * Generate a new empty EMFProjectGeneratorproject.
+     * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that
+     * name already exits the new project uses the same name and a number. The actual used name can
+     * be received from the returned IProject.
      * @param projectName is the name of the new project.
      * @return the project as IProject object.
      */

@@ -55,6 +55,7 @@ public abstract class AbstractSavingStrategy {
         if (saveInProject) {
             refreshFolder(filePath());
         }
+        System.out.println("The extracted metamodel was saved under: " + filePath());
     }
 
     /**

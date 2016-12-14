@@ -1,5 +1,6 @@
 package eme.generator.saving;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -22,8 +23,8 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      */
     @Override
     protected void beforeSaving(String projectName) {
-        this.projectName = projectName;
-        // TODO (HIGH) Create new empty EMF project called (projectName)Model
+        IProject project = EMFProjectGenerator.createProject(projectName + "Model");
+        this.projectName = project.getName();
     }
 
     /*
@@ -32,7 +33,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
     @Override
     protected String filePath() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return workspace.getRoot().getLocation().toFile().getPath() + "/" + projectName + "Model/model/";
+        return workspace.getRoot().getLocation().toFile().getPath() + "/" + projectName + "/model/";
     }
 
     /*
