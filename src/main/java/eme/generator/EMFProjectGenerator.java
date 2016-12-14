@@ -37,19 +37,16 @@ public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project cre
     public static IProject createProject(String projectName) {
         IProject project = null;
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        int counter = 2;
-        String name = null;
-        do {
-            if (name == null) {
-                name = projectName;
-            } else {
-                name = projectName + counter;
-                counter++;
-            }
-            project = workspace.getRoot().getProject(name);
-        } while (project.exists());
+        int version = 2;
+        String finalName = projectName;
+        project = workspace.getRoot().getProject(projectName);
+        while (project.exists()) { // to avoid duplicates:
+            finalName = projectName + version;
+            version++;
+            project = workspace.getRoot().getProject(finalName);
+        }
         IJavaProject javaProject = JavaCore.create(project);
-        IProjectDescription projectDescription = ResourcesPlugin.getWorkspace().newProjectDescription(name);
+        IProjectDescription projectDescription = ResourcesPlugin.getWorkspace().newProjectDescription(finalName);
         projectDescription.setLocation(null);
         try {
             project.create(projectDescription, null);
@@ -84,11 +81,11 @@ public abstract class EMFProjectGenerator { // TODO (MEDIUM) improve project cre
         classpathEntries.add(JavaCore.newContainerEntry(new Path("org.eclipse.pde.core.requiredPlugins")));
         try {
             javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]), null);
-            javaProject.setOutputLocation(new Path("/" + name + "/bin"), null);
+            javaProject.setOutputLocation(new Path("/" + finalName + "/bin"), null);
         } catch (JavaModelException exception) {
             printException(exception, "building classpath & output location");
         }
-        createManifest(name, project);
+        createManifest(finalName, project);
         return project;
     }
 
