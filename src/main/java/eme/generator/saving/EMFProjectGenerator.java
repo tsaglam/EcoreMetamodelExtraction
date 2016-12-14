@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.JavaCore;
  * @author Timur Saglam
  */
 public class EMFProjectGenerator { // TODO (MEDIUM) improve project creation.
-    
+
     /**
      * Generate a new empty EMFProjectGeneratorproject.
      * @param projectName is the name of the new project.
@@ -79,7 +79,10 @@ public class EMFProjectGenerator { // TODO (MEDIUM) improve project creation.
         return project;
     }
 
-    private static IFile createFile(String name, IContainer container, String content) {
+    /**
+     * Creates file.
+     */
+    private static IFile createFile(String name, IContainer container, String content, String charSet) throws CoreException {
         IFile file = container.getFile(new Path(name));
         try {
             InputStream stream = new ByteArrayInputStream(content.getBytes(file.getCharset()));
@@ -92,17 +95,15 @@ public class EMFProjectGenerator { // TODO (MEDIUM) improve project creation.
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return file;
-    }
-
-    private static IFile createFile(String name, IContainer container, String content, String charSet) throws CoreException {
-        IFile file = createFile(name, container, content);
         if (file != null && charSet != null) {
             file.setCharset(charSet, null);
         }
         return file;
     }
 
+    /**
+     * Creates manifest file.
+     */
     private static void createManifest(String projectName, IProject project) throws CoreException {
         StringBuilder manifestContent = new StringBuilder("Manifest-Version: 1.0\n");
         manifestContent.append("Bundle-ManifestVersion: 2\n");
