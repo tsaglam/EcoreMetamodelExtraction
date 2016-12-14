@@ -4,6 +4,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import eme.generator.EMFProjectGenerator;
+
 /**
  * Saving strategy that creates a new project for very saved model.
  * @author Timur Saglam
