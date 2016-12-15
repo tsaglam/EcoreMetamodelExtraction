@@ -67,7 +67,9 @@ public class EcoreMetamodelGeneratorTest {
     }
 
     private void buildMVCPackages() {
-        model.add(new ExtractedPackage(""));
+        ExtractedPackage extractedPackage = new ExtractedPackage("");
+        extractedPackage.setAsRoot();
+        model.add(extractedPackage);
         model.add(new ExtractedPackage("main"));
         model.add(new ExtractedPackage("main.model"));
         model.add(new ExtractedPackage("main.view"));
@@ -76,6 +78,7 @@ public class EcoreMetamodelGeneratorTest {
 
     private void buildEnum() {
         ExtractedPackage extractedPackage = new ExtractedPackage("");
+        extractedPackage.setAsRoot();
         ExtractedEnumeration enumeration = new ExtractedEnumeration("SomeEnum");
         enumeration.addEnumeral("ONE");
         enumeration.addEnumeral("TWO");
