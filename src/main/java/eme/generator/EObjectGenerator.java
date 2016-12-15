@@ -19,7 +19,7 @@ import eme.properties.ExtractionProperties;
  * calls. It utilizes the EcoreFactory class.
  * @author Timur Saglam
  */
-public class EClassGenerator {
+public class EObjectGenerator {
 
     private EcoreFactory ecoreFactory;
     private ExtractionProperties properties;
@@ -28,7 +28,7 @@ public class EClassGenerator {
      * Basic constructor
      * @param properties is the properties class for the extraction.
      */
-    public EClassGenerator(ExtractionProperties properties) {
+    public EObjectGenerator(ExtractionProperties properties) {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
     }
