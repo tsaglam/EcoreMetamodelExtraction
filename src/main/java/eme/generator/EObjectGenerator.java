@@ -34,6 +34,24 @@ public class EObjectGenerator {
     }
 
     /**
+     * Generates a EClassifier from an ExtractedType.
+     * @param type is the ExtractedType.
+     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
+     */
+    public EClassifier generateEClassifier(ExtractedType type) {
+        EClassifier eClassifier = null;
+        if (type.getClass() == ExtractedInterface.class) {
+            eClassifier = generateEClass((ExtractedInterface) type);
+        } else if (type.getClass() == ExtractedClass.class) {
+            eClassifier = generateEClass((ExtractedClass) type);
+        } else if (type.getClass() == ExtractedEnumeration.class) {
+            eClassifier = generateEEnum((ExtractedEnumeration) type);
+        }
+        eClassifier.setName(type.getName());
+        return eClassifier;
+    }
+
+    /**
      * Generates an EPackage from an extractedPackage. Recursively calls this method to all
      * contained elements.
      * @param extractedPackage is the package the EPackage gets generated from.
@@ -86,24 +104,6 @@ public class EObjectGenerator {
     }
 
     /**
-     * Generates a EClassifier from an ExtractedType.
-     * @param type is the ExtractedType.
-     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
-     */
-    private EClassifier generateEClassifier(ExtractedType type) {
-        EClassifier eClassifier = null;
-        if (type.getClass() == ExtractedInterface.class) {
-            eClassifier = generateEClass((ExtractedInterface) type);
-        } else if (type.getClass() == ExtractedClass.class) {
-            eClassifier = generateEClass((ExtractedClass) type);
-        } else if (type.getClass() == ExtractedEnumeration.class) {
-            eClassifier = generateEEnum((ExtractedEnumeration) type);
-        }
-        eClassifier.setName(type.getName());
-        return eClassifier;
-    }
-
-    /**
      * Generates an EEnum from an ExtractedEnumeration.
      * @param extractedEnum is the ExtractedEnumeration.
      * @return the EEnum.
@@ -114,7 +114,7 @@ public class EObjectGenerator {
             EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
             literal.setName(enumeral); // set name.
             literal.setValue(eEnum.getELiterals().size()); // set ordinal.
-            eEnum.getELiterals().add(literal); // add literal to enumm.
+            eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
     }
