@@ -21,7 +21,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class AbstractProperties {
     private static String FILE_COMMENT;
-    private final URL fileURL;
+    private URL fileURL;
     protected Properties properties;
 
     /**
@@ -33,8 +33,12 @@ public abstract class AbstractProperties {
         FILE_COMMENT = comment;
         Bundle bundle = Platform.getBundle("EcoreMetamodelExtraction");
         Path path = new Path(name);
-        fileURL = FileLocator.find(bundle, path, null);
-        load(); // load if file exists.
+        try {
+            fileURL = FileLocator.find(bundle, path, null);
+            load(); // load if file exists.
+        } catch (Error error) {
+            System.err.println("Could not reach properties file.");
+        }  
     }
 
     /**
