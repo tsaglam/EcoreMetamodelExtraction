@@ -71,13 +71,13 @@ public abstract class AbstractSavingStrategy {
             folder.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (CoreException exception) {
             System.err.println("Could not refresh output folder. Try that manually.");
-            exception.printStackTrace(); // TODO (LOW) use message box.
+            exception.printStackTrace();
         }
     }
 
     /**
      * Can be used to prepare the saving itself.
-     * @param projectName is the name of the project of the model that gets saved.
+     * @param projectName is the name of the project where the metamodel was extracted.
      */
     protected abstract void beforeSaving(String projectName);
 
