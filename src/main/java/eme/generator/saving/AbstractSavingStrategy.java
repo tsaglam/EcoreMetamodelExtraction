@@ -32,7 +32,9 @@ public abstract class AbstractSavingStrategy {
     }
 
     /**
-     * Saves an EPackage as an Ecore file.
+     * Saves an EPackage as an Ecore file. The method calls the methods filePath() and fileName() to
+     * get the information it needs to save the metamodel. If the default saving behavior is not
+     * wanted, this method has to be overridden in the strategy class that overrides this class.
      * @param ePackage is the EPackage to save.
      * @param projectName is the name of the project the EPAckage was generated from.
      */
