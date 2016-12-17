@@ -75,7 +75,7 @@ public class EObjectGenerator {
             }
         }
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
-            if (!type.isNested() || properties.getExtractNestedTypes()) { // if is allowed to
+            if (!type.isInnerType() || properties.getExtractNestedTypes()) { // if is allowed to
                 ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
             }
         }

@@ -5,8 +5,8 @@ package eme.model;
  * @author Timur Saglam
  */
 public class ExtractedType extends ExtractedElement {
-    protected boolean nested;
-    protected String nestedIn;
+    protected boolean innerType;
+    protected String outerTypeName;
 
     /**
      * Basic constructor.
@@ -15,24 +15,24 @@ public class ExtractedType extends ExtractedElement {
     public ExtractedType(String fullName) {
         super(fullName);
         if (name.contains("$")) { // dollar in name means its a nested type
-            nested = true; // set nested true and adapt parent
-            nestedIn = name.substring(0, name.lastIndexOf('$'));
+            innerType = true; // set nested true and adapt parent
+            outerTypeName = name.substring(0, name.lastIndexOf('$'));
         }
     }
 
     /**
-     * Method checks whether the type is a nested type.
-     * @return true if it is a nested type.
+     * Returns the name of the outer type of an type, if that type is an inner type.
+     * @return name of the outer type, null if the type is not an inner type.
      */
-    public boolean isNested() {
-        return nested;
+    public String getOuterTypeName() {
+        return outerTypeName;
     }
 
-    public static void main(String[] args) {
-        ExtractedClass myClass = new ExtractedClass("main.sub.MyClass$NestedClass", false);
-        System.out.println(myClass.isNested());
-        System.out.println(myClass.getName());
-        System.out.println(myClass.getParentName());
-        System.out.println(myClass.getFullName());
+    /**
+     * Method checks whether the type is a inner type.
+     * @return true if it is a inner type.
+     */
+    public boolean isInnerType() {
+        return innerType;
     }
 }
