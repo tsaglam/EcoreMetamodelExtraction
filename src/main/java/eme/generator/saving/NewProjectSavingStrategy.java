@@ -11,7 +11,8 @@ import eme.generator.EMFProjectGenerator;
  * @author Timur Saglam
  */
 public class NewProjectSavingStrategy extends AbstractSavingStrategy {
-    private String projectName;
+    private String generatedProjectName;
+    private String fileName;
 
     /**
      * Basic constructor.
@@ -25,8 +26,9 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      */
     @Override
     protected void beforeSaving(String projectName) {
-        IProject project = EMFProjectGenerator.createProject(projectName + "Model");
-        this.projectName = project.getName();
+        fileName = projectName;
+        IProject newProject = EMFProjectGenerator.createProject(projectName + "Model");
+        this.generatedProjectName = newProject.getName(); //
     }
 
     /*
@@ -35,7 +37,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
     @Override
     protected String filePath() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return workspace.getRoot().getLocation().toFile().getPath() + "/" + projectName + "/model/";
+        return workspace.getRoot().getLocation().toFile().getPath() + "/" + generatedProjectName + "/model/";
     }
 
     /*
@@ -43,7 +45,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      */
     @Override
     protected String fileName() {
-        return projectName;
+        return fileName;
     }
 
 }
