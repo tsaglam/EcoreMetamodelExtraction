@@ -46,6 +46,8 @@ public class EObjectGenerator {
             eClassifier = generateEClass((ExtractedClass) type);
         } else if (type.getClass() == ExtractedEnumeration.class) {
             eClassifier = generateEEnum((ExtractedEnumeration) type);
+        } else {
+            throw new UnsupportedOperationException("Not implemented for " + type.getClass());
         }
         eClassifier.setName(type.getName());
         return eClassifier;
