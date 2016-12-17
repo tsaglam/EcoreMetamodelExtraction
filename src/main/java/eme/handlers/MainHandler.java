@@ -69,7 +69,7 @@ public class MainHandler extends AbstractHandler {
      */
     private boolean isJavaProject(IProject project) {
         try {
-            return project.isNatureEnabled("org.eclipse.jdt.core.javanature");
+            return project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature");
         } catch (CoreException e) {
             e.printStackTrace();
         }
