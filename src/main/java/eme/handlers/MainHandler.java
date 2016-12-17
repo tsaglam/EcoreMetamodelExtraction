@@ -27,7 +27,10 @@ public class MainHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-        new EcoreMetamodelExtraction().extractAndSaveFrom(chooseProject());
+        IProject project = chooseProject();
+        if (project != null) {
+            new EcoreMetamodelExtraction().extractAndSaveFrom(project);
+        }
         return null;
     }
 
