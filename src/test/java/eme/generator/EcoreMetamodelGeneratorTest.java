@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eme.generator.saving.CustomPathSavingStrategy;
@@ -17,10 +16,6 @@ public class EcoreMetamodelGeneratorTest {
     ExtractionProperties properties;
     EcoreMetamodelGenerator generator;
     IntermediateModel model;
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
 
     @Before
     public void setUp() throws Exception {
