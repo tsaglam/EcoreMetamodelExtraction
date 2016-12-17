@@ -21,8 +21,8 @@ public abstract class ExtractedElement {
     }
 
     /**
-     * Getter for the full package name.
-     * @return the full name of the package, consisting out of the package path and the package name
+     * Getter for the full element name.
+     * @return the full name of the element, consisting out of the package path and the element name
      * separated by an dot.
      */
     public String getFullName() {
@@ -33,15 +33,15 @@ public abstract class ExtractedElement {
     }
 
     /**
-     * Getter for the package name.
-     * @return the package name.
+     * Getter for the element name.
+     * @return the element name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Getter for the name of the packages parent.
+     * Getter for the name of the elements parent.
      * @return the parent name.
      */
     public String getParentName() {

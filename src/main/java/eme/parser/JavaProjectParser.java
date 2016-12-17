@@ -68,8 +68,7 @@ public class JavaProjectParser {
     private void parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass extractedClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
-        currentModel.add(extractedClass);
-        currentPackage.add(extractedClass);
+        currentModel.addTo(extractedClass, currentPackage);
     }
 
     /**
@@ -83,8 +82,7 @@ public class JavaProjectParser {
                 enumeration.addEnumeral(field.getElementName()); // add to enum
             }
         }
-        currentModel.add(enumeration);
-        currentPackage.add(enumeration);
+        currentModel.addTo(enumeration, currentPackage);
     }
 
     /**
@@ -131,8 +129,7 @@ public class JavaProjectParser {
      */
     private void parseInterface(IType type) throws JavaModelException {
         ExtractedInterface extractedInterface = new ExtractedInterface(type.getFullyQualifiedName());
-        currentModel.add(extractedInterface);
-        currentPackage.add(extractedInterface);
+        currentModel.addTo(extractedInterface, currentPackage);
     }
 
     /**

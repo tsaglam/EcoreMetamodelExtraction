@@ -28,27 +28,27 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model.
+     * Adds a new class to the intermediate model. Finds parent package automatically.
      * @param newClass is the new class to add.
      */
     public void add(ExtractedClass newClass) {
-        classes.add(newClass); // add class to list of classes.
+        addTo(newClass, findParent(newClass));
     }
 
     /**
-     * Adds a new enumeration to the intermediate model.
+     * Adds a new enumeration to the intermediate model. Finds parent package automatically.
      * @param newEnum is the new enumeration to add.
      */
     public void add(ExtractedEnumeration newEnum) {
-        enumerations.add(newEnum); // add class to list of classes.
+        addTo(newEnum, findParent(newEnum));
     }
 
     /**
-     * Adds a new class to the intermediate model.
+     * Adds a new class to the intermediate model. Finds parent package automatically.
      * @param newInterface is the new class to add.
      */
     public void add(ExtractedInterface newInterface) {
-        interfaces.add(newInterface); // add class to list of classes.
+        addTo(newInterface, findParent(newInterface));
     }
 
     /**
@@ -63,6 +63,36 @@ public class IntermediateModel {
             getPackage(newPackage.getParentName()).add(newPackage);
         }
         packages.add(newPackage);
+    }
+
+    /**
+     * Adds a new class to the intermediate model and to a specific parent package.
+     * @param newClass is the new class to add.
+     * @param parent is the parent package.
+     */
+    public void addTo(ExtractedClass newClass, ExtractedPackage parent) {
+        classes.add(newClass); // add class to list of classes.
+        parent.add(newClass);
+    }
+
+    /**
+     * Adds a new enumeration to the intermediate model and to a specific parent package.
+     * @param newEnum is the new enumeration to add.
+     * @param parent is the parent package.
+     */
+    public void addTo(ExtractedEnumeration newEnum, ExtractedPackage parent) {
+        enumerations.add(newEnum); // add class to list of classes.
+        parent.add(newEnum);
+    }
+
+    /**
+     * Adds a new class to the intermediate model and to a specific parent package.
+     * @param newInterface is the new class to add.
+     * @param parent is the parent package.
+     */
+    public void addTo(ExtractedInterface newInterface, ExtractedPackage parent) {
+        interfaces.add(newInterface); // add class to list of classes.
+        parent.add(newInterface);
     }
 
     /**
@@ -112,8 +142,23 @@ public class IntermediateModel {
 
     @Override
     public String toString() {
-        return "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() 
-                + ", Interfaces=" + interfaces.size() + ", Enums=" + enumerations.size() + "]";
+        return projectName + "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + ", Interfaces=" + interfaces.size()
+                + ", Enums=" + enumerations.size() + "]";
         // TODO (LOW) keep up to date.
+    }
+
+    /**
+     * Finds a package for a specific ExtractedElement according to its parents name.
+     * @param element is the ExtractedElement.
+     * @return the package with the matching full name.
+     */
+    private ExtractedPackage findParent(ExtractedElement element) {
+        String parent = element.getParentName();
+        for (ExtractedPackage aPackage : packages) { // for all packages
+            if (aPackage.getFullName().equals(parent)) { // if parent
+                return aPackage; // can only have on parent
+            }
+        }
+        throw new RuntimeException("Could not find package " + parent);
     }
 }
