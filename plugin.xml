@@ -5,26 +5,26 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Sample Category"
+            name="EME Category"
             id="EcoreMetamodelExtraction.commands.category">
       </category>
       <command
             name="Choose project..."
             categoryId="EcoreMetamodelExtraction.commands.category"
-            id="EcoreMetamodelExtraction.commands.sampleCommand">
+            id="EcoreMetamodelExtraction.commands.chooseProjectCommand">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="EcoreMetamodelExtraction.commands.sampleCommand"
+            commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
             class="eme.handlers.MainHandler">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="EcoreMetamodelExtraction.commands.sampleCommand"
+            commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -35,13 +35,13 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               label="EcoreMetamodelExtraction"
+               label="EME"
                mnemonic="M"
                id="EcoreMetamodelExtraction.menus.sampleMenu">
             <command
-                  commandId="EcoreMetamodelExtraction.commands.sampleCommand"
+                  commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
                   mnemonic="S"
-                  id="EcoreMetamodelExtraction.menus.sampleCommand">
+                  id="EcoreMetamodelExtraction.menus.chooseProjectCommand">
             </command>
          </menu>
       </menuContribution>
@@ -50,13 +50,13 @@
          <toolbar
                id="EcoreMetamodelExtraction.toolbars.sampleToolbar">
             <command
-                  commandId="EcoreMetamodelExtraction.commands.sampleCommand"
-                  icon="src/main/resources/sample.gif"
-                  tooltip="EcoreMetamodelExtraction"
-                  id="EcoreMetamodelExtraction.toolbars.sampleCommand">
+                  commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
+                  icon="src/main/resources/eme.gif"
+                  tooltip="EcoreMetamodelExtraction (choose Project)"
+                  id="EcoreMetamodelExtraction.toolbars.chooseProjectCommand">
             </command>
          </toolbar>
       </menuContribution>
    </extension>
-
+   
 </plugin>
