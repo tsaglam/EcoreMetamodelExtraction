@@ -6,6 +6,7 @@ package eme.model;
  */
 public class ExtractedType extends ExtractedElement {
     protected boolean nested;
+    protected String nestedIn;
 
     /**
      * Basic constructor.
@@ -15,7 +16,7 @@ public class ExtractedType extends ExtractedElement {
         super(fullName);
         if (name.contains("$")) { // dollar in name means its a nested type
             nested = true; // set nested true and adapt parent
-            parent += "." + name.substring(0, name.lastIndexOf('$'));
+            nestedIn = name.substring(0, name.lastIndexOf('$'));
         }
     }
 
@@ -25,5 +26,13 @@ public class ExtractedType extends ExtractedElement {
      */
     public boolean isNested() {
         return nested;
+    }
+
+    public static void main(String[] args) {
+        ExtractedClass myClass = new ExtractedClass("main.sub.MyClass$NestedClass", false);
+        System.out.println(myClass.isNested());
+        System.out.println(myClass.getName());
+        System.out.println(myClass.getParentName());
+        System.out.println(myClass.getFullName());
     }
 }
