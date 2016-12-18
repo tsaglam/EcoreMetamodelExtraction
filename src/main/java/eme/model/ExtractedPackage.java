@@ -8,10 +8,10 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedPackage extends ExtractedElement {
-    private List<ExtractedPackage> subpackages;
     private List<ExtractedClass> classes;
-    private List<ExtractedInterface> interfaces;
     private List<ExtractedEnumeration> enumerations;
+    private List<ExtractedInterface> interfaces;
+    private List<ExtractedPackage> subpackages;
     protected boolean root;
 
     /**
@@ -28,35 +28,25 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Adds a new class to the package.
-     * @param newClass is the new class of the package.
-     */
-    public void add(ExtractedClass newClass) {
-        classes.add(newClass);
-    }
-
-    /**
-     * Adds a new enumeration to the package.
-     * @param newEnumeration is the new enumeration of the package.
-     */
-    public void add(ExtractedEnumeration newEnumeration) {
-        enumerations.add(newEnumeration);
-    }
-
-    /**
-     * Adds a new interface to the package.
-     * @param newInterface is the new interface of the package.
-     */
-    public void add(ExtractedInterface newInterface) {
-        interfaces.add(newInterface);
-    }
-
-    /**
      * Adds a new subpackage to the package.
      * @param subpackage is the new subpackage of the package.
      */
     public void add(ExtractedPackage subpackage) {
         subpackages.add(subpackage);
+    }
+
+    /**
+     * Adds a new type to the package.
+     * @param type is the new type of the package.
+     */
+    public void add(ExtractedType type) {
+        if (type.getClass() == ExtractedClass.class) {
+            classes.add((ExtractedClass) type);
+        } else if (type.getClass() == ExtractedInterface.class) {
+            interfaces.add((ExtractedInterface) type);
+        } else if (type.getClass() == ExtractedEnumeration.class) {
+            enumerations.add((ExtractedEnumeration) type);
+        }
     }
 
     /**

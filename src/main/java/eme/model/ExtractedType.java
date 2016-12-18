@@ -21,11 +21,33 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ExtractedType) { // same class
+            return getFullName().equals(((ExtractedType) obj).getFullName()); // same full name
+        }
+        return false;
+    }
+
+    /**
      * Returns the name of the outer type of an type, if that type is an inner type.
      * @return name of the outer type, null if the type is not an inner type.
      */
     public String getOuterTypeName() {
         return outerTypeName;
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getFullName() == null) ? 0 : getFullName().hashCode());
+        return result;
     }
 
     /**

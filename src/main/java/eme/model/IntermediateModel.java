@@ -8,12 +8,10 @@ import java.util.Set;
  * @author Timur Saglam
  */
 public class IntermediateModel {
-    private Set<ExtractedClass> classes;
-    private Set<ExtractedEnumeration> enumerations;
-    private Set<ExtractedInterface> interfaces;
     private Set<ExtractedPackage> packages;
     private String projectName;
     private ExtractedPackage rootElement;
+    private Set<ExtractedType> types;
 
     /**
      * Basic constructor.
@@ -21,37 +19,8 @@ public class IntermediateModel {
      */
     public IntermediateModel(String projectName) {
         packages = new LinkedHashSet<ExtractedPackage>();
-        classes = new LinkedHashSet<ExtractedClass>();
-        interfaces = new LinkedHashSet<ExtractedInterface>();
-        enumerations = new LinkedHashSet<ExtractedEnumeration>();
+        types = new LinkedHashSet<ExtractedType>();
         this.projectName = projectName;
-    }
-
-    /**
-     * Adds a new class to the intermediate model if it is not already added. Finds parent package
-     * automatically.
-     * @param newClass is the new class to add.
-     */
-    public void add(ExtractedClass newClass) {
-        addTo(newClass, findParent(newClass));
-    }
-
-    /**
-     * Adds a new enumeration to the intermediate model if it is not already added. Finds parent
-     * package automatically.
-     * @param newEnum is the new enumeration to add.
-     */
-    public void add(ExtractedEnumeration newEnum) {
-        addTo(newEnum, findParent(newEnum));
-    }
-
-    /**
-     * Adds a new class to the intermediate model if it is not already added. Finds parent package
-     * automatically.
-     * @param newInterface is the new class to add.
-     */
-    public void add(ExtractedInterface newInterface) {
-        addTo(newInterface, findParent(newInterface));
     }
 
     /**
@@ -70,38 +39,23 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model and to a specific parent package if it is not
-     * already added.
-     * @param newClass is the new class to add.
-     * @param parent is the parent package.
+     * Adds a new type to the intermediate model if it is not already added. Finds parent package
+     * automatically.
+     * @param type is the new type to add.
      */
-    public void addTo(ExtractedClass newClass, ExtractedPackage parent) {
-        if (classes.add(newClass)) { // add class to list of classes.
-            parent.add(newClass);
-        }
+    public void add(ExtractedType type) {
+        addTo(type, findParent(type));
     }
 
     /**
-     * Adds a new enumeration to the intermediate model and to a specific parent package if it is
-     * not already added.
-     * @param newEnum is the new enumeration to add.
-     * @param parent is the parent package.
-     */
-    public void addTo(ExtractedEnumeration newEnum, ExtractedPackage parent) {
-        if (enumerations.add(newEnum)) { // add class to list of classes.
-            parent.add(newEnum);
-        }
-    }
-
-    /**
-     * Adds a new class to the intermediate model and to a specific parent package if it is not
+     * Adds a new type to the intermediate model and to a specific parent package if it is not
      * already added.
-     * @param newInterface is the new class to add.
+     * @param type is the new type to add.
      * @param parent is the parent package.
      */
-    public void addTo(ExtractedInterface newInterface, ExtractedPackage parent) {
-        if (interfaces.add(newInterface)) { // add class to list of classes.
-            parent.add(newInterface);
+    public void addTo(ExtractedType type, ExtractedPackage parent) {
+        if (types.add(type)) { // add class to list of classes.
+            parent.add(type);
         }
     }
 
@@ -144,16 +98,13 @@ public class IntermediateModel {
     public void print() {
         System.out.println(toString());
         System.out.println("   with packages " + packages.toString());
-        System.out.println("   with classes " + classes.toString());
-        System.out.println("   with interfaces " + interfaces.toString());
-        System.out.println("   with enumerations " + enumerations.toString());
+        System.out.println("   with types " + types.toString());
         // TODO (LOW) keep up to date.
     }
 
     @Override
     public String toString() {
-        return projectName + "IntermediateModel[Packages=" + packages.size() + ", Classes=" + classes.size() + ", Interfaces=" + interfaces.size()
-                + ", Enums=" + enumerations.size() + "]";
+        return projectName + "IntermediateModel[Packages=" + packages.size() + ", Types=" + types.size() + "]";
         // TODO (LOW) keep up to date.
     }
 
