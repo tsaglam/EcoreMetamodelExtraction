@@ -4,7 +4,7 @@ package eme.model;
  * Represents a type in the intermediate model.
  * @author Timur Saglam
  */
-public class ExtractedType extends ExtractedElement {
+public abstract class ExtractedType extends ExtractedElement {
     protected boolean innerType;
     protected String outerTypeName;
 
