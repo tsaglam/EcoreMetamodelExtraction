@@ -28,7 +28,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model. Finds parent package automatically.
+     * Adds a new class to the intermediate model if it is not already added. Finds parent package
+     * automatically.
      * @param newClass is the new class to add.
      */
     public void add(ExtractedClass newClass) {
@@ -36,7 +37,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new enumeration to the intermediate model. Finds parent package automatically.
+     * Adds a new enumeration to the intermediate model if it is not already added. Finds parent
+     * package automatically.
      * @param newEnum is the new enumeration to add.
      */
     public void add(ExtractedEnumeration newEnum) {
@@ -44,7 +46,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model. Finds parent package automatically.
+     * Adds a new class to the intermediate model if it is not already added. Finds parent package
+     * automatically.
      * @param newInterface is the new class to add.
      */
     public void add(ExtractedInterface newInterface) {
@@ -52,7 +55,7 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new package to the intermediate model.
+     * Adds a new package to the intermediate model if it is not already added.
      * @param newPackage is the new package to add.
      */
     public void add(ExtractedPackage newPackage) {
@@ -67,7 +70,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model and to a specific parent package.
+     * Adds a new class to the intermediate model and to a specific parent package if it is not
+     * already added.
      * @param newClass is the new class to add.
      * @param parent is the parent package.
      */
@@ -78,7 +82,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new enumeration to the intermediate model and to a specific parent package.
+     * Adds a new enumeration to the intermediate model and to a specific parent package if it is
+     * not already added.
      * @param newEnum is the new enumeration to add.
      * @param parent is the parent package.
      */
@@ -89,7 +94,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new class to the intermediate model and to a specific parent package.
+     * Adds a new class to the intermediate model and to a specific parent package if it is not
+     * already added.
      * @param newInterface is the new class to add.
      * @param parent is the parent package.
      */
