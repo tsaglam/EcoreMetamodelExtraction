@@ -32,6 +32,21 @@ public class IntermediateModelTest {
         assertEquals(4, countPackages(model.getRoot()));
     }
 
+    @Test
+    public void testDuplicateTypes() {
+        model.add(new ExtractedPackage(""));
+        model.add(new ExtractedClass("DuplicateClass", true));
+        model.add(new ExtractedClass("DuplicateClass", false));
+        model.add(new ExtractedInterface("DuplicateInterface"));
+        model.add(new ExtractedInterface("DuplicateInterface"));
+        model.add(new ExtractedEnumeration("DuplicateEnum"));
+        model.add(new ExtractedEnumeration("DuplicateEnum"));
+        model.add(new ExtractedClass("DuplicateType", true));
+        model.add(new ExtractedInterface("DuplicateType"));
+        model.add(new ExtractedEnumeration("DuplicateType"));
+        assertEquals(4, model.getRoot().getTypes().size());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testUnknownPackage() {
         addMVCPackages();
