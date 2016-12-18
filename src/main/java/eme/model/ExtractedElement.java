@@ -21,6 +21,17 @@ public abstract class ExtractedElement {
     }
 
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this.getClass() == obj.getClass()) { // same class
+            return getFullName().equals(((ExtractedElement) obj).getFullName()); // same full name
+        }
+        return false;
+    }
+
+    /**
      * Getter for the full element name.
      * @return the full name of the element, consisting out of the package path and the element name
      * separated by an dot.
@@ -46,6 +57,17 @@ public abstract class ExtractedElement {
      */
     public String getParentName() {
         return parent;
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getFullName() == null) ? 0 : getFullName().hashCode());
+        return result;
     }
 
     /**
