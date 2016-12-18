@@ -133,6 +133,9 @@ public class ExtractedPackage extends ExtractedElement {
 
     @Override
     public String toString() {
+        if (name.equals("")) {
+            return "DEFAULT";
+        }
         return getFullName();
     }
 }
