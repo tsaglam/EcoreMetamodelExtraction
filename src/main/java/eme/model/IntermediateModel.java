@@ -1,17 +1,17 @@
 package eme.model;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Base class for an intermediate model.
  * @author Timur Saglam
  */
 public class IntermediateModel {
-    private List<ExtractedClass> classes;
-    private List<ExtractedEnumeration> enumerations;
-    private List<ExtractedInterface> interfaces;
-    private List<ExtractedPackage> packages;
+    private Set<ExtractedClass> classes;
+    private Set<ExtractedEnumeration> enumerations;
+    private Set<ExtractedInterface> interfaces;
+    private Set<ExtractedPackage> packages;
     private String projectName;
     private ExtractedPackage rootElement;
 
@@ -20,10 +20,10 @@ public class IntermediateModel {
      * @param projectName is the name of the project the model was extracted from.
      */
     public IntermediateModel(String projectName) {
-        packages = new LinkedList<ExtractedPackage>();
-        classes = new LinkedList<ExtractedClass>();
-        interfaces = new LinkedList<ExtractedInterface>();
-        enumerations = new LinkedList<ExtractedEnumeration>();
+        packages = new LinkedHashSet<ExtractedPackage>();
+        classes = new LinkedHashSet<ExtractedClass>();
+        interfaces = new LinkedHashSet<ExtractedInterface>();
+        enumerations = new LinkedHashSet<ExtractedEnumeration>();
         this.projectName = projectName;
     }
 
@@ -56,13 +56,14 @@ public class IntermediateModel {
      * @param newPackage is the new package to add.
      */
     public void add(ExtractedPackage newPackage) {
-        if (rootElement == null) { // if it is the first package
-            rootElement = newPackage; // add as root
-            newPackage.setAsRoot(); // mark as root
-        } else {
-            getPackage(newPackage.getParentName()).add(newPackage);
+        if (packages.add(newPackage)) {
+            if (rootElement == null) { // if it is the first package
+                rootElement = newPackage; // add as root
+                newPackage.setAsRoot(); // mark as root
+            } else {
+                getPackage(newPackage.getParentName()).add(newPackage);
+            }
         }
-        packages.add(newPackage);
     }
 
     /**
@@ -71,8 +72,9 @@ public class IntermediateModel {
      * @param parent is the parent package.
      */
     public void addTo(ExtractedClass newClass, ExtractedPackage parent) {
-        classes.add(newClass); // add class to list of classes.
-        parent.add(newClass);
+        if (classes.add(newClass)) { // add class to list of classes.
+            parent.add(newClass);
+        }
     }
 
     /**
@@ -81,8 +83,9 @@ public class IntermediateModel {
      * @param parent is the parent package.
      */
     public void addTo(ExtractedEnumeration newEnum, ExtractedPackage parent) {
-        enumerations.add(newEnum); // add class to list of classes.
-        parent.add(newEnum);
+        if (enumerations.add(newEnum)) { // add class to list of classes.
+            parent.add(newEnum);
+        }
     }
 
     /**
@@ -91,8 +94,9 @@ public class IntermediateModel {
      * @param parent is the parent package.
      */
     public void addTo(ExtractedInterface newInterface, ExtractedPackage parent) {
-        interfaces.add(newInterface); // add class to list of classes.
-        parent.add(newInterface);
+        if (interfaces.add(newInterface)) { // add class to list of classes.
+            parent.add(newInterface);
+        }
     }
 
     /**
