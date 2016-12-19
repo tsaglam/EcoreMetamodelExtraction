@@ -8,10 +8,10 @@ import java.util.Set;
  * @author Timur Saglam
  */
 public class IntermediateModel {
-    private Set<ExtractedPackage> packages;
-    private String projectName;
+    private final Set<ExtractedPackage> packages;
+    private final String projectName;
     private ExtractedPackage rootElement;
-    private Set<ExtractedType> types;
+    private final Set<ExtractedType> types;
 
     /**
      * Basic constructor.
@@ -44,7 +44,7 @@ public class IntermediateModel {
      * @param type is the new type to add.
      */
     public void add(ExtractedType type) {
-        addTo(type, findParent(type));
+        addTo(type, getPackage(type.getParentName()));
     }
 
     /**
@@ -106,20 +106,5 @@ public class IntermediateModel {
     public String toString() {
         return projectName + "IntermediateModel[Packages=" + packages.size() + ", Types=" + types.size() + "]";
         // TODO (LOW) keep up to date.
-    }
-
-    /**
-     * Finds a package for a specific ExtractedElement according to its parents name.
-     * @param element is the ExtractedElement.
-     * @return the package with the matching full name.
-     */
-    private ExtractedPackage findParent(ExtractedElement element) {
-        String parent = element.getParentName();
-        for (ExtractedPackage aPackage : packages) { // for all packages
-            if (aPackage.getFullName().equals(parent)) { // if parent
-                return aPackage; // can only have on parent
-            }
-        }
-        throw new RuntimeException("Could not find package " + parent);
     }
 }

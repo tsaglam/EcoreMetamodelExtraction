@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
-    private boolean saveInProject;
+    private final boolean saveInProject;
 
     /**
      * Basic constructor. Takes the name of the project.

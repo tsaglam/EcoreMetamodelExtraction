@@ -27,13 +27,13 @@ import eme.model.IntermediateModel;
 public class JavaProjectParser {
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
-    private boolean printExtractedModel;
+    private final boolean printModel;
 
     /**
      * Basic constructor.
      */
     public JavaProjectParser() {
-        printExtractedModel = true;
+        printModel = true;
     }
 
     /**
@@ -48,7 +48,7 @@ public class JavaProjectParser {
         } catch (JavaModelException exception) {
             System.out.println("Error while extracting the model: " + exception.getMessage());
         }
-        if (printExtractedModel) { // if printing is enabled TODO (MEDIUM) check in model class
+        if (printModel) { // if printing is enabled TODO (MEDIUM) check in model class
             currentModel.print(); // print intermediate model.
         }
         return currentModel;
@@ -67,8 +67,8 @@ public class JavaProjectParser {
      */
     private void parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
-        ExtractedClass extractedClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
-        currentModel.addTo(extractedClass, currentPackage);
+        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
+        currentModel.addTo(newClass, currentPackage);
     }
 
     /**
@@ -128,17 +128,17 @@ public class JavaProjectParser {
      * @param type is the IType.
      */
     private void parseInterface(IType type) throws JavaModelException {
-        ExtractedInterface extractedInterface = new ExtractedInterface(type.getFullyQualifiedName());
-        currentModel.addTo(extractedInterface, currentPackage);
+        ExtractedInterface newInterface = new ExtractedInterface(type.getFullyQualifiedName());
+        currentModel.addTo(newInterface, currentPackage);
     }
 
     /**
      * Extracts all compilation units from a list of package fragments. It then parses all
      * ICompilationUnits while updating the current package.
-     * @param extractedFragments is the list of compilation units.
+     * @param fragments is the list of compilation units.
      */
-    private void parseIPackageFragments(List<IPackageFragment> extractedFragments) throws JavaModelException {
-        for (IPackageFragment fragment : extractedFragments) { // for every package fragment
+    private void parseIPackageFragments(List<IPackageFragment> fragments) throws JavaModelException {
+        for (IPackageFragment fragment : fragments) { // for every package fragment
             currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
                 parseICompilationUnit(unit); // extract classes

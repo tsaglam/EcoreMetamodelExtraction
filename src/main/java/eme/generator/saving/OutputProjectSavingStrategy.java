@@ -14,10 +14,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
  */
 public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
 
-    private DateTimeFormatter formatter;
-    private String outputProjectName;
+    private final DateTimeFormatter formatter;
+    private final String outputProjectName;
     private String projectName;
-    private IWorkspace workspace;
+    private final IWorkspace workspace;
 
     /**
      * Basic constructor.

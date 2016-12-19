@@ -21,8 +21,8 @@ import eme.properties.ExtractionProperties;
  */
 public class EObjectGenerator {
 
-    private EcoreFactory ecoreFactory;
-    private ExtractionProperties properties;
+    private final EcoreFactory ecoreFactory;
+    private final ExtractionProperties properties;
 
     /**
      * Basic constructor

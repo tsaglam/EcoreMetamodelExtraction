@@ -15,9 +15,9 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EcoreMetamodelExtraction {
-    private ExtractionProperties properties;
-    private JavaProjectParser parser;
-    private EcoreMetamodelGenerator generator;
+    private final ExtractionProperties properties;
+    private final JavaProjectParser parser;
+    private final EcoreMetamodelGenerator generator;
 
     /**
      * Basic constructor. Builds parser and generator.

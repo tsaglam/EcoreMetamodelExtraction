@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ExtractedEnumeration extends ExtractedType {
 
-    private List<String> enumerals;
+    private final List<String> enumerals;
 
     /**
      * Basic constructor.

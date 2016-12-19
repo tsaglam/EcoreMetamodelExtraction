@@ -8,10 +8,10 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedPackage extends ExtractedElement {
-    private List<ExtractedClass> classes;
-    private List<ExtractedEnumeration> enumerations;
-    private List<ExtractedInterface> interfaces;
-    private List<ExtractedPackage> subpackages;
+    private final List<ExtractedClass> classes;
+    private final List<ExtractedEnumeration> enumerations;
+    private final List<ExtractedInterface> interfaces;
+    private final List<ExtractedPackage> subpackages;
     protected boolean root;
 
     /**
@@ -103,7 +103,7 @@ public class ExtractedPackage extends ExtractedElement {
                 return false;
             }
         }
-        return (classes.size() + interfaces.size() + enumerations.size()) == 0;
+        return classes.size() + interfaces.size() + enumerations.size() == 0;
     }
 
     /**
@@ -123,7 +123,7 @@ public class ExtractedPackage extends ExtractedElement {
 
     @Override
     public String toString() {
-        if (name.equals("")) {
+        if ("".equals(name)) {
             return "DEFAULT";
         }
         return getFullName();

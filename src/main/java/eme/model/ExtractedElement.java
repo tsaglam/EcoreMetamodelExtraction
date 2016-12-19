@@ -37,7 +37,7 @@ public abstract class ExtractedElement {
      * separated by an dot.
      */
     public String getFullName() {
-        if (parent.equals("")) {
+        if ("".equals(parent)) {
             return name;
         }
         return parent + "." + name;
@@ -105,11 +105,11 @@ public abstract class ExtractedElement {
      * @param fullName is the full qualified name.
      * @return the name.
      */
-    protected String createName(String fullName) {
-        if (!fullName.contains(".")) {
-            return fullName; // already is name.
-        } else { // split name from parent package:
+    protected final String createName(String fullName) {
+        if (fullName.contains(".")) {
             return fullName.substring(separator(fullName) + 1); // get name
+        } else { // split name from parent package:
+            return fullName; // already is name.
         }
     }
 
@@ -118,11 +118,11 @@ public abstract class ExtractedElement {
      * @param fullName is the full qualified name.
      * @return the path.
      */
-    protected String createPath(String fullName) {
-        if (!fullName.contains(".")) {
-            return ""; // has no parent.
-        } else { // split name from parent package:
+    protected final String createPath(String fullName) {
+        if (fullName.contains(".")) {
             return fullName.substring(0, separator(fullName)); // get path
+        } else { // split name from parent package:
+            return ""; // has no parent.
         }
     }
 }

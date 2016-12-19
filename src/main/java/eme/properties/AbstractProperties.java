@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  * @author Timur Saglam
  */
 public abstract class AbstractProperties {
-    private String fileComment;
+    private final String fileComment;
     private URL fileURL;
     protected Properties properties;
 
