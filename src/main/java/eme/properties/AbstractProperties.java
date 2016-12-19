@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  * @author Timur Saglam
  */
 public abstract class AbstractProperties {
-    private static String FILE_COMMENT;
+    private String fileComment;
     private URL fileURL;
     protected Properties properties;
 
@@ -30,7 +30,7 @@ public abstract class AbstractProperties {
      * @param comment is the comment of the properties file.
      */
     public AbstractProperties(String name, String comment) {
-        FILE_COMMENT = comment;
+        fileComment = comment;
         Bundle bundle = Platform.getBundle("EcoreMetamodelExtraction");
         Path path = new Path(name);
         try {
@@ -38,7 +38,7 @@ public abstract class AbstractProperties {
             load(); // load if file exists.
         } catch (Error error) {
             System.err.println("Could not reach properties file.");
-        }  
+        }
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class AbstractProperties {
     public void save() {
         try {
             OutputStream out = fileURL.openConnection().getOutputStream(); // create output stream
-            properties.store(out, FILE_COMMENT); // store with stream
+            properties.store(out, fileComment); // store with stream
             out.close(); // close stream
         } catch (FileNotFoundException exception) {
             exception.printStackTrace();
@@ -59,7 +59,7 @@ public abstract class AbstractProperties {
     /**
      * Sets all the properties to their default values.
      */
-    abstract public void setDefaultValues();
+    public abstract void setDefaultValues();
 
     /**
      * Loads the settings from the properties file.

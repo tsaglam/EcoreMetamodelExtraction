@@ -18,7 +18,7 @@ import eme.properties.ExtractionProperties;
  */
 public class EcoreMetamodelGenerator {
 
-    private final static String OUTPUT_PROJECT = "EME-Generator-Output";
+    private static final  String OUTPUT_PROJECT = "EME-Generator-Output";
     private EObjectGenerator eObjectGenerator;
     private EPackage ecoreMetamodel;
     private String projectName;
@@ -26,6 +26,7 @@ public class EcoreMetamodelGenerator {
 
     /**
      * Basic constructor.
+     * @param properties is the ExtractionProperties class for the exraction.
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
         eObjectGenerator = new EObjectGenerator(properties);

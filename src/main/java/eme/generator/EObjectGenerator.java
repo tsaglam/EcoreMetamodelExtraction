@@ -57,6 +57,7 @@ public class EObjectGenerator {
      * Generates an EPackage from an extractedPackage. Recursively calls this method to all
      * contained elements.
      * @param extractedPackage is the package the EPackage gets generated from.
+     * @param projectName is the name of the project.
      * @return the generated EPackage.
      */
     public EPackage generateEPackage(ExtractedPackage extractedPackage, String projectName) {

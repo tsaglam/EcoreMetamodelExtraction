@@ -74,5 +74,4 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
         }
         return separator + suffix; // identifier = separator + suffix
     }
-
 }
