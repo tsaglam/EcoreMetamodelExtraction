@@ -12,12 +12,14 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
+import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 
 /**
@@ -68,6 +70,10 @@ public class JavaProjectParser {
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
+        newClass.setSuperClass(type.getSuperclassName());
+        if (type.getSuperclassName() != null) { // get full supertype name:
+            newClass.setSuperClass(type.newSupertypeHierarchy(null).getSuperclass(type).getFullyQualifiedName());
+        }
         currentModel.addTo(newClass, currentPackage);
         return newClass;
     }
@@ -92,13 +98,17 @@ public class JavaProjectParser {
      * @param compilationUnit is the given ICompilationUnit.
      */
     private void parseICompilationUnit(ICompilationUnit compilationUnit) throws JavaModelException {
+        ExtractedType newType = null;
         for (IType type : compilationUnit.getAllTypes()) { // for all types
             if (type.isClass()) {
-                parseClass(type);
+                newType = parseClass(type); // create class
             } else if (type.isInterface()) {
-                parseInterface(type);
+                newType = parseInterface(type); // create interface
             } else if (type.isEnum()) {
-                parseEnumeration(type);
+                newType = parseEnumeration(type); // create enum
+            }
+            for (IType superInterface : type.newSupertypeHierarchy(null).getSuperInterfaces(type)) {
+                newType.addSuperInterface(superInterface.getFullyQualifiedName()); // add interface
             }
         }
     }
