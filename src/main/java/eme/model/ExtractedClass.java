@@ -25,4 +25,12 @@ public class ExtractedClass extends ExtractedType {
     public boolean isAbstract() {
         return isAbstract;
     }
+    
+    /**
+     * Sets a class as super class.
+     * @param superClass is the new super class.
+     */
+    public void setSuperClass(String superClass ) {
+        this.superClass = superClass;
+    }
 }

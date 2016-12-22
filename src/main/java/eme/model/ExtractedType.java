@@ -1,5 +1,8 @@
 package eme.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Represents a type in the intermediate model.
  * @author Timur Saglam
@@ -7,6 +10,8 @@ package eme.model;
 public abstract class ExtractedType extends ExtractedElement {
     protected boolean innerType;
     protected String outerTypeName;
+    protected String superClass;
+    protected final List<String> superInterfaces;
 
     /**
      * Basic constructor.
@@ -14,10 +19,19 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public ExtractedType(String fullName) {
         super(fullName);
+        superInterfaces = new LinkedList<String>();
         if (name.contains("$")) { // dollar in name means its a nested type
             innerType = true; // set nested true and adapt parent
             outerTypeName = name.substring(0, name.lastIndexOf('$'));
         }
+    }
+
+    /**
+     * Adds an interface as super interface.
+     * @param superInterface is the new super interface.
+     */
+    public void addSuperInterface(String superInterface) {
+        superInterfaces.add(superInterface);
     }
 
     /**
