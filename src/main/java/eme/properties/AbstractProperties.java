@@ -7,10 +7,14 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+
+import eme.parser.JavaProjectParser;
 
 /**
  * The class is the super class for the class ExtractionProperties. It separates the loading, saving
@@ -20,6 +24,7 @@ import org.osgi.framework.Bundle;
  * @author Timur Saglam
  */
 public abstract class AbstractProperties {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final String fileComment;
     private URL fileURL;
     protected Properties properties;
@@ -37,7 +42,7 @@ public abstract class AbstractProperties {
             fileURL = FileLocator.find(bundle, path, null);
             load(); // load if file exists.
         } catch (Error error) {
-            System.err.println("Could not reach properties file.");
+            logger.warn("Could not reach properties file.", error);
         }
     }
 
@@ -50,9 +55,9 @@ public abstract class AbstractProperties {
             properties.store(out, fileComment); // store with stream
             out.close(); // close stream
         } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         }
     }
 
@@ -71,9 +76,9 @@ public abstract class AbstractProperties {
             properties.load(in); // load from stream
             in.close(); // close stream
         } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            logger.error(exception);
         }
     }
 }

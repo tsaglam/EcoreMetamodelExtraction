@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -12,7 +14,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
@@ -27,6 +28,7 @@ import eme.model.IntermediateModel;
  * @author Timur Saglam
  */
 public class JavaProjectParser {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
     private final boolean printModel;
@@ -48,7 +50,7 @@ public class JavaProjectParser {
         try {
             parseIJavaProject(project); // parse project
         } catch (JavaModelException exception) {
-            System.out.println("Error while extracting the model: " + exception.getMessage());
+            logger.fatal("Error while extracting the model.", exception);
         }
         if (printModel) { // if printing is enabled TODO (MEDIUM) check in model class
             currentModel.print(); // print intermediate model.

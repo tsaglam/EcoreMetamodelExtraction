@@ -3,11 +3,17 @@ package eme.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import eme.parser.JavaProjectParser;
+
 /**
  * Base class for an intermediate model.
  * @author Timur Saglam
  */
 public class IntermediateModel {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final Set<ExtractedPackage> packages;
     private final String projectName;
     private ExtractedPackage rootElement;
@@ -96,9 +102,9 @@ public class IntermediateModel {
      * Prints the model.
      */
     public void print() {
-        System.out.println(toString());
-        System.out.println("   with packages " + packages.toString());
-        System.out.println("   with types " + types.toString());
+        logger.info(toString());
+        logger.info("   with packages " + packages.toString());
+        logger.info("   with types " + types.toString());
         // TODO (LOW) keep up to date.
     }
 

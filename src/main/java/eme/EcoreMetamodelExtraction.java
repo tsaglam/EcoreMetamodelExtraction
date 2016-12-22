@@ -65,6 +65,7 @@ public class EcoreMetamodelExtraction {
      */
     private void check(IProject project) {
         if (project == null) {
+            
             throw new IllegalArgumentException("Project can't be null!");
         } else if (!project.exists()) {
             throw new IllegalArgumentException("Project " + project.toString() + "does not exist!");

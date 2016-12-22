@@ -1,5 +1,7 @@
 package eme.handlers;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -13,6 +15,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import eme.EcoreMetamodelExtraction;
+import eme.parser.JavaProjectParser;
 
 /**
  * Main handler extends AbstractHandler, an IHandler base class.
@@ -21,7 +24,7 @@ import eme.EcoreMetamodelExtraction;
  * @author Timur Saglam
  */
 public class MainHandler extends AbstractHandler {
-
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private IWorkbenchWindow window;
 
     @Override
@@ -70,8 +73,8 @@ public class MainHandler extends AbstractHandler {
     private boolean isJavaProject(IProject project) {
         try {
             return project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature");
-        } catch (CoreException e) {
-            e.printStackTrace();
+        } catch (CoreException exception) {
+            logger.error("Could not check whether project is valid.", exception);
         }
         return false;
     }

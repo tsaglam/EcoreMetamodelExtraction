@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -21,11 +23,14 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import eme.parser.JavaProjectParser;
+
 /**
  * Utility class for creating an empty EMF project.
  * @author Timur Saglam
  */
 public abstract class EMFProjectGenerator {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
 
     /**
      * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that
@@ -51,7 +56,7 @@ public abstract class EMFProjectGenerator {
         try {
             project.create(projectDescription, null);
         } catch (CoreException exception) {
-            printException(exception, "creating project resource in workspace");
+            logger.error("Error while creating project resource in workspace", exception);
         }
         List<IClasspathEntry> classpathEntries = new ArrayList<IClasspathEntry>();
         projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" });
@@ -72,7 +77,7 @@ public abstract class EMFProjectGenerator {
                 srcContainer.create(false, true, null);
             }
         } catch (CoreException exception) {
-            printException(exception, "building project description & source folder");
+            logger.error("Error while building project description & source folder", exception);
         }
         IClasspathEntry srcClasspathEntry = JavaCore.newSourceEntry(srcContainer.getFullPath());
         classpathEntries.add(0, srcClasspathEntry);
@@ -83,7 +88,7 @@ public abstract class EMFProjectGenerator {
             javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]), null);
             javaProject.setOutputLocation(new Path("/" + finalName + "/bin"), null);
         } catch (JavaModelException exception) {
-            printException(exception, "building classpath & output location");
+            logger.error("Error while building classpath & output location", exception);
         }
         createManifest(finalName, project);
         return project;
@@ -117,12 +122,7 @@ public abstract class EMFProjectGenerator {
             metaInf.create(false, true, null);
             createFile("MANIFEST.MF", metaInf, manifestContent.toString(), null);
         } catch (Exception exception) {
-            printException(exception, "creating the manifest file");
+            logger.error("Error while creating the manifest file", exception);
         }
-    }
-
-    private static void printException(Exception exception, String action) {
-        System.err.println("Error while " + action + ":");
-        exception.printStackTrace();
     }
 }

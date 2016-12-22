@@ -3,6 +3,8 @@ package eme.generator.saving;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -15,11 +17,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import eme.parser.JavaProjectParser;
+
 /**
  * This is the abstract super class for all saving strategies.
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final boolean saveInProject;
 
     /**
@@ -46,18 +51,18 @@ public abstract class AbstractSavingStrategy {
         try {
             resource = resourceSet.createResource(URI.createFileURI(filePath() + fileName() + ".ecore"));
         } catch (IllegalArgumentException exception) {
-            exception.printStackTrace();
+           logger.error("Error while saving the metamodel.", exception);
         }
         resource.getContents().add(ePackage); // add the EPackage as root.
         try { // save the content:
             resource.save(Collections.EMPTY_MAP);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            logger.error("Error while saving the metamodel.", exception);
         }
         if (saveInProject) {
             refreshFolder(filePath());
         }
-        System.out.println("The extracted metamodel was saved under: " + filePath());
+        logger.info("The extracted metamodel was saved under: " + filePath());
     }
 
     /**
@@ -70,8 +75,7 @@ public abstract class AbstractSavingStrategy {
         try {
             folder.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (CoreException exception) {
-            System.err.println("Could not refresh output folder. Try that manually.");
-            exception.printStackTrace();
+            logger.warn("Could not refresh output folder. Try that manually.", exception);
         }
     }
 
