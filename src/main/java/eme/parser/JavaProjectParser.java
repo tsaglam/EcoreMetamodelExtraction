@@ -65,24 +65,26 @@ public class JavaProjectParser {
      * Parses an IType that has been identified as class.
      * @param type is the IType.
      */
-    private void parseClass(IType type) throws JavaModelException {
+    private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
         currentModel.addTo(newClass, currentPackage);
+        return newClass;
     }
 
     /**
      * Parse an IType that has been identified as enumeration.
      * @param type is the IType.
      */
-    private void parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration enumeration = new ExtractedEnumeration(type.getFullyQualifiedName());
+    private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
+        ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName());
         for (IField field : type.getFields()) { // for every enumeral
             if (Flags.isEnum(field.getFlags())) {
-                enumeration.addEnumeral(field.getElementName()); // add to enum
+                newEnum.addEnumeral(field.getElementName()); // add to enum
             }
         }
-        currentModel.addTo(enumeration, currentPackage);
+        currentModel.addTo(newEnum, currentPackage);
+        return newEnum;
     }
 
     /**
@@ -127,9 +129,10 @@ public class JavaProjectParser {
      * Parses an IType that has been identified as interface.
      * @param type is the IType.
      */
-    private void parseInterface(IType type) throws JavaModelException {
+    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
         ExtractedInterface newInterface = new ExtractedInterface(type.getFullyQualifiedName());
         currentModel.addTo(newInterface, currentPackage);
+        return newInterface;
     }
 
     /**
