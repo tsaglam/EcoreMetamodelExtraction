@@ -110,7 +110,7 @@ public class JavaProjectParser {
                 newType = parseEnumeration(type); // create enum
             }
             for (IType superInterface : type.newSupertypeHierarchy(null).getSuperInterfaces(type)) {
-                newType.addSuperInterface(superInterface.getFullyQualifiedName()); // add interface
+                newType.addInterface(superInterface.getFullyQualifiedName()); // add interface
             }
         }
     }

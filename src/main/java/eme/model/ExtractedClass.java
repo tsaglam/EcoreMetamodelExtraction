@@ -6,7 +6,7 @@ package eme.model;
  */
 public class ExtractedClass extends ExtractedType {
 
-    private final boolean isAbstract;
+    private final boolean abstractClass;
 
     /**
      * Basic constructor.
@@ -15,7 +15,7 @@ public class ExtractedClass extends ExtractedType {
      */
     public ExtractedClass(String fullName, boolean isAbstract) {
         super(fullName);
-        this.isAbstract = isAbstract;
+        abstractClass = isAbstract;
     }
 
     /**
@@ -23,7 +23,7 @@ public class ExtractedClass extends ExtractedType {
      * @return true if class is abstract.
      */
     public boolean isAbstract() {
-        return isAbstract;
+        return abstractClass;
     }
     
     /**

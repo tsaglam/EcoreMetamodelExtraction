@@ -9,7 +9,7 @@ import java.util.List;
  */
 public abstract class ExtractedType extends ExtractedElement {
     protected boolean innerType;
-    protected String outerTypeName;
+    protected String outerType;
     protected String superClass;
     protected final List<String> superInterfaces;
 
@@ -22,7 +22,7 @@ public abstract class ExtractedType extends ExtractedElement {
         superInterfaces = new LinkedList<String>();
         if (name.contains("$")) { // dollar in name means its a nested type
             innerType = true; // set nested true and adapt parent
-            outerTypeName = name.substring(0, name.lastIndexOf('$'));
+            outerType = name.substring(0, name.lastIndexOf('$'));
         }
     }
 
@@ -30,7 +30,7 @@ public abstract class ExtractedType extends ExtractedElement {
      * Adds an interface as super interface.
      * @param superInterface is the new super interface.
      */
-    public void addSuperInterface(String superInterface) {
+    public void addInterface(String superInterface) {
         superInterfaces.add(superInterface);
     }
 
@@ -49,8 +49,8 @@ public abstract class ExtractedType extends ExtractedElement {
      * Returns the name of the outer type of an type, if that type is an inner type.
      * @return name of the outer type, null if the type is not an inner type.
      */
-    public String getOuterTypeName() {
-        return outerTypeName;
+    public String getOuterType() {
+        return outerType;
     }
 
     /**
