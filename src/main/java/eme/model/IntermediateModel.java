@@ -99,6 +99,23 @@ public class IntermediateModel {
     }
 
     /**
+     * Returns the type of the intermediate model whose full name matches the given full name.
+     * @param fullName is the given full name.
+     * @return the type with the matching name.
+     * @throws RuntimeException if the type is not found. This means this method cannot be used to
+     * check whether there is a certain type in the model. It is explicitly used to find an existing
+     * type.
+     */
+    public ExtractedType getType(String fullName) {
+        for (ExtractedType type : types) { // for all packages
+            if (type.getFullName().equals(fullName)) { // if parent
+                return type; // can only have on parent
+            }
+        }
+        throw new RuntimeException("Could not find package " + fullName);
+    }
+
+    /**
      * Prints the model.
      */
     public void print() {

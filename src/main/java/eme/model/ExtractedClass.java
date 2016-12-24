@@ -19,18 +19,26 @@ public class ExtractedClass extends ExtractedType {
     }
 
     /**
+     * Getter for the name of the super class.
+     * @return
+     */
+    public String getSuperClass() {
+        return superClass;
+    }
+
+    /**
      * Checks whether the class is abstract.
      * @return true if class is abstract.
      */
     public boolean isAbstract() {
         return abstractClass;
     }
-    
+
     /**
      * Sets a class as super class.
      * @param superClass is the new super class.
      */
-    public void setSuperClass(String superClass ) {
+    public void setSuperClass(String superClass) {
         this.superClass = superClass;
     }
 }

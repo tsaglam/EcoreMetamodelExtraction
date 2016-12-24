@@ -15,6 +15,7 @@ import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
+import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -25,6 +26,7 @@ import eme.properties.ExtractionProperties;
 public class EObjectGenerator {
 
     private final Map<String, EClassifier> createdEClassifiers;
+    private IntermediateModel model;
     private final EcoreFactory ecoreFactory;
     private final ExtractionProperties properties;
 
@@ -43,6 +45,7 @@ public class EObjectGenerator {
      */
     public void clear() {
         createdEClassifiers.clear();
+        model = null;
     }
 
     /**
@@ -77,7 +80,7 @@ public class EObjectGenerator {
      * @param projectName is the name of the project.
      * @return the generated EPackage.
      */
-    public EPackage generateEPackage(ExtractedPackage extractedPackage, String projectName) {
+    public EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) { // set root name & prefix:
             ePackage.setName(properties.getDefaultPackageName());
@@ -86,10 +89,10 @@ public class EObjectGenerator {
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());
         }
-        ePackage.setNsURI(projectName + "/" + extractedPackage.getFullName()); // Set URI
+        ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
             if (!subpackage.isEmpty() || properties.getExtractEmptyPackages()) { // if is allowed to
-                ePackage.getESubpackages().add(generateEPackage(subpackage, projectName)); // extract
+                ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
             }
         }
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
@@ -101,6 +104,14 @@ public class EObjectGenerator {
     }
 
     /**
+     * Sets the intermediate model.
+     * @param model is the new model.
+     */
+    public void setModel(IntermediateModel model) {
+        this.model = model;
+    }
+
+    /**
      * Generates an EClass from an ExtractedClass.
      * @param extractedClass is the ExtractedClass.
      * @return the EClass.
@@ -108,6 +119,16 @@ public class EObjectGenerator {
     private EClass generateEClass(ExtractedClass extractedClass) {
         EClass eClass = ecoreFactory.createEClass();
         eClass.setAbstract(extractedClass.isAbstract());
+        String superClassName = extractedClass.getSuperClass();
+        if (superClassName != null) { // if has super type
+            EClassifier superClass;
+            if (createdEClassifiers.containsKey(superClassName)) { // if is already created.
+                superClass = createdEClassifiers.get(superClassName); // get from map.
+            } else { // if not already created, get type from model and create.
+                superClass = generateEClassifier(model.getType(superClassName));
+            }
+            eClass.getESuperTypes().add((EClass) superClass); // add super class
+        }
         return eClass;
     }
 

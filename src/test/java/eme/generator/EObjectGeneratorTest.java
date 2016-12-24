@@ -17,6 +17,7 @@ import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
+import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 import eme.properties.TestProperties;
 
@@ -28,6 +29,7 @@ public class EObjectGeneratorTest {
     public void setUp() throws Exception {
         properties = new TestProperties();
         generator = new EObjectGenerator(properties);
+        generator.setModel(new IntermediateModel("TestProject"));
     }
 
     @Test
@@ -38,7 +40,7 @@ public class EObjectGeneratorTest {
         root.add(new ExtractedPackage("view"));
         root.add(new ExtractedPackage("controller"));
         root.add(new ExtractedEnumeration("someEnum"));
-        EPackage result = generator.generateEPackage(root, "testGeneratePackage");
+        EPackage result = generator.generateEPackage(root);
         assertNotNull(result);
         assertEquals("DEFAULT", result.getName());
         List<EPackage> subpackages = result.getESubpackages();

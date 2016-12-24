@@ -64,7 +64,8 @@ public class EcoreMetamodelGenerator {
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
-        ecoreMetamodel = eObjectGenerator.generateEPackage(root, projectName); // generate model.
+        eObjectGenerator.setModel(model);
+        ecoreMetamodel = eObjectGenerator.generateEPackage(root); // generate model.
         return ecoreMetamodel;
     }
 
