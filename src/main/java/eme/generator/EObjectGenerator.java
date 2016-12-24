@@ -1,5 +1,8 @@
 package eme.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -21,6 +24,7 @@ import eme.properties.ExtractionProperties;
  */
 public class EObjectGenerator {
 
+    private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private final ExtractionProperties properties;
 
@@ -31,14 +35,26 @@ public class EObjectGenerator {
     public EObjectGenerator(ExtractionProperties properties) {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
+        createdEClassifiers = new HashMap<String, EClassifier>();
     }
 
     /**
-     * Generates a EClassifier from an ExtractedType.
+     * Clears all the information about the previously created metamodel.
+     */
+    public void clear() {
+        createdEClassifiers.clear();
+    }
+
+    /**
+     * Generates a EClassifier from an ExtractedType, if the type was not already generated.
      * @param type is the ExtractedType.
      * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
      */
     public EClassifier generateEClassifier(ExtractedType type) {
+        String fullName = type.getFullName();
+        if (createdEClassifiers.containsKey(fullName)) {
+            return createdEClassifiers.get(fullName);
+        }
         EClassifier eClassifier = null;
         if (type.getClass() == ExtractedInterface.class) {
             eClassifier = generateEClass((ExtractedInterface) type);
@@ -50,6 +66,7 @@ public class EObjectGenerator {
             throw new UnsupportedOperationException("Not implemented for " + type.getClass());
         }
         eClassifier.setName(type.getName());
+        createdEClassifiers.put(fullName, eClassifier);
         return eClassifier;
     }
 
