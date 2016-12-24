@@ -1,5 +1,8 @@
 package eme;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
@@ -15,6 +18,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EcoreMetamodelExtraction {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final ExtractionProperties properties;
     private final JavaProjectParser parser;
     private final EcoreMetamodelGenerator generator;
@@ -23,6 +27,8 @@ public class EcoreMetamodelExtraction {
      * Basic constructor. Builds parser and generator.
      */
     public EcoreMetamodelExtraction() {
+        BasicConfigurator.configure();
+        logger.info("Started EME");
         properties = new ExtractionProperties();
         parser = new JavaProjectParser();
         generator = new EcoreMetamodelGenerator(properties);
@@ -65,7 +71,6 @@ public class EcoreMetamodelExtraction {
      */
     private void check(IProject project) {
         if (project == null) {
-            
             throw new IllegalArgumentException("Project can't be null!");
         } else if (!project.exists()) {
             throw new IllegalArgumentException("Project " + project.toString() + "does not exist!");
