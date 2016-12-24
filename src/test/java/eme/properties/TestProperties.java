@@ -1,7 +1,5 @@
 package eme.properties;
 
-import eme.properties.ExtractionProperties;
-
 /**
  * This class mocks a the class ExtractionProperties. It stores all values locally
  * @author Timur Saglam

@@ -51,7 +51,7 @@ public abstract class AbstractSavingStrategy {
         try {
             resource = resourceSet.createResource(URI.createFileURI(filePath() + fileName() + ".ecore"));
         } catch (IllegalArgumentException exception) {
-           logger.error("Error while saving the metamodel.", exception);
+            logger.error("Error while saving the metamodel.", exception);
         }
         resource.getContents().add(ePackage); // add the EPackage as root.
         try { // save the content:
