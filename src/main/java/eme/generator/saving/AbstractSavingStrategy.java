@@ -86,14 +86,14 @@ public abstract class AbstractSavingStrategy {
     protected abstract void beforeSaving(String projectName);
 
     /**
-     * Determines the path where the ecore file is saved.
-     * @return the file path.
-     */
-    protected abstract String filePath();
-
-    /**
      * Determines the name of the ecore file.
      * @return the file name.
      */
     protected abstract String fileName();
+
+    /**
+     * Determines the path where the ecore file is saved.
+     * @return the file path.
+     */
+    protected abstract String filePath();
 }

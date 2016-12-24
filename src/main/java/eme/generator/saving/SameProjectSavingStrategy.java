@@ -18,12 +18,11 @@ public class SameProjectSavingStrategy extends AbstractSavingStrategy {
     }
 
     /*
-     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
+     * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
      */
     @Override
-    protected String filePath() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return workspace.getRoot().getLocation().toFile().getPath() + "/" + projectName + "/model/";
+    protected void beforeSaving(String projectName) {
+        this.projectName = projectName;
     }
 
     /*
@@ -35,10 +34,11 @@ public class SameProjectSavingStrategy extends AbstractSavingStrategy {
     }
 
     /*
-     * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
+     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
     @Override
-    protected void beforeSaving(String projectName) {
-        this.projectName = projectName;
+    protected String filePath() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        return workspace.getRoot().getLocation().toFile().getPath() + "/" + projectName + "/model/";
     }
 }

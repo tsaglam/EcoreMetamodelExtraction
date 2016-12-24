@@ -23,16 +23,6 @@ import eme.EcoreMetamodelExtraction;
 public class MainHandler extends AbstractHandler {
     private IWorkbenchWindow window;
 
-    @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-        IProject project = chooseProject();
-        if (project != null) {
-            new EcoreMetamodelExtraction().extractAndSaveFrom(project);
-        }
-        return null;
-    }
-
     /**
      * Accesses all the projects in the workspace and lets the user choose a project with a simple
      * dialog.
@@ -46,6 +36,16 @@ public class MainHandler extends AbstractHandler {
             if (isJavaProject(project) && isChoosen(project)) {
                 return project;
             }
+        }
+        return null;
+    }
+
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+        IProject project = chooseProject();
+        if (project != null) {
+            new EcoreMetamodelExtraction().extractAndSaveFrom(project);
         }
         return null;
     }

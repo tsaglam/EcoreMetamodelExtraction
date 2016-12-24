@@ -21,33 +21,6 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
         super(true);
     }
 
-    /*
-     * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
-     */
-    @Override
-    protected void beforeSaving(String projectName) {
-        fileName = projectName;
-        IProject newProject = EMFProjectGenerator.createProject(projectName + identifier(projectName));
-        this.generatedProjectName = newProject.getName(); //
-    }
-
-    /*
-     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
-     */
-    @Override
-    protected String filePath() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return workspace.getRoot().getLocation().toFile().getPath() + "/" + generatedProjectName + "/model/";
-    }
-
-    /*
-     * @see eme.generator.saving.AbstractSavingStrategy#fileName()
-     */
-    @Override
-    protected String fileName() {
-        return fileName;
-    }
-
     /**
      * Returns the project identifier, which basically is a separator character and the String
      * "Model" or "Model", depending on the naming type of the projects name.
@@ -73,5 +46,32 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
             suffix = suffix.toLowerCase(); // use lower case suffix
         }
         return separator + suffix; // identifier = separator + suffix
+    }
+
+    /*
+     * @see eme.generator.saving.AbstractSavingStrategy#beforeSaving()
+     */
+    @Override
+    protected void beforeSaving(String projectName) {
+        fileName = projectName;
+        IProject newProject = EMFProjectGenerator.createProject(projectName + identifier(projectName));
+        this.generatedProjectName = newProject.getName(); //
+    }
+
+    /*
+     * @see eme.generator.saving.AbstractSavingStrategy#fileName()
+     */
+    @Override
+    protected String fileName() {
+        return fileName;
+    }
+
+    /*
+     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
+     */
+    @Override
+    protected String filePath() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        return workspace.getRoot().getLocation().toFile().getPath() + "/" + generatedProjectName + "/model/";
     }
 }

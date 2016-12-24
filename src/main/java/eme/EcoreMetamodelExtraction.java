@@ -36,6 +36,16 @@ public class EcoreMetamodelExtraction {
 
     /**
      * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and
+     * an Ecore metamodel will be build and saved as an Ecore file
+     * @param project is the specific project for the extraction.
+     */
+    public void extractAndSaveFrom(IProject project) {
+        extractFrom(project);
+        generator.saveMetamodel();
+    }
+
+    /**
+     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and
      * an Ecore metamodel will be build.
      * @param project is the specific project for the extraction.
      * @return the Ecore metamodel with the default package as root.
@@ -45,16 +55,6 @@ public class EcoreMetamodelExtraction {
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = parser.buildIntermediateModel(javaProject);
         return generator.generateMetamodelFrom(model);
-    }
-
-    /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and
-     * an Ecore metamodel will be build and saved as an Ecore file
-     * @param project is the specific project for the extraction.
-     */
-    public void extractAndSaveFrom(IProject project) {
-        extractFrom(project);
-        generator.saveMetamodel();
     }
 
     /**

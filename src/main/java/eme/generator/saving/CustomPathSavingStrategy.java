@@ -20,22 +20,6 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
         super(false); // don't refresh folder
     }
 
-    /*
-     * @see eme.generator.saving.AbstractSavingStrategy#fileName()
-     */
-    @Override
-    protected String fileName() {
-        return name;
-    }
-
-    /*
-     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
-     */
-    @Override
-    protected String filePath() {
-        return path;
-    }
-
     /**
      * Opens a saving dialog and sets the path and the name.
      */
@@ -56,5 +40,21 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
         path = result.substring(0, index);
         name = result.substring(index, result.lastIndexOf('.'));
         shell.close();
+    }
+
+    /*
+     * @see eme.generator.saving.AbstractSavingStrategy#fileName()
+     */
+    @Override
+    protected String fileName() {
+        return name;
+    }
+
+    /*
+     * @see eme.generator.saving.AbstractSavingStrategy#filePath()
+     */
+    @Override
+    protected String filePath() {
+        return path;
     }
 }
