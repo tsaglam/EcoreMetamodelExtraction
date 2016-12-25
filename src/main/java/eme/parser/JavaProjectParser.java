@@ -73,8 +73,11 @@ public class JavaProjectParser {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
         newClass.setSuperClass(type.getSuperclassName());
-        if (type.getSuperclassName() != null) { // get full supertype name:
-            newClass.setSuperClass(type.newSupertypeHierarchy(null).getSuperclass(type).getFullyQualifiedName());
+        if (type.getSuperclassName() != null) { // get full super type:
+            IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
+            if (superType != null) { // could be null, prevents exception
+                newClass.setSuperClass(superType.getFullyQualifiedName()); // set super type name.
+            }
         }
         currentModel.addTo(newClass, currentPackage);
         return newClass;
