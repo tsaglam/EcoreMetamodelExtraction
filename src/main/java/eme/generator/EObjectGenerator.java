@@ -119,14 +119,8 @@ public class EObjectGenerator {
     private EClass generateEClass(ExtractedClass extractedClass) {
         EClass eClass = ecoreFactory.createEClass();
         eClass.setAbstract(extractedClass.isAbstract());
-        String superClassName = extractedClass.getSuperClass();
-        if (superClassName != null) { // if has super type
-            EClassifier superClass;
-            if (createdEClassifiers.containsKey(superClassName)) { // if is already created.
-                superClass = createdEClassifiers.get(superClassName); // get from map.
-            } else { // if not already created, get type from model and create.
-                superClass = generateEClassifier(model.getType(superClassName));
-            }
+        EClass superClass = getSuperClass(extractedClass); // get super
+        if (superClass != null) { // if has super class
             eClass.getESuperTypes().add((EClass) superClass); // add super class
         }
         return eClass;
@@ -158,5 +152,27 @@ public class EObjectGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
+    }
+
+    /**
+     * Get super class of extracted class if the super class is valid. creates super class if it
+     * does not exist.
+     * @param extractedClass is the extracted class.
+     * @return the super class as EClass, or null if there is no super class.
+     */
+    private EClass getSuperClass(ExtractedClass extractedClass) {
+        String superClassName = extractedClass.getSuperClass();
+        EClassifier superClass = null;
+        if (superClassName != null) { // if has super type
+            if (createdEClassifiers.containsKey(superClassName)) { // if is already created:
+                superClass = createdEClassifiers.get(superClassName); // get from map.
+            } else { // if not already created, check if it is in model:
+                ExtractedType type = model.getType(superClassName);
+                if (type != null) { // is in model, generate super type.
+                    superClass = generateEClassifier(type);
+                }
+            }
+        }
+        return (EClass) superClass;
     }
 }
