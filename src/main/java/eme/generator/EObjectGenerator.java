@@ -1,8 +1,12 @@
 package eme.generator;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -16,6 +20,7 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
+import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -25,9 +30,10 @@ import eme.properties.ExtractionProperties;
  */
 public class EObjectGenerator {
 
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
-    private IntermediateModel model;
     private final EcoreFactory ecoreFactory;
+    private IntermediateModel model;
     private final ExtractionProperties properties;
 
     /**
@@ -119,9 +125,13 @@ public class EObjectGenerator {
     private EClass generateEClass(ExtractedClass extractedClass) {
         EClass eClass = ecoreFactory.createEClass();
         eClass.setAbstract(extractedClass.isAbstract());
+        List<EClass> eSuperTypes = eClass.getESuperTypes();
         EClass superClass = getSuperClass(extractedClass); // get super
         if (superClass != null) { // if has super class
-            eClass.getESuperTypes().add((EClass) superClass); // add super class
+            eSuperTypes.add(superClass); // add super class
+        }
+        for (EClass superInterface : getSuperInterfaces(extractedClass)) {
+            eSuperTypes.add(superInterface);
         }
         return eClass;
     }
@@ -135,6 +145,9 @@ public class EObjectGenerator {
         EClass eClass = ecoreFactory.createEClass();
         eClass.setAbstract(true);
         eClass.setInterface(true);
+        for (EClass superInterface : getSuperInterfaces(extractedInterface)) {
+            eClass.getESuperTypes().add(superInterface);
+        }
         return eClass;
     }
 
@@ -162,17 +175,38 @@ public class EObjectGenerator {
      */
     private EClass getSuperClass(ExtractedClass extractedClass) {
         String superClassName = extractedClass.getSuperClass();
-        EClassifier superClass = null;
         if (superClassName != null) { // if has super type
             if (createdEClassifiers.containsKey(superClassName)) { // if is already created:
-                superClass = createdEClassifiers.get(superClassName); // get from map.
-            } else { // if not already created, check if it is in model:
-                ExtractedType type = model.getType(superClassName);
-                if (type != null) { // is in model, generate super type.
-                    superClass = generateEClassifier(type);
+                return (EClass) createdEClassifiers.get(superClassName); // get from map.
+            } else { // if not already created:
+                try { // create from type if found in model.
+                    return (EClass) generateEClassifier(model.getType(superClassName));
+                } catch (IllegalArgumentException exception) {
+                    logger.warn("Could not generate super class " + superClassName);
                 }
             }
         }
-        return (EClass) superClass;
+        return null;
+    }
+
+    /**
+     * Returns a list of super interfaces for a given extracted type.
+     * @param type is the extracted type.
+     * @return is the list of super interfaces.
+     */
+    private List<EClass> getSuperInterfaces(ExtractedType type) {
+        List<EClass> interfaces = new LinkedList<EClass>();
+        for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
+            if (createdEClassifiers.containsKey(interfaceName)) { // if already created
+                interfaces.add((EClass) createdEClassifiers.get(interfaceName)); // add
+            } else {
+                try { // if not already created, try to create with type from model
+                    interfaces.add((EClass) generateEClassifier(model.getType(interfaceName)));
+                } catch (IllegalArgumentException exception) {
+                    logger.warn("Could not generate super interface " + interfaceName);
+                }
+            }
+        }
+        return interfaces;
     }
 }

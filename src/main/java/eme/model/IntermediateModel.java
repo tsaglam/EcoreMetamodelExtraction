@@ -101,7 +101,7 @@ public class IntermediateModel {
     /**
      * Returns the type of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
-     * @return the type with the matching name, or null if no matching type is found.
+     * @return the type with the matching name.
      */
     public ExtractedType getType(String fullName) {
         for (ExtractedType type : types) { // for all packages
@@ -109,7 +109,7 @@ public class IntermediateModel {
                 return type; // can only have on parent
             }
         }
-        return null;
+        throw new IllegalArgumentException("Could not find type " + fullName + " in the IntermediateModel");
     }
 
     /**

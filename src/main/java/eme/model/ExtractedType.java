@@ -46,6 +46,14 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
+     * Getter for the list of super interface names.
+     * @return the list of super interface names.
+     */
+    public List<String> getSuperInterfaces() {
+        return superInterfaces;
+    }
+
+    /**
      * Returns the name of the outer type of an type, if that type is an inner type.
      * @return name of the outer type, null if the type is not an inner type.
      */
