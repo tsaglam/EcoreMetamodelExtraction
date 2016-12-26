@@ -10,15 +10,25 @@ import java.util.List;
 public class ExtractedMethod extends ExtractedElement {
     private final List<ExtractedVariable> parameters;
     private String returnType;
+    private boolean staticMethod;
 
     /**
      * Basic constructor.
      * @param fullName is the full name of the method, consisting out of the full class name and the
      * method name.
      */
-    public ExtractedMethod(String fullName) {
+    public ExtractedMethod(String fullName, boolean staticMethod) {
         super(fullName);
         parameters = new LinkedList<ExtractedVariable>();
+        this.staticMethod = staticMethod;
+    }
+
+    /**
+     * Adds a parameter to the method.
+     * @param parameter is the new parameter.
+     */
+    public void addParameter(ExtractedVariable parameter) {
+        parameters.add(parameter);
     }
 
     /**
@@ -35,5 +45,13 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public String getReturnType() {
         return returnType;
+    }
+
+    /**
+     * Checks whether the method is static.
+     * @return true if it is static.
+     */
+    public boolean isStatic() {
+        return staticMethod;
     }
 }
