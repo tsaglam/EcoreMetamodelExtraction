@@ -131,13 +131,6 @@ public class EcoreElementGenerator { // TODO (LOW) remove this class.
         }
     }
 
-    // Prints a generated product if printing is enabled.
-    private void print(EObject product) {
-        if (printResults) {
-            System.out.println("Generated: " + product.toString());
-        }
-    }
-
     // Checks EObject parameters on being null.
     private void check(EObject... parameters) {
         for (EObject parameter : parameters) {
@@ -155,6 +148,13 @@ public class EcoreElementGenerator { // TODO (LOW) remove this class.
             } else if (parameter.isEmpty()) {
                 throw new IllegalArgumentException("Parameter can't be empty: " + parameter);
             }
+        }
+    }
+
+    // Prints a generated product if printing is enabled.
+    private void print(EObject product) {
+        if (printResults) {
+            System.out.println("Generated: " + product.toString());
         }
     }
 }
