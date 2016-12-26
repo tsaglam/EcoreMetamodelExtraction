@@ -9,6 +9,7 @@ import java.util.List;
  */
 public abstract class ExtractedType extends ExtractedElement {
     protected boolean innerType;
+    protected final List<ExtractedMethod> methods;
     protected String outerType;
     protected String superClass;
     protected final List<String> superInterfaces;
@@ -20,6 +21,7 @@ public abstract class ExtractedType extends ExtractedElement {
     public ExtractedType(String fullName) {
         super(fullName);
         superInterfaces = new LinkedList<String>();
+        methods = new LinkedList<ExtractedMethod>();
         if (name.contains("$")) { // dollar in name means its a nested type
             innerType = true; // set nested true and adapt parent
             outerType = name.substring(0, name.lastIndexOf('$'));
@@ -35,6 +37,14 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
+     * Adds a method to the type.
+     * @param method is the new method.
+     */
+    public void addMethod(ExtractedMethod method) {
+        methods.add(method);
+    }
+
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -43,6 +53,14 @@ public abstract class ExtractedType extends ExtractedElement {
             return getFullName().equals(((ExtractedType) obj).getFullName()); // same full name
         }
         return false;
+    }
+
+    /**
+     * Getter for the list of methods.
+     * @return the list of methods.
+     */
+    public List<ExtractedMethod> getMethods() {
+        return methods;
     }
 
     /**
