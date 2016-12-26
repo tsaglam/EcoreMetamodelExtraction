@@ -17,9 +17,10 @@ public class ExtractedMethod extends ExtractedElement {
      * @param fullName is the full name of the method, consisting out of the full class name and the
      * method name.
      */
-    public ExtractedMethod(String fullName, boolean staticMethod) {
+    public ExtractedMethod(String fullName, String returnType, boolean staticMethod) {
         super(fullName);
         parameters = new LinkedList<ExtractedVariable>();
+        this.returnType = returnType;
         this.staticMethod = staticMethod;
     }
 
