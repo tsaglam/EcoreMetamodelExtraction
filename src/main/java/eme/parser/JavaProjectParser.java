@@ -19,11 +19,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
+import eme.model.ExtractedVariable;
 import eme.model.IntermediateModel;
 
 /**
@@ -135,10 +137,12 @@ public class JavaProjectParser {
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
             methodName = iType.getFullyQualifiedName() + method.getElementName(); // build name
-            extractedMethod = new ExtractedMethod(methodName, method.getReturnType(), Flags.isStatic(method.getFlags()));
+            String simpleName = TypeParser.simpleName(method.getReturnType()); // get simple name
+            String fullName = TypeParser.fullName(method.getReturnType(), method); // get full name
+            ExtractedDataType returnType = new ExtractedDataType(simpleName, fullName);
+            extractedMethod = new ExtractedMethod(methodName, returnType, Flags.isStatic(method.getFlags()));
             parseParameters(method, extractedMethod); // parse parameters
             extractedType.addMethod(extractedMethod);
-            System.out.println(extractedMethod.toString()); // TODO remove debug output
         }
     }
 
@@ -165,16 +169,15 @@ public class JavaProjectParser {
     }
 
     private void parseParameters(IMethod iMethod, ExtractedMethod extractedMethod) throws JavaModelException {
-        System.out.println("IN METHOD " + iMethod.getElementName() + ": ");
+        String simpleName;
+        String fullName;
+        String identifier;
         for (ILocalVariable parameter : iMethod.getParameters()) {
-            String signature = parameter.getTypeSignature();
-            System.out.print(parameter.getElementName() + " = ");
-            System.out.print(signature + " || ");
-            System.out.print(TypeParser.simpleName(signature) + " || ");
-            System.out.println(TypeParser.fullName(parameter, iMethod));
-            // TODO (HIGH) extract params pls
+            simpleName = TypeParser.simpleName(parameter.getTypeSignature());
+            fullName = TypeParser.fullName(parameter.getTypeSignature(), iMethod);
+            identifier = parameter.getElementName();
+            extractedMethod.addParameter(new ExtractedVariable(identifier, simpleName, fullName));
         }
-        System.out.println("");
     }
 
     /**

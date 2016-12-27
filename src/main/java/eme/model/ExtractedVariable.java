@@ -9,20 +9,20 @@ public class ExtractedVariable extends ExtractedDataType {
 
     /**
      * Basic constructor, creates variable.
-     * @param name is the name of the variable.
+     * @param identifier is the name of the variable.
      * @param simpleName is the simple name of the type of the variable, like "String",
      * "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of type of the variable, like "java.lang.String",
      * "java.util.list" and "char".
      */
-    public ExtractedVariable(String name, String simpleName, String fullName) {
+    public ExtractedVariable(String identifier, String simpleName, String fullName) {
         super(simpleName, fullName);
-        this.identifier = name;
+        this.identifier = identifier;
     }
 
     /**
-     * Getter for the name of the variable.
-     * @return the name.
+     * Getter for the identifier of the variable.
+     * @return the identifier.
      */
     public String getIdentifier() {
         return identifier;

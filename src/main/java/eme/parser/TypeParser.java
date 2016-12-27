@@ -1,6 +1,5 @@
 package eme.parser;
 
-import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -13,18 +12,19 @@ import org.eclipse.jdt.core.Signature;
 public abstract class TypeParser {
     /**
      * Returns the full name of a parameter, e.g "java.lang.String", "java.util.List" or "char".
-     * @param parameterVariable is the parameter.
+     * @param typeSignature is the type signature.
      * @param method is the method where the parameter belongs.
      * @return the full name.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public static String fullName(ILocalVariable parameterVariable, IMethod method) throws JavaModelException {
-        String simpleName = Signature.getSignatureSimpleName(parameterVariable.getTypeSignature());
+    public static String fullName(String typeSignature, IMethod method) throws JavaModelException {
+        String simpleName = Signature.getSignatureSimpleName(typeSignature);
         String[][] resolvedTypeNames = method.getDeclaringType().resolveType(simpleName);
-        String fullName = ""; // TODO (middle) design own approach
+        String fullName = simpleName; // TODO (middle) design own approach
         if (resolvedTypeNames != null) {
             String[] typeName = resolvedTypeNames[0];
             if (typeName != null) {
+                fullName = "";
                 for (int i = 0; i < typeName.length; i++) {
                     if (fullName.length() > 0) {
                         fullName += '.';
@@ -44,7 +44,13 @@ public abstract class TypeParser {
      * @param typeSignatue is the type signature to translate.
      * @return the simple name.
      */
-    public static String simpleName(String typeSignatue) {
-        return Signature.getSignatureSimpleName(typeSignatue);
+    public static String simpleName(String typeSignatue) { // TODO (MEDIUM) better solution
+        String name = Signature.getSignatureSimpleName(typeSignatue);
+        for (int i = 0; i < name.length(); i++) {
+            if (name.charAt(i) == '<' || name.charAt(i) == '[') {
+                return name.substring(0, i);
+            }
+        }
+        return name;
     }
 }
