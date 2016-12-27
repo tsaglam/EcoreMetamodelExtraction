@@ -1,5 +1,6 @@
 package eme.parser;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -11,11 +12,15 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.ILocalVariable;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
@@ -137,6 +142,7 @@ public class JavaProjectParser {
             extractedMethod = new ExtractedMethod(methodName, method.getReturnType(), Flags.isStatic(method.getFlags()));
             parseParameters(method, extractedMethod); // parse parameters
             extractedType.addMethod(extractedMethod);
+            System.out.println(extractedMethod.toString()); // TODO remove debug output
         }
     }
 
@@ -163,7 +169,15 @@ public class JavaProjectParser {
     }
 
     private void parseParameters(IMethod iMethod, ExtractedMethod extractedMethod) throws JavaModelException {
-        // TODO (HIGH) implement and comment me
+        System.out.println("IN METHOD " + iMethod.getElementName() + ": ");
+        for (ILocalVariable parameter : iMethod.getParameters()) {
+            System.out.print(parameter.getElementName() + " = ");
+            System.out.print(parameter.getTypeSignature() + " || ");
+            System.out.print(TypeParser.simpleName(parameter.getTypeSignature()) + " || ");
+            System.out.println(TypeParser.fullName(parameter, iMethod));
+            // TODO (HIGH) extract params pls
+        }
+        System.out.println("");
     }
 
     /**
