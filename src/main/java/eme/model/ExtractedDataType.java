@@ -43,7 +43,7 @@ public class ExtractedDataType {
      * getter for the full type name.
      * @return the full type name.
      */
-    public String getFullName() {
+    public String getFullTypeName() {
         return fullName;
     }
 
@@ -59,7 +59,7 @@ public class ExtractedDataType {
      * getter for the simple type name.
      * @return the simple type name.
      */
-    public String getName() {
+    public String getTypeName() {
         return simpleName;
     }
 

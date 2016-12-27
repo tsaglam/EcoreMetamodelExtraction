@@ -24,7 +24,7 @@ public class ExtractedVariable extends ExtractedDataType {
      * Getter for the name of the variable.
      * @return the name.
      */
-    public String getName() {
+    public String getIdentifier() {
         return identifier;
     }
 

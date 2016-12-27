@@ -10,14 +10,19 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
+import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
+import eme.model.ExtractedVariable;
 import eme.model.IntermediateModel;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
@@ -34,6 +39,7 @@ public class EObjectGenerator {
     private final EcoreFactory ecoreFactory;
     private IntermediateModel model;
     private final ExtractionProperties properties;
+    private final EDataTypeGenerator typeGenerator;
 
     /**
      * Basic constructor
@@ -42,6 +48,7 @@ public class EObjectGenerator {
     public EObjectGenerator(ExtractionProperties properties) {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
+        typeGenerator = new EDataTypeGenerator();
         createdEClassifiers = new HashMap<String, EClassifier>();
     }
 
@@ -117,6 +124,39 @@ public class EObjectGenerator {
     }
 
     /**
+     * Adds the operations of an extracted type to a specific List of EOperations.
+     * @param type is the extracted type.
+     * @param list is the list of EOperations.
+     */
+    private void addOperations(ExtractedType type, List<EOperation> list) {
+        EOperation operation;
+        for (ExtractedMethod method : type.getMethods()) {
+            operation = ecoreFactory.createEOperation();
+            operation.setName(method.getName());
+            operation.setEType(getEDataType(method.getReturnType()));
+            addParameters(method, operation.getEParameters());
+            list.add(operation);
+        }
+
+    }
+
+    /**
+     * Adds the parameters of an extracted method to a specific List of EParameters.
+     * @param method is the extracted method.
+     * @param list is the list of EParameters.
+     */
+    private void addParameters(ExtractedMethod method, List<EParameter> list) {
+        EParameter parameter;
+        for (ExtractedVariable variable : method.getParameters()) {
+            parameter = ecoreFactory.createEParameter();
+            parameter.setName(variable.getIdentifier());
+            parameter.setEType(getEDataType(variable));
+            // TODO (HIGH) generic types and arrays etc
+            list.add(parameter);
+        }
+    }
+
+    /**
      * Adds the super class of an extracted class to a specific List of EClasses. If the extracted
      * class has no super class, no EClass is added.
      * @param extractedClass is the extracted class.
@@ -168,7 +208,8 @@ public class EObjectGenerator {
         List<EClass> eSuperTypes = eClass.getESuperTypes();
         addSuperClass(extractedClass, eSuperTypes); // get super
         addSuperInterfaces(extractedClass, eSuperTypes);
-        return eClass;
+        addOperations(extractedClass, eClass.getEOperations());
+        return eClass; // TODO (MEDIUM) remove duplicate code from class & interface
     }
 
     /**
@@ -181,6 +222,7 @@ public class EObjectGenerator {
         eClass.setAbstract(true);
         eClass.setInterface(true);
         addSuperInterfaces(extractedInterface, eClass.getESuperTypes());
+        addOperations(extractedInterface, eClass.getEOperations());
         return eClass;
     }
 
@@ -198,5 +240,15 @@ public class EObjectGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
+    }
+
+    private EClassifier getEDataType(ExtractedDataType extractedDataType) {
+        String typeName = extractedDataType.getFullTypeName();
+        if (createdEClassifiers.containsKey(typeName)) { // if is custom class
+            return createdEClassifiers.get(typeName);
+        } else if (typeGenerator.knows(extractedDataType)) { // if is basic type or already known
+            return typeGenerator.get(extractedDataType); // access EDataType
+        } // if its an external type
+        return typeGenerator.create(extractedDataType); // create new EDataType
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ExtractedMethod extends ExtractedElement {
     private final List<ExtractedVariable> parameters;
-    private String returnType;
+    private ExtractedDataType returnType;
     private boolean staticMethod;
 
     /**
@@ -17,7 +17,7 @@ public class ExtractedMethod extends ExtractedElement {
      * @param fullName is the full name of the method, consisting out of the full class name and the
      * method name.
      */
-    public ExtractedMethod(String fullName, String returnType, boolean staticMethod) {
+    public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean staticMethod) {
         super(fullName);
         parameters = new LinkedList<ExtractedVariable>();
         this.returnType = returnType;
@@ -44,7 +44,7 @@ public class ExtractedMethod extends ExtractedElement {
      * getter for the return type;
      * @return the returnType
      */
-    public String getReturnType() {
+    public ExtractedDataType getReturnType() {
         return returnType;
     }
 
