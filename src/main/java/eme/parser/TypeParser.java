@@ -2,43 +2,34 @@ package eme.parser;
 
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 /**
- * Helper class to deal with type signatures.
+ * Helper class to deal with type signatures. Used following source:
+ * stackoverflow.com/questions/27775320/how-to-get-fully-qualified-name-of-parameter-value-in-a-method
  * @author Timur Saglam
  */
 public abstract class TypeParser {
-    public static String parse(ILocalVariable parameterVariable, IType declaringType) {
-        
-        return null;
-    }
-    
     /**
-     * Returns the simple name of a type signature, e.g "String", "List<int>" or char[][].
-     * @param typeSignatue is the type signature to translate.
-     * @return the simple name.
+     * Returns the full name of a parameter, e.g "java.lang.String", "java.util.List" or "char".
+     * @param parameterVariable is the parameter.
+     * @param method is the method where the parameter belongs.
+     * @return the full name.
+     * @throws JavaModelException if there are problems with the JDT API.
      */
-    public static String simpleName(String typeSignatue) {
-        return Signature.toString(typeSignatue);
-    }
-
     public static String fullName(ILocalVariable parameterVariable, IMethod method) throws JavaModelException {
-        IType declaringType = method.getDeclaringType();
-        String name = parameterVariable.getTypeSignature();
-        String simpleName = Signature.getSignatureSimpleName(name);
-        String[][] allResults = declaringType.resolveType(simpleName);
-        String fullName = "";
-        if (allResults != null) {
-            String[] nameParts = allResults[0];
-            if (nameParts != null) {
-                for (int i = 0; i < nameParts.length; i++) {
+        String simpleName = Signature.getSignatureSimpleName(parameterVariable.getTypeSignature());
+        String[][] resolvedTypeNames = method.getDeclaringType().resolveType(simpleName);
+        String fullName = ""; // TODO (middle) design own approach
+        if (resolvedTypeNames != null) {
+            String[] typeName = resolvedTypeNames[0];
+            if (typeName != null) {
+                for (int i = 0; i < typeName.length; i++) {
                     if (fullName.length() > 0) {
                         fullName += '.';
                     }
-                    String part = nameParts[i];
+                    String part = typeName[i];
                     if (part != null) {
                         fullName += part;
                     }
@@ -46,5 +37,14 @@ public abstract class TypeParser {
             }
         }
         return fullName;
+    }
+
+    /**
+     * Returns the simple name of a type signature, e.g "String", "List<int>" or "char[][]".
+     * @param typeSignatue is the type signature to translate.
+     * @return the simple name.
+     */
+    public static String simpleName(String typeSignatue) {
+        return Signature.getSignatureSimpleName(typeSignatue);
     }
 }

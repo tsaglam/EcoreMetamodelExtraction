@@ -167,9 +167,10 @@ public class JavaProjectParser {
     private void parseParameters(IMethod iMethod, ExtractedMethod extractedMethod) throws JavaModelException {
         System.out.println("IN METHOD " + iMethod.getElementName() + ": ");
         for (ILocalVariable parameter : iMethod.getParameters()) {
+            String signature = parameter.getTypeSignature();
             System.out.print(parameter.getElementName() + " = ");
-            System.out.print(parameter.getTypeSignature() + " || ");
-            System.out.print(TypeParser.simpleName(parameter.getTypeSignature()) + " || ");
+            System.out.print(signature + " || ");
+            System.out.print(TypeParser.simpleName(signature) + " || ");
             System.out.println(TypeParser.fullName(parameter, iMethod));
             // TODO (HIGH) extract params pls
         }
