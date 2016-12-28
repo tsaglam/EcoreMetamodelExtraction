@@ -25,7 +25,6 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
-import eme.model.ExtractedVariable;
 import eme.model.IntermediateModel;
 
 /**
@@ -136,12 +135,13 @@ public class JavaProjectParser {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = iType.getFullyQualifiedName() + method.getElementName(); // build name
-            String simpleName = TypeParser.simpleName(method.getReturnType()); // get simple name
-            String fullName = TypeParser.fullName(method.getReturnType(), method); // get full name
-            ExtractedDataType returnType = new ExtractedDataType(simpleName, fullName);
+            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build
+                                                                                        // name
+            ExtractedDataType returnType = TypeParser.parseReturnType(method);
             extractedMethod = new ExtractedMethod(methodName, returnType, Flags.isStatic(method.getFlags()));
-            parseParameters(method, extractedMethod); // parse parameters
+            for (ILocalVariable parameter : method.getParameters()) {
+                extractedMethod.addParameter(TypeParser.parseParameter(parameter, method));
+            }
             extractedType.addMethod(extractedMethod);
         }
     }
@@ -166,18 +166,6 @@ public class JavaProjectParser {
             currentModel.add(new ExtractedPackage(name)); // build model packages first
         }
         parseCompilationUnits(extractedFragments); // then continue parsing
-    }
-
-    private void parseParameters(IMethod iMethod, ExtractedMethod extractedMethod) throws JavaModelException {
-        String simpleName;
-        String fullName;
-        String identifier;
-        for (ILocalVariable parameter : iMethod.getParameters()) {
-            simpleName = TypeParser.simpleName(parameter.getTypeSignature());
-            fullName = TypeParser.fullName(parameter.getTypeSignature(), iMethod);
-            identifier = parameter.getElementName();
-            extractedMethod.addParameter(new ExtractedVariable(identifier, simpleName, fullName));
-        }
     }
 
     /**
