@@ -30,6 +30,6 @@ public class ExtractedVariable extends ExtractedDataType {
 
     @Override
     public String toString() {
-        return super.toString() + " " + identifier;
+        return getClass() + "(" + identifier + ", " + getTypeName() + ", " + getFullTypeName() + ")";
     }
 }

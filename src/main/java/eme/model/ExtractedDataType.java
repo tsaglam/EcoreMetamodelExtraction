@@ -24,11 +24,11 @@ public class ExtractedDataType {
             genericArguments = 1; // at least one
         }
         for (int i = 0; i < simpleName.length(); i++) {
-            if (simpleName.charAt(i) == ',') {
+            if (simpleName.charAt(i) == ',') { // TODO (HIGH) fix generic parsing
                 genericArguments++; // count additional generic arguments
             }
         }
-        arrayDimension = simpleName.split("\\[").length - 1; // count array dimensions
+        arrayDimension = fullName.split("\\[").length - 1; // count array dimensions
     }
 
     /**
@@ -81,6 +81,6 @@ public class ExtractedDataType {
 
     @Override
     public String toString() {
-        return simpleName;
+        return getClass() + "(" + simpleName + ", " + fullName + ")";
     }
 }
