@@ -59,6 +59,7 @@ public class EcoreMetamodelGenerator {
      * @return the root element of the metamodel, an EPackage.
      */
     public EPackage generateMetamodelFrom(IntermediateModel model) {
+        eObjectGenerator.clear(); // clear generator cache
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
