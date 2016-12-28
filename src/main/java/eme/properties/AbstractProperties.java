@@ -31,13 +31,13 @@ public abstract class AbstractProperties {
 
     /**
      * Basic constructor. Loads the properties file, creates a new one if the file does not exist.
-     * @param name is the name of the properties file.
+     * @param fileName is the name of the properties file.
      * @param comment is the comment of the properties file.
      */
-    public AbstractProperties(String name, String comment) {
-        fileComment = comment;
+    public AbstractProperties(String fileName, String fileComment) {
+        this.fileComment = fileComment;
         Bundle bundle = Platform.getBundle("EcoreMetamodelExtraction");
-        Path path = new Path(name);
+        Path path = new Path(fileName);
         try {
             fileURL = FileLocator.find(bundle, path, null);
             load(); // load if file exists.
