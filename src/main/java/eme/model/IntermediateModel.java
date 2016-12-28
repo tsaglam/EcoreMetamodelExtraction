@@ -79,7 +79,7 @@ public class IntermediateModel {
                 return aPackage; // can only have on parent
             }
         }
-        throw new RuntimeException("Could not find package " + fullName);
+        throw new IllegalArgumentException("Could not find package " + fullName);
     }
 
     /**
