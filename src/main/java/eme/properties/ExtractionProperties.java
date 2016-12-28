@@ -4,7 +4,7 @@ package eme.properties;
  * This class manages the extraction properties in the user.properties file.
  * @author Timur Saglam
  */
-public class ExtractionProperties extends AbstractProperties { // TODO (MEDIUM) add setters
+public class ExtractionProperties extends AbstractProperties {
     private static final String FILE_COMMENT = "Use this file to configure the Ecore metamodel extraction.";
     private static final String FILE_NAME = "user.properties";
 
