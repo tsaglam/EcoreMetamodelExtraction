@@ -148,13 +148,14 @@ public class EObjectGenerator {
      * @param list is the list of EParameters.
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
-        EParameter parameter;
-        for (ExtractedVariable variable : method.getParameters()) {
-            parameter = ecoreFactory.createEParameter();
-            parameter.setName(variable.getIdentifier());
-            parameter.setEType(getEDataType(variable));
-            // TODO (HIGH) generic types and arrays etc
-            list.add(parameter);
+        EParameter eParameter;
+        for (ExtractedVariable parameter : method.getParameters()) {
+            if (!parameter.isArray() && !parameter.isGeneric()) {  // TODO (HIGH) generics & arrays
+                eParameter = ecoreFactory.createEParameter();
+                eParameter.setName(parameter.getIdentifier());
+                eParameter.setEType(getEDataType(parameter));
+                list.add(eParameter);
+            }
         }
     }
 
@@ -245,12 +246,16 @@ public class EObjectGenerator {
     }
 
     private EClassifier getEDataType(ExtractedDataType extractedDataType) {
-        String typeName = extractedDataType.getFullTypeName();
-        if (createdEClassifiers.containsKey(typeName)) { // if is custom class
-            return createdEClassifiers.get(typeName);
+        String fullName = extractedDataType.getFullTypeName();
+        if (createdEClassifiers.containsKey(fullName)) { // if is custom class
+            System.out.println("### is custom class: " + extractedDataType.toString()); // TODO
+            return createdEClassifiers.get(fullName);
         } else if (typeGenerator.knows(extractedDataType)) { // if is basic type or already known
+            System.out.println("### is already known: " + extractedDataType.toString()); // TODO
             return typeGenerator.get(extractedDataType); // access EDataType
         } // if its an external type
+        System.out.print("### will be created: " + extractedDataType.toString()); // TODO
+        System.out.println("      " + createdEClassifiers.toString()); // TODO
         return typeGenerator.create(extractedDataType); // create new EDataType
     }
 }
