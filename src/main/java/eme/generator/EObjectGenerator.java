@@ -133,7 +133,9 @@ public class EObjectGenerator {
         for (ExtractedMethod method : type.getMethods()) {
             operation = ecoreFactory.createEOperation();
             operation.setName(method.getName());
-            operation.setEType(getEDataType(method.getReturnType()));
+            if (method.getReturnType() != null) {
+                operation.setEType(getEDataType(method.getReturnType()));
+            }
             addParameters(method, operation.getEParameters());
             list.add(operation);
         }
