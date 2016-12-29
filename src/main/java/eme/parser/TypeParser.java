@@ -1,10 +1,13 @@
 package eme.parser;
 
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import eme.model.ExtractedAttribute;
 import eme.model.ExtractedDataType;
 import eme.model.ExtractedVariable;
 
@@ -23,8 +26,19 @@ public abstract class TypeParser {
      * @throws JavaModelException if there are problems with the JDT API.
      */
     public static String fullName(String typeSignature, IMethod method) throws JavaModelException {
+        return fullName(typeSignature, method.getDeclaringType());
+    }
+
+    /**
+     * Returns the full name of a field, e.g "java.lang.String", "java.util.List" or "char".
+     * @param typeSignature is the type signature.
+     * @param iType is the type where the field belongs to.
+     * @return the full name.
+     * @throws JavaModelException if there are problems with the JDT API.
+     */
+    public static String fullName(String typeSignature, IType iType) throws JavaModelException {
         String simpleName = Signature.getSignatureSimpleName(typeSignature);
-        String[][] resolvedTypeNames = method.getDeclaringType().resolveType(simpleName);
+        String[][] resolvedTypeNames = iType.resolveType(simpleName);
         String fullName = simpleName; // TODO (middle) design own approach
         if (resolvedTypeNames != null) {
             String[] typeName = resolvedTypeNames[0];
@@ -42,6 +56,20 @@ public abstract class TypeParser {
             }
         }
         return fullName;
+    }
+
+    /**
+     * Creates extracted attribute from a field and its type.
+     * @param field is the field.
+     * @param iType is the type of the field.
+     * @return the extracted attribute of the field.
+     * @throws JavaModelException if there are problems with the JDT API.
+     */
+    public static ExtractedAttribute parseField(IField field, IType iType) throws JavaModelException {
+        String signature = field.getTypeSignature(); // get return type signature
+        String simpleName = TypeParser.simpleName(signature); // get simple name
+        String fullName = TypeParser.fullName(signature, iType); // get full name
+        return new ExtractedAttribute(field.getElementName(), simpleName, fullName);
     }
 
     /**

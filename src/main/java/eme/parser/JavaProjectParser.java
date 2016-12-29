@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.AccessLevelModifier;
+import eme.model.ExtractedAttribute;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
@@ -68,6 +69,21 @@ public class JavaProjectParser {
      */
     private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
         return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
+    }
+
+    /**
+     * Parses Attributes from an IType and adds them to an ExtractedType.
+     * @param iType is the IType.
+     * @param extractedType is the ExtractedType.
+     */
+    private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
+        ExtractedAttribute attribute;
+        for (IField field : iType.getFields()) {
+            attribute = TypeParser.parseField(field, iType);
+            int flags = field.getFlags();
+            attribute.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isFinal(flags));
+            extractedType.addAttribute(attribute);
+        }
     }
 
     /**
@@ -174,16 +190,17 @@ public class JavaProjectParser {
      */
     private void parseTypes(ICompilationUnit compilationUnit) throws JavaModelException {
         ExtractedType extractedType = null;
-        for (IType type : compilationUnit.getAllTypes()) { // for all types
-            if (type.isClass()) {
-                extractedType = parseClass(type); // create class
-            } else if (type.isInterface()) {
-                extractedType = parseInterface(type); // create interface
-            } else if (type.isEnum()) {
-                extractedType = parseEnumeration(type); // create enum
+        for (IType iType : compilationUnit.getAllTypes()) { // for all types
+            if (iType.isClass()) {
+                extractedType = parseClass(iType); // create class
+            } else if (iType.isInterface()) {
+                extractedType = parseInterface(iType); // create interface
+            } else if (iType.isEnum()) {
+                extractedType = parseEnumeration(iType); // create enum
             }
-            parseMethods(type, extractedType); // parse methods
-            for (IType superInterface : type.newSupertypeHierarchy(null).getSuperInterfaces(type)) {
+            parseMethods(iType, extractedType); // parse methods
+            parseAttributes(iType, extractedType); // parse attributes
+            for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
                 extractedType.addInterface(superInterface.getFullyQualifiedName()); // add interface
             }
         }

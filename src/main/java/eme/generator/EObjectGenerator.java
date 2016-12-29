@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -17,8 +18,10 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.model.ExtractedAttribute;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
@@ -68,6 +71,7 @@ public class EObjectGenerator {
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) {
             addOperations(incompleteEClasses.get(eClass), eClass.getEOperations());
+            addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures());
         }
     }
 
@@ -134,6 +138,22 @@ public class EObjectGenerator {
         createdEClassifiers.clear();
         incompleteEClasses.clear();
         this.model = model;
+    }
+
+    /**
+     * Adds the attributes of an extracted type to a specific List of EStructuralFeatures.
+     * @param type is the extracted type.
+     * @param list is the list of EStructuralFeatures.
+     */
+    private void addAttributes(ExtractedType type, List<EStructuralFeature> list) {
+        EAttribute eAttribute;
+        for (ExtractedAttribute attribute : type.getAttributes()) {
+            eAttribute = ecoreFactory.createEAttribute(); // TODO (HIGH) isExtracteable
+            eAttribute.setName(attribute.getIdentifier());
+            eAttribute.setChangeable(!attribute.isFinal());
+            eAttribute.setEType(getEDataType(attribute));
+            list.add(eAttribute);
+        }
     }
 
     /**
