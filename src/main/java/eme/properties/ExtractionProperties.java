@@ -32,6 +32,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Returns the value of the property ExtractConstructors.
+     * @return the value.
+     */
+    public boolean getExtractConstructors() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractConstructors", "false"));
+    }
+
+    /**
      * Returns the value of the property ExtractEmptyPackages.
      * @return the value.
      */
@@ -45,6 +53,14 @@ public class ExtractionProperties extends AbstractProperties {
      */
     public boolean getExtractNestedTypes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes", "true"));
+    }
+
+    /**
+     * Returns the value of the property ExtractPrivateMethods.
+     * @return the value.
+     */
+    public boolean getExtractPrivateMethods() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractPrivateMethods", "false"));
     }
 
     /**
@@ -100,6 +116,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Sets the value of the property ExtractConstructors.
+     * @param value is the new value.
+     */
+    public void setExtractConstructors(boolean value) {
+        properties.setProperty("ExtractConstructors", Boolean.toString(value));
+    }
+
+    /**
      * Sets the value of the property ExtractEmptyPackages.
      * @param value is the new value.
      */
@@ -113,6 +137,14 @@ public class ExtractionProperties extends AbstractProperties {
      */
     public void setExtractNestedTypes(boolean value) {
         properties.setProperty("ExtractNestedTypes", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractPrivateMethods.
+     * @param value is the new value.
+     */
+    public void setExtractPrivateMethods(boolean value) {
+        properties.setProperty("ExtractPrivateMethods", Boolean.toString(value));
     }
 
     /**
