@@ -1,5 +1,8 @@
 package eme.generator;
 
+import static eme.model.AccessLevelModifier.PRIVATE;
+import static eme.model.AccessLevelModifier.PROTECTED;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +19,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 
-import eme.model.AccessLevelModifier;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
@@ -282,9 +284,10 @@ public class EObjectGenerator {
      * Checks whether a method is extractable. Checks the properties and the method.
      */
     private boolean isExtractable(ExtractedMethod method) {
-        return (!method.isConstructor() || properties.getExtractConstructors())
-                && (!method.isAbstract() || properties.getExtractAbstractMethods())
-                && (!method.isStatic() || properties.getExtractStaticMethods())
-                && (method.getModifier() != AccessLevelModifier.PRIVATE || properties.getExtractPrivateMethods());
+        return (!method.isConstructor() || properties.getExtractConstructors()) // extract constructors
+                && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
+                && (!method.isStatic() || properties.getExtractStaticMethods())// extract static methods
+                && (method.getModifier() != PROTECTED || properties.getExtractProtectedMethods()) // protected methods
+                && (method.getModifier() != PRIVATE || properties.getExtractPrivateMethods()); // private methods
     }
 }
