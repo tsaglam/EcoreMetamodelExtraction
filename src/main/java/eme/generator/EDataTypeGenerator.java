@@ -85,5 +85,7 @@ public class EDataTypeGenerator {
         typeMap.put("java.lang.String", EcorePackage.eINSTANCE.getEString());
         typeMap.put("java.lang.Object", EcorePackage.eINSTANCE.getEJavaObject());
         typeMap.put("java.lang.Class", EcorePackage.eINSTANCE.getEJavaClass());
+        typeMap.put("java.util.List", EcorePackage.eINSTANCE.getEEList());
+        typeMap.put("java.util.Map", EcorePackage.eINSTANCE.getEMap());
     }
 }
