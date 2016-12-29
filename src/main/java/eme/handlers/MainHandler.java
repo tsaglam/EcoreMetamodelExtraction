@@ -24,8 +24,7 @@ public class MainHandler extends AbstractHandler {
     private IWorkbenchWindow window;
 
     /**
-     * Accesses all the projects in the workspace and lets the user choose a project with a simple
-     * dialog.
+     * Accesses all the projects in the workspace and lets the user choose a project with a simple dialog.
      * @return the chosen project.
      */
     public IProject chooseProject() {

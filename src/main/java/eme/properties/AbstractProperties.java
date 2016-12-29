@@ -17,10 +17,9 @@ import org.osgi.framework.Bundle;
 import eme.parser.JavaProjectParser;
 
 /**
- * The class is the super class for the class ExtractionProperties. It separates the loading, saving
- * and creating process of the properties file from the actual getters and setters in the
- * ExtractionProperties class. This class also enables the simple creation of additional property
- * classes by deriving a class from this one.
+ * The class is the super class for the class ExtractionProperties. It separates the loading, saving and creating
+ * process of the properties file from the actual getters and setters in the ExtractionProperties class. This class also
+ * enables the simple creation of additional property classes by deriving a class from this one.
  * @author Timur Saglam
  */
 public abstract class AbstractProperties {

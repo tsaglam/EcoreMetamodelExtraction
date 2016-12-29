@@ -22,8 +22,8 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
     }
 
     /**
-     * Returns the project identifier, which basically is a separator character and the String
-     * "Model" or "Model", depending on the naming type of the projects name.
+     * Returns the project identifier, which basically is a separator character and the String "Model" or "Model",
+     * depending on the naming type of the projects name.
      * @param projectName is the projects name. determines which identifier is used.
      * @return the project identifier.
      */

@@ -45,8 +45,7 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new type to the intermediate model if it is not already added. Finds parent package
-     * automatically.
+     * Adds a new type to the intermediate model if it is not already added. Finds parent package automatically.
      * @param type is the new type to add.
      */
     public void add(ExtractedType type) {
@@ -54,8 +53,7 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new type to the intermediate model and to a specific parent package if it is not
-     * already added.
+     * Adds a new type to the intermediate model and to a specific parent package if it is not already added.
      * @param type is the new type to add.
      * @param parent is the parent package.
      */
@@ -69,9 +67,8 @@ public class IntermediateModel {
      * Returns the package of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
      * @return the package with the matching name.
-     * @throws RuntimeException if the package is not found. This means this method cannot be used
-     * to check whether there is a certain package in the model. It is explicitly used to find an
-     * existing package.
+     * @throws RuntimeException if the package is not found. This means this method cannot be used to check whether
+     * there is a certain package in the model. It is explicitly used to find an existing package.
      */
     public ExtractedPackage getPackage(String fullName) {
         for (ExtractedPackage aPackage : packages) { // for all packages

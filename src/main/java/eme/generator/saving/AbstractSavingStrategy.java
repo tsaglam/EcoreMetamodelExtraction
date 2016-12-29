@@ -29,17 +29,17 @@ public abstract class AbstractSavingStrategy {
 
     /**
      * Basic constructor. Takes the name of the project.
-     * @param saveInProject determines whether the folder where the file is saved should be
-     * refreshed in the Eclipse IDE. Set this true if the file is saved in a project in the IDE.
+     * @param saveInProject determines whether the folder where the file is saved should be refreshed in the Eclipse
+     * IDE. Set this true if the file is saved in a project in the IDE.
      */
     public AbstractSavingStrategy(boolean saveInProject) {
         this.saveInProject = saveInProject;
     }
 
     /**
-     * Saves an EPackage as an Ecore file. The method calls the methods filePath() and fileName() to
-     * get the information it needs to save the metamodel. If the default saving behavior is not
-     * wanted, this method has to be overridden in the strategy class that overrides this class.
+     * Saves an EPackage as an Ecore file. The method calls the methods filePath() and fileName() to get the information
+     * it needs to save the metamodel. If the default saving behavior is not wanted, this method has to be overridden in
+     * the strategy class that overrides this class.
      * @param ePackage is the EPackage to save.
      * @param projectName is the name of the project the EPAckage was generated from.
      */

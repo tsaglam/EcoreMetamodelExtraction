@@ -88,8 +88,8 @@ public class JavaProjectParser {
     }
 
     /**
-     * Extracts all compilation units from a list of package fragments. It then parses all
-     * ICompilationUnits while updating the current package.
+     * Extracts all compilation units from a list of package fragments. It then parses all ICompilationUnits while
+     * updating the current package.
      * @param fragments is the list of compilation units.
      */
     private void parseCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {
@@ -147,10 +147,9 @@ public class JavaProjectParser {
     }
 
     /**
-     * The method takes an IJavaProject and extracts the package structure of the project. It
-     * continues by parsing the IPackageFragments. The method creates the packages from a set of
-     * package names to avoid the problem of duplicate default packages. But all other parsing calls
-     * are done with a list of fragments.
+     * The method takes an IJavaProject and extracts the package structure of the project. It continues by parsing the
+     * IPackageFragments. The method creates the packages from a set of package names to avoid the problem of duplicate
+     * default packages. But all other parsing calls are done with a list of fragments.
      * @param project is the IJavaProject that gets parsed.
      */
     private void parsePackages(IJavaProject project) throws JavaModelException {

@@ -12,8 +12,8 @@ import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
 /**
- * This class generates an Ecore Metamodel from an Intermediate Model. It also allows to save a
- * generated metamodel as an Ecore file using a specific saving strategy.
+ * This class generates an Ecore Metamodel from an Intermediate Model. It also allows to save a generated metamodel as
+ * an Ecore file using a specific saving strategy.
  * @author Timur Saglam
  */
 public class EcoreMetamodelGenerator {

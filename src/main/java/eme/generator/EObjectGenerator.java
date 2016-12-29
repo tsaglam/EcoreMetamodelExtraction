@@ -29,9 +29,9 @@ import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
- * This class allows to generate Ecore metamodel components, which are EObjects, with simple method
- * calls. It utilizes the EcoreFactory class. The general order to call the methods is: 1.
- * prepareFor(), 2. the generateEPackage(), 3. completeGenration().
+ * This class allows to generate Ecore metamodel components, which are EObjects, with simple method calls. It utilizes
+ * the EcoreFactory class. The general order to call the methods is: 1. prepareFor(), 2. the generateEPackage(), 3.
+ * completeGenration().
  * @author Timur Saglam
  */
 public class EObjectGenerator {
@@ -58,9 +58,9 @@ public class EObjectGenerator {
     }
 
     /**
-     * This method finishes the generation of the EObjects by adding methods and Attributes after
-     * the classes were build. This separate part of the generation is necessary to avoid cyclic
-     * data type dependencies on ungenerated classes.
+     * This method finishes the generation of the EObjects by adding methods and Attributes after the classes were
+     * build. This separate part of the generation is necessary to avoid cyclic data type dependencies on ungenerated
+     * classes.
      */
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) {
@@ -94,8 +94,7 @@ public class EObjectGenerator {
     }
 
     /**
-     * Generates an EPackage from an extractedPackage. Recursively calls this method to all
-     * contained elements.
+     * Generates an EPackage from an extractedPackage. Recursively calls this method to all contained elements.
      * @param extractedPackage is the package the EPackage gets generated from.
      * @param projectName is the name of the project.
      * @return the generated EPackage.
@@ -171,8 +170,8 @@ public class EObjectGenerator {
     }
 
     /**
-     * Adds the super class of an extracted class to a specific List of EClasses. If the extracted
-     * class has no super class, no EClass is added.
+     * Adds the super class of an extracted class to a specific List of EClasses. If the extracted class has no super
+     * class, no EClass is added.
      * @param extractedClass is the extracted class.
      * @param toList is the list of EClasses.
      */
@@ -192,8 +191,8 @@ public class EObjectGenerator {
     }
 
     /**
-     * Adds all super interfaces of an extracted type to a specific List of EClasses. If the
-     * extracted type has no super interfaces, no EClass is added.
+     * Adds all super interfaces of an extracted type to a specific List of EClasses. If the extracted type has no super
+     * interfaces, no EClass is added.
      * @param type is the extracted type.
      * @param toList is the list of EClasses.
      */
@@ -256,6 +255,14 @@ public class EObjectGenerator {
         return eEnum;
     }
 
+    /**
+     * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes. It
+     * internally decides for one of three possibilities: The ExtractedDataType represents either (1.) a custom class
+     * from the model, or (2.) or an external class that has to be created as data type, or (3.) an already known data
+     * type (Basic type or already created).
+     * @param extractedDataType is the data type to translate to an EClassifier.
+     * @return the data type as an EClassifier.
+     */
     private EClassifier getEDataType(ExtractedDataType extractedDataType) {
         String fullName = extractedDataType.getFullTypeName();
         if (createdEClassifiers.containsKey(fullName)) { // if is custom class

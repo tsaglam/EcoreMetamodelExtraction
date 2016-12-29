@@ -12,10 +12,8 @@ public class ExtractedDataType {
 
     /**
      * Basic constructor, takes the full and the simple name.
-     * @param simpleName is the simple name of the data type, like "String", "List&ltint&gt" and
-     * "char[][]".
-     * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list"
-     * and "char".
+     * @param simpleName is the simple name of the data type, like "String", "List&ltint&gt" and "char[][]".
+     * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
      */
     public ExtractedDataType(String simpleName, String fullName) {
         this.simpleName = simpleName;

@@ -35,8 +35,8 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and
-     * an Ecore metamodel will be build and saved as an Ecore file
+     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
+     * will be build and saved as an Ecore file
      * @param project is the specific project for the extraction.
      */
     public void extractAndSaveFrom(IProject project) {
@@ -45,8 +45,8 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and
-     * an Ecore metamodel will be build.
+     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
+     * will be build.
      * @param project is the specific project for the extraction.
      * @return the Ecore metamodel with the default package as root.
      */

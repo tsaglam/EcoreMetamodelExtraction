@@ -14,8 +14,7 @@ public class ExtractedMethod extends ExtractedElement {
 
     /**
      * Basic constructor.
-     * @param fullName is the full name of the method, consisting out of the full class name and the
-     * method name.
+     * @param fullName is the full name of the method, consisting out of the full class name and the method name.
      */
     public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean staticMethod) {
         super(fullName);

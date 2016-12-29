@@ -19,8 +19,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 /**
- * This class allows to generate Ecore metamodel components with simple method calls. It utilizes
- * the EcoreFactory class.
+ * This class allows to generate Ecore metamodel components with simple method calls. It utilizes the EcoreFactory
+ * class.
  * @author Timur Saglam
  */
 public class EcoreElementGenerator { // TODO (LOW) remove this class.

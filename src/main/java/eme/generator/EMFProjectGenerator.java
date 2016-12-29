@@ -26,8 +26,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import eme.parser.JavaProjectParser;
 
 /**
- * Utility class for creating an empty EMF project. For this class the following code snippet was
- * used to design the project creation:
+ * Utility class for creating an empty EMF project. For this class the following code snippet was used to design the
+ * project creation:
  * architecturware.cvs.sourceforge.net/viewvc/architecturware/oaw_v4/core.plugin/plugin.oaw4/main/src/org/openarchitectureware/wizards/EclipseHelper.java
  * @author Timur Saglam
  */
@@ -35,9 +35,8 @@ public abstract class EMFProjectGenerator {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
 
     /**
-     * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that
-     * name already exits the new project uses the same name and a number. The actual used name can
-     * be received from the returned IProject.
+     * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that name already exits
+     * the new project uses the same name and a number. The actual used name can be received from the returned IProject.
      * @param projectName is the name of the new project.
      * @return the project as IProject object.
      */

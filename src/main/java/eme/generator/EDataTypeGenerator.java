@@ -27,8 +27,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed
-     * with the method EDataTypeGenerator.get().
+     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed with the method
+     * EDataTypeGenerator.get().
      * @param extractedDataType is the extracted data type.
      * @return the new EDataType
      */
@@ -56,8 +56,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Checks whether a specific extracted data type can be accessed using the method
-     * EDataTypeGenerator.get(). If it can not be accessed it has to be created first.
+     * Checks whether a specific extracted data type can be accessed using the method EDataTypeGenerator.get(). If it
+     * can not be accessed it has to be created first.
      * @param extractedDataType is the data type.
      * @return true if it is a basic type.
      */
