@@ -14,8 +14,8 @@ import eme.model.ExtractedDataType;
  * @author Timur Saglam
  */
 public class EDataTypeGenerator {
-    private final Map<String, EDataType> typeMap;
     private final EcoreFactory ecoreFactory;
+    private final Map<String, EDataType> typeMap;
 
     /**
      * Basic constructor, builds the type map.

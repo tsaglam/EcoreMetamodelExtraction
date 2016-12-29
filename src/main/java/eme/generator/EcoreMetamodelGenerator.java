@@ -19,8 +19,8 @@ import eme.properties.ExtractionProperties;
 public class EcoreMetamodelGenerator {
 
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
-    private final EObjectGenerator eObjectGenerator;
     private EPackage ecoreMetamodel;
+    private final EObjectGenerator eObjectGenerator;
     private String projectName;
     private AbstractSavingStrategy savingStrategy;
 
@@ -59,14 +59,14 @@ public class EcoreMetamodelGenerator {
      * @return the root element of the metamodel, an EPackage.
      */
     public EPackage generateMetamodelFrom(IntermediateModel model) {
-        eObjectGenerator.clear(); // clear generator cache
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
-        eObjectGenerator.setModel(model);
+        eObjectGenerator.prepareFor(model);
         ecoreMetamodel = eObjectGenerator.generateEPackage(root); // generate model.
+        eObjectGenerator.completeGeneration();
         return ecoreMetamodel;
     }
 

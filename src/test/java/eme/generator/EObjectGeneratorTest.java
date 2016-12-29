@@ -29,7 +29,7 @@ public class EObjectGeneratorTest {
     public void setUp() throws Exception {
         properties = new TestProperties();
         generator = new EObjectGenerator(properties);
-        generator.setModel(new IntermediateModel("TestProject"));
+        generator.prepareFor(new IntermediateModel("TestProject"));
     }
 
     @Test

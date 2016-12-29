@@ -8,6 +8,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EOperation;
@@ -29,7 +30,8 @@ import eme.properties.ExtractionProperties;
 
 /**
  * This class allows to generate Ecore metamodel components, which are EObjects, with simple method
- * calls. It utilizes the EcoreFactory class.
+ * calls. It utilizes the EcoreFactory class. The general order to call the methods is: 1.
+ * prepareFor(), 2. the generateEPackage(), 3. completeGenration().
  * @author Timur Saglam
  */
 public class EObjectGenerator {
@@ -37,12 +39,14 @@ public class EObjectGenerator {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
+    private final Map<EClass, ExtractedType> incompleteEClasses;
     private IntermediateModel model;
     private final ExtractionProperties properties;
+    private EPackage root;
     private final EDataTypeGenerator typeGenerator;
 
     /**
-     * Basic constructor
+     * Basic constructor.
      * @param properties is the properties class for the extraction.
      */
     public EObjectGenerator(ExtractionProperties properties) {
@@ -50,14 +54,18 @@ public class EObjectGenerator {
         ecoreFactory = EcoreFactory.eINSTANCE;
         typeGenerator = new EDataTypeGenerator();
         createdEClassifiers = new HashMap<String, EClassifier>();
+        incompleteEClasses = new HashMap<EClass, ExtractedType>();
     }
 
     /**
-     * Clears all the information about the previously created metamodel.
+     * This method finishes the generation of the EObjects by adding methods and Attributes after
+     * the classes were build. This separate part of the generation is necessary to avoid cyclic
+     * data type dependencies on ungenerated classes.
      */
-    public void clear() {
-        createdEClassifiers.clear();
-        model = null;
+    public void completeGeneration() {
+        for (EClass eClass : incompleteEClasses.keySet()) {
+            addOperations(incompleteEClasses.get(eClass), eClass.getEOperations());
+        }
     }
 
     /**
@@ -95,6 +103,7 @@ public class EObjectGenerator {
     public EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) { // set root name & prefix:
+            root = ePackage; // store locally as root
             ePackage.setName(properties.getDefaultPackageName());
             ePackage.setNsPrefix(properties.getDefaultPackageName());
         } else { // set name & prefix for non root packages:
@@ -116,10 +125,12 @@ public class EObjectGenerator {
     }
 
     /**
-     * Sets the intermediate model.
+     * Clears the caches of the class and sets the intermediate model.
      * @param model is the new model.
      */
-    public void setModel(IntermediateModel model) {
+    public void prepareFor(IntermediateModel model) {
+        createdEClassifiers.clear();
+        incompleteEClasses.clear();
         this.model = model;
     }
 
@@ -211,7 +222,7 @@ public class EObjectGenerator {
         List<EClass> eSuperTypes = eClass.getESuperTypes();
         addSuperClass(extractedClass, eSuperTypes); // get super
         addSuperInterfaces(extractedClass, eSuperTypes);
-        addOperations(extractedClass, eClass.getEOperations());
+        incompleteEClasses.put(eClass, extractedClass); // finish building later
         return eClass; // TODO (MEDIUM) remove duplicate code from class & interface
     }
 
@@ -225,7 +236,7 @@ public class EObjectGenerator {
         eClass.setAbstract(true);
         eClass.setInterface(true);
         addSuperInterfaces(extractedInterface, eClass.getESuperTypes());
-        addOperations(extractedInterface, eClass.getEOperations());
+        incompleteEClasses.put(eClass, extractedInterface); // finish building later
         return eClass;
     }
 
@@ -248,14 +259,13 @@ public class EObjectGenerator {
     private EClassifier getEDataType(ExtractedDataType extractedDataType) {
         String fullName = extractedDataType.getFullTypeName();
         if (createdEClassifiers.containsKey(fullName)) { // if is custom class
-            System.out.println("### is custom class: " + extractedDataType.toString()); // TODO
             return createdEClassifiers.get(fullName);
         } else if (typeGenerator.knows(extractedDataType)) { // if is basic type or already known
-            System.out.println("### is already known: " + extractedDataType.toString()); // TODO
             return typeGenerator.get(extractedDataType); // access EDataType
-        } // if its an external type
-        System.out.print("### will be created: " + extractedDataType.toString()); // TODO
-        System.out.println("      " + createdEClassifiers.toString()); // TODO
-        return typeGenerator.create(extractedDataType); // create new EDataType
+        } else { // if its an external type
+            EDataType eDataType = typeGenerator.create(extractedDataType); // create new EDataType
+            root.getEClassifiers().add(eDataType); // add root containment
+            return eDataType;
+        }
     }
 }
