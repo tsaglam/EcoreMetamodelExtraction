@@ -8,6 +8,7 @@ import java.util.List;
  * @author Timur Saglam
  */
 public abstract class ExtractedType extends ExtractedElement {
+    protected final List<ExtractedAttribute> attributes;
     protected boolean innerType;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
@@ -22,10 +23,19 @@ public abstract class ExtractedType extends ExtractedElement {
         super(fullName);
         superInterfaces = new LinkedList<String>();
         methods = new LinkedList<ExtractedMethod>();
+        attributes = new LinkedList<ExtractedAttribute>();
         if (name.contains("$")) { // dollar in name means its a nested type
             innerType = true; // set nested true and adapt parent
             outerType = name.substring(0, name.lastIndexOf('$'));
         }
+    }
+
+    /**
+     * Adds an attribute to the type.
+     * @param attribute is the new attribute.
+     */
+    public void addAttribute(ExtractedAttribute attribute) {
+        attributes.add(attribute);
     }
 
     /**
@@ -53,6 +63,14 @@ public abstract class ExtractedType extends ExtractedElement {
             return getFullName().equals(((ExtractedType) obj).getFullName()); // same full name
         }
         return false;
+    }
+
+    /**
+     * Getter for the list of attributes.
+     * @return the list of attributes.
+     */
+    public List<ExtractedAttribute> getAttributes() {
+        return attributes;
     }
 
     /**
