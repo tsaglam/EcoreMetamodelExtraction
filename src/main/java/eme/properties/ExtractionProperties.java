@@ -114,6 +114,9 @@ public class ExtractionProperties extends AbstractProperties {
         properties.setProperty("ExtractStaticMethods", "false");
         properties.setProperty("ExtractStaticAttributes", "false");
         properties.setProperty("SavingStrategy", "NewProject");
+        properties.setProperty("ExtractProtectedMethods", "true");
+        properties.setProperty("ExtractProtectedMethods", "false");
+        properties.setProperty("ExtractConstructors", "false");
     }
 
     /**
