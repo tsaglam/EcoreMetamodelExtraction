@@ -38,7 +38,7 @@ public class ExtractedMethod extends ExtractedElement {
      * Getter for the access level modifier.
      * @return the access level modifier of the method.
      */
-    public AccessLevelModifier getAccessLevelModifier() {
+    public AccessLevelModifier getModifier() {
         return modifier;
     }
 

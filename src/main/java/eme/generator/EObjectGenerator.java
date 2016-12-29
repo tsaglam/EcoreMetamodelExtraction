@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.model.AccessLevelModifier;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
@@ -141,15 +142,16 @@ public class EObjectGenerator {
     private void addOperations(ExtractedType type, List<EOperation> list) {
         EOperation operation;
         for (ExtractedMethod method : type.getMethods()) {
-            operation = ecoreFactory.createEOperation();
-            operation.setName(method.getName());
-            if (method.getReturnType() != null) {
-                operation.setEType(getEDataType(method.getReturnType()));
+            if (isExtractable(method)) {
+                operation = ecoreFactory.createEOperation();
+                operation.setName(method.getName());
+                if (method.getReturnType() != null) {
+                    operation.setEType(getEDataType(method.getReturnType()));
+                }
+                addParameters(method, operation.getEParameters());
+                list.add(operation);
             }
-            addParameters(method, operation.getEParameters());
-            list.add(operation);
         }
-
     }
 
     /**
@@ -274,5 +276,15 @@ public class EObjectGenerator {
             root.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
         }
+    }
+
+    /**
+     * Checks whether a method is extractable. Checks the properties and the method.
+     */
+    private boolean isExtractable(ExtractedMethod method) {
+        return (!method.isConstructor() || properties.getExtractConstructors())
+                && (!method.isAbstract() || properties.getExtractAbstractMethods())
+                && (!method.isStatic() || properties.getExtractStaticMethods())
+                && (method.getModifier() != AccessLevelModifier.PRIVATE || properties.getExtractPrivateMethods());
     }
 }
