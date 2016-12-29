@@ -18,8 +18,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import eme.model.AccessLevelModifier;
 import eme.model.ExtractedClass;
-import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
@@ -135,10 +135,10 @@ public class JavaProjectParser {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build
-                                                                                        // name
-            ExtractedDataType returnType = TypeParser.parseReturnType(method);
-            extractedMethod = new ExtractedMethod(methodName, returnType, Flags.isStatic(method.getFlags()));
+            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // name
+            int flags = method.getFlags();
+            extractedMethod = new ExtractedMethod(methodName, TypeParser.parseReturnType(method), method.isConstructor());
+            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags));
             for (ILocalVariable parameter : method.getParameters()) {
                 extractedMethod.addParameter(TypeParser.parseParameter(parameter, method));
             }
