@@ -51,6 +51,7 @@ public class EcoreMetamodelExtraction {
      * @return the Ecore metamodel with the default package as root.
      */
     public EPackage extractFrom(IProject project) {
+        logger.info("Started extraction of project " + project.getName());
         check(project); // check if valid.
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = parser.buildIntermediateModel(javaProject);

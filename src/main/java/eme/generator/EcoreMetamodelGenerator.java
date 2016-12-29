@@ -1,5 +1,7 @@
 package eme.generator;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.generator.saving.AbstractSavingStrategy;
@@ -9,6 +11,7 @@ import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.generator.saving.SameProjectSavingStrategy;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
+import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -17,7 +20,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EcoreMetamodelGenerator {
-
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private EPackage ecoreMetamodel;
     private final EObjectGenerator eObjectGenerator;
@@ -59,6 +62,7 @@ public class EcoreMetamodelGenerator {
      * @return the root element of the metamodel, an EPackage.
      */
     public EPackage generateMetamodelFrom(IntermediateModel model) {
+        logger.info("Started generating the metamodel");
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null: " + model.toString());
@@ -74,6 +78,7 @@ public class EcoreMetamodelGenerator {
      * Saves the metamodel as an Ecore file.
      */
     public void saveMetamodel() {
+        logger.info("Started saving the metamodel");
         if (ecoreMetamodel == null) {
             throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
         }
