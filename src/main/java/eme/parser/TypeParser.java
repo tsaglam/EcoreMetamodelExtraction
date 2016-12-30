@@ -12,8 +12,7 @@ import eme.model.ExtractedDataType;
 import eme.model.ExtractedVariable;
 
 /**
- * Helper class to deal with type signatures. Used following source:
- * stackoverflow.com/questions/27775320/how-to-get-fully-qualified-name-of-parameter-value-in-a-method
+ * Helper class to deal with type signatures.
  * @author Timur Saglam
  */
 public abstract class TypeParser {
@@ -37,25 +36,12 @@ public abstract class TypeParser {
      * @throws JavaModelException if there are problems with the JDT API.
      */
     public static String fullName(String signature, IType iType) throws JavaModelException {
-        String typeSignature = Signature.getElementType(signature);
-        String simpleName = Signature.getSignatureSimpleName(typeSignature);
-        String[][] resolvedTypeNames = iType.resolveType(simpleName);
-        String fullName = ""; // TODO (middle) design own approach
-        if (resolvedTypeNames != null) {
-            String[] typeName = resolvedTypeNames[0];
-            if (typeName != null) {
-                for (int i = 0; i < typeName.length; i++) {
-                    if (fullName.length() > 0) {
-                        fullName += '.';
-                    }
-                    String part = typeName[i];
-                    if (part != null) {
-                        fullName += part;
-                    }
-                }
-            }
+        String simpleName = Signature.getSignatureSimpleName(Signature.getElementType(signature));
+        String[][] resolvedType = iType.resolveType(simpleName); // resolve type
+        if (resolvedType != null && resolvedType[0] != null) {
+            return Signature.toQualifiedName(resolvedType[0]);
         }
-        return ("".equals(fullName)) ? simpleName : fullName;
+        return simpleName;
     }
 
     /**
