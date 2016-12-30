@@ -1,7 +1,5 @@
 package eme.parser;
 
-import java.util.Arrays;
-
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -38,14 +36,14 @@ public abstract class TypeParser {
      * @return the full name.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public static String fullName(String typeSignature, IType iType) throws JavaModelException {
+    public static String fullName(String signature, IType iType) throws JavaModelException {
+        String typeSignature = Signature.getElementType(signature);
         String simpleName = Signature.getSignatureSimpleName(typeSignature);
         String[][] resolvedTypeNames = iType.resolveType(simpleName);
-        String fullName = simpleName; // TODO (middle) design own approach
+        String fullName = ""; // TODO (middle) design own approach
         if (resolvedTypeNames != null) {
             String[] typeName = resolvedTypeNames[0];
             if (typeName != null) {
-                fullName = "";
                 for (int i = 0; i < typeName.length; i++) {
                     if (fullName.length() > 0) {
                         fullName += '.';
@@ -57,7 +55,7 @@ public abstract class TypeParser {
                 }
             }
         }
-        return fullName.split("\\[")[0];
+        return ("".equals(fullName)) ? simpleName : fullName;
     }
 
     /**

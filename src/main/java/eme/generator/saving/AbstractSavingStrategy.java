@@ -44,7 +44,7 @@ public abstract class AbstractSavingStrategy {
      * @param projectName is the name of the project the EPAckage was generated from.
      */
     public void save(EPackage ePackage, String projectName) {
-        beforeSaving(projectName);
+        beforeSaving(projectName); // TODO (HIGH) implement resource map thing
         ePackage.eClass(); // Initialize the EPackage:
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
