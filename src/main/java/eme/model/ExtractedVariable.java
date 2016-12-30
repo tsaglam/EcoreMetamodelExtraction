@@ -13,8 +13,8 @@ public class ExtractedVariable extends ExtractedDataType {
      * @param simpleName is the simple name of the type of the variable, like "String", "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of type of the variable, like "java.lang.String", "java.util.list" and "char".
      */
-    public ExtractedVariable(String identifier, String simpleName, String fullName) {
-        super(simpleName, fullName);
+    public ExtractedVariable(String identifier, String simpleName, String fullName, int arrayCount) {
+        super(simpleName, fullName, arrayCount);
         this.identifier = identifier;
     }
 

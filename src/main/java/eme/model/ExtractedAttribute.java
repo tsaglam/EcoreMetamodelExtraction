@@ -16,8 +16,8 @@ public class ExtractedAttribute extends ExtractedVariable {
      * @param simpleName is the simple name of the type of the attribute, like "String", "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and "char".
      */
-    public ExtractedAttribute(String identifier, String simpleName, String fullName) {
-        super(identifier, simpleName, fullName);
+    public ExtractedAttribute(String identifier, String simpleName, String fullName, int arrayCount) {
+        super(identifier, simpleName, fullName, arrayCount);
     }
 
     /**

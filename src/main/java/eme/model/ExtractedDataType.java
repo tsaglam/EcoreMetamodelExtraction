@@ -7,7 +7,7 @@ package eme.model;
 public class ExtractedDataType {
     private final String simpleName;
     private final String fullName;
-    private int arrayDimension;
+    private final int arrayDimension;
     private int genericArguments;
 
     /**
@@ -15,18 +15,11 @@ public class ExtractedDataType {
      * @param simpleName is the simple name of the data type, like "String", "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
      */
-    public ExtractedDataType(String simpleName, String fullName) {
+    public ExtractedDataType(String simpleName, String fullName, int arrayCount) {
         this.simpleName = simpleName;
         this.fullName = fullName;
-        if (simpleName.contains("<")) {
-            genericArguments = 1; // at least one
-        }
-        for (int i = 0; i < simpleName.length(); i++) {
-            if (simpleName.charAt(i) == ',') { // TODO (HIGH) fix generic parsing
-                genericArguments++; // count additional generic arguments
-            }
-        }
-        arrayDimension = fullName.split("\\[").length - 1; // count array dimensions
+        genericArguments = 0; // TODO (HIGH) detect generics
+        arrayDimension = arrayCount;
     }
 
     /**

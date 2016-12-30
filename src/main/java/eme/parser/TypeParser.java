@@ -1,5 +1,7 @@
 package eme.parser;
 
+import java.util.Arrays;
+
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -55,7 +57,7 @@ public abstract class TypeParser {
                 }
             }
         }
-        return fullName;
+        return fullName.split("\\[")[0];
     }
 
     /**
@@ -69,7 +71,7 @@ public abstract class TypeParser {
         String signature = field.getTypeSignature(); // get return type signature
         String simpleName = TypeParser.simpleName(signature); // get simple name
         String fullName = TypeParser.fullName(signature, iType); // get full name
-        return new ExtractedAttribute(field.getElementName(), simpleName, fullName);
+        return new ExtractedAttribute(field.getElementName(), simpleName, fullName, Signature.getArrayCount(signature));
     }
 
     /**
@@ -83,7 +85,7 @@ public abstract class TypeParser {
         String signature = parameter.getTypeSignature(); // get return type signature
         String simpleName = TypeParser.simpleName(signature); // get simple name
         String fullName = TypeParser.fullName(signature, iMethod); // get full name
-        return new ExtractedVariable(parameter.getElementName(), simpleName, fullName);
+        return new ExtractedVariable(parameter.getElementName(), simpleName, fullName, Signature.getArrayCount(signature));
     }
 
     /**
@@ -99,7 +101,7 @@ public abstract class TypeParser {
         }
         String simpleName = TypeParser.simpleName(signature); // get simple name
         String fullName = TypeParser.fullName(signature, iMethod); // get full name
-        return new ExtractedDataType(simpleName, fullName); // create return type
+        return new ExtractedDataType(simpleName, fullName, Signature.getArrayCount(signature)); // create return type
     }
 
     /**
