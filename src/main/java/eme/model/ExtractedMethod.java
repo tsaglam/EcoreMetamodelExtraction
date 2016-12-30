@@ -18,6 +18,8 @@ public class ExtractedMethod extends ExtractedElement {
     /**
      * Basic constructor.
      * @param fullName is the full name of the method, consisting out of the full class name and the method name.
+     * @param returnType is the data type for the return type of the method. null if it is void.
+     * @param constructor determines whether this method is an constructor.
      */
     public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean constructor) {
         super(fullName);

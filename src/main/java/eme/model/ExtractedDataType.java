@@ -16,6 +16,7 @@ public class ExtractedDataType {
     /**
      * Basic constructor, takes the full and the simple name.
      * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
+     * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.
      */
     public ExtractedDataType(String fullName, int arrayCount) {
         this.fullName = fullName;

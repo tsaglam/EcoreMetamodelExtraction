@@ -20,7 +20,7 @@ public class ExtractedClass extends ExtractedType {
 
     /**
      * Getter for the name of the super class.
-     * @return
+     * @return the super class name.
      */
     public String getSuperClass() {
         return superClass;

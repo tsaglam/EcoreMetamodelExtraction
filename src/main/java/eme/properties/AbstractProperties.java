@@ -31,7 +31,7 @@ public abstract class AbstractProperties {
     /**
      * Basic constructor. Loads the properties file, creates a new one if the file does not exist.
      * @param fileName is the name of the properties file.
-     * @param comment is the comment of the properties file.
+     * @param fileComment is the comment of the properties file.
      */
     public AbstractProperties(String fileName, String fileComment) {
         this.fileComment = fileComment;

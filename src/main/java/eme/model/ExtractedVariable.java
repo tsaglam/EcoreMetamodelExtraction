@@ -11,6 +11,7 @@ public class ExtractedVariable extends ExtractedDataType {
      * Basic constructor, creates variable.
      * @param identifier is the name of the variable.
      * @param fullName is the full name of type of the variable, like "java.lang.String", "java.util.list" and "char".
+     * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.
      */
     public ExtractedVariable(String identifier, String fullName, int arrayCount) {
         super(fullName, arrayCount);

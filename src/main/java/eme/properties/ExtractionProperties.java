@@ -54,7 +54,7 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractNestedTypes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes", "true"));
     }
-    
+
     /**
      * Returns the value of the property ExtractPrivateAttributes.
      * @return the value.
@@ -62,7 +62,6 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractPrivateAttributes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractPrivateAttributes", "false"));
     }
-
 
     /**
      * Returns the value of the property ExtractPrivateMethods.
@@ -79,7 +78,7 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractProtectedAttributes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractProtectedAttributes", "false"));
     }
-    
+
     /**
      * Returns the value of the property ExtractProtectedMethods.
      * @return the value.
@@ -87,7 +86,7 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractProtectedMethods() {
         return Boolean.parseBoolean(properties.getProperty("ExtractProtectedMethods", "true"));
     }
-    
+
     /**
      * Returns the value of the property ExtractPublicAttributes.
      * @return the value.
@@ -95,7 +94,7 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractPublicAttributes() {
         return Boolean.parseBoolean(properties.getProperty("ExtractPublicAttributes", "true"));
     }
-    
+
     /**
      * Returns the value of the property ExtractStaticAttributes.
      * @return the value.
@@ -177,7 +176,7 @@ public class ExtractionProperties extends AbstractProperties {
     public void setExtractNestedTypes(boolean value) {
         properties.setProperty("ExtractNestedTypes", Boolean.toString(value));
     }
-    
+
     /**
      * Sets the value of the property ExtractPrivateAttributes.
      * @param value is the new value.
@@ -201,7 +200,7 @@ public class ExtractionProperties extends AbstractProperties {
     public void setExtractProtectedAttributes(boolean value) {
         properties.setProperty("ExtractProtectedttributes", Boolean.toString(value));
     }
-    
+
     /**
      * Sets the value of the property ExtractProtectedMethods.
      * @param value is the new value.
@@ -209,7 +208,7 @@ public class ExtractionProperties extends AbstractProperties {
     public void setExtractProtectedMethods(boolean value) {
         properties.setProperty("ExtractProtectedMethods", Boolean.toString(value));
     }
-    
+
     /**
      * Sets the value of the property ExtractPublicAttributes.
      * @param value is the new value.
@@ -217,7 +216,7 @@ public class ExtractionProperties extends AbstractProperties {
     public void setExtractPublicAttributes(boolean value) {
         properties.setProperty("ExtractPublicAttributes", Boolean.toString(value));
     }
-    
+
     /**
      * Sets the value of the property ExtractStaticAttributes.
      * @param value is the new value.

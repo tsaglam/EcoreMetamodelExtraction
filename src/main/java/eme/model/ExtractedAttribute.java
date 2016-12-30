@@ -14,6 +14,7 @@ public class ExtractedAttribute extends ExtractedVariable {
      * Basic constructor, creates the attribute.
      * @param identifier is the name of the attribute.
      * @param fullName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and "char".
+     * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.
      */
     public ExtractedAttribute(String identifier, String fullName, int arrayCount) {
         super(identifier, fullName, arrayCount);
@@ -50,9 +51,9 @@ public class ExtractedAttribute extends ExtractedVariable {
      * @param staticAttribute determines whether the attribute is static or not.
      * @param finalAttribute determines whether the attribute is final or not.
      */
-    public void setFlags(AccessLevelModifier modifier, boolean staticMethod, boolean finalAttribute) {
+    public void setFlags(AccessLevelModifier modifier, boolean staticAttribute, boolean finalAttribute) {
         this.modifier = modifier;
-        this.staticAttribute = staticMethod;
+        this.staticAttribute = staticAttribute;
         this.finalAttribute = finalAttribute;
     }
 
