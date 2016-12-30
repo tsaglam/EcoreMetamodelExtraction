@@ -56,6 +56,15 @@ public class ExtractionProperties extends AbstractProperties {
     }
     
     /**
+     * Returns the value of the property ExtractPrivateAttributes.
+     * @return the value.
+     */
+    public boolean getExtractPrivateAttributes() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractPrivateAttributes", "false"));
+    }
+
+
+    /**
      * Returns the value of the property ExtractPrivateMethods.
      * @return the value.
      */
@@ -63,7 +72,14 @@ public class ExtractionProperties extends AbstractProperties {
         return Boolean.parseBoolean(properties.getProperty("ExtractPrivateMethods", "false"));
     }
 
-
+    /**
+     * Returns the value of the property ExtractProtectedAttributes.
+     * @return the value.
+     */
+    public boolean getExtractProtectedAttributes() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractProtectedAttributes", "false"));
+    }
+    
     /**
      * Returns the value of the property ExtractProtectedMethods.
      * @return the value.
@@ -71,7 +87,15 @@ public class ExtractionProperties extends AbstractProperties {
     public boolean getExtractProtectedMethods() {
         return Boolean.parseBoolean(properties.getProperty("ExtractProtectedMethods", "true"));
     }
-
+    
+    /**
+     * Returns the value of the property ExtractPublicAttributes.
+     * @return the value.
+     */
+    public boolean getExtractPublicAttributes() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractPublicAttributes", "true"));
+    }
+    
     /**
      * Returns the value of the property ExtractStaticAttributes.
      * @return the value.
@@ -113,6 +137,9 @@ public class ExtractionProperties extends AbstractProperties {
         properties.setProperty("ExtractAbstractMethods", "false");
         properties.setProperty("ExtractStaticMethods", "false");
         properties.setProperty("ExtractStaticAttributes", "false");
+        properties.setProperty("ExtractPublicAttributes", "true");
+        properties.setProperty("ExtractProtectedAttributes", "false");
+        properties.setProperty("ExtractPrivateAttributes", "false");
         properties.setProperty("SavingStrategy", "NewProject");
         properties.setProperty("ExtractProtectedMethods", "true");
         properties.setProperty("ExtractProtectedMethods", "false");
@@ -152,6 +179,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
     
     /**
+     * Sets the value of the property ExtractPrivateAttributes.
+     * @param value is the new value.
+     */
+    public void setExtractPrivateAttributes(boolean value) {
+        properties.setProperty("ExtractPrivateAttributes", Boolean.toString(value));
+    }
+
+    /**
      * Sets the value of the property ExtractPrivateMethods.
      * @param value is the new value.
      */
@@ -160,13 +195,29 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Sets the value of the property ExtractProtectedAttributes.
+     * @param value is the new value.
+     */
+    public void setExtractProtectedAttributes(boolean value) {
+        properties.setProperty("ExtractProtectedttributes", Boolean.toString(value));
+    }
+    
+    /**
      * Sets the value of the property ExtractProtectedMethods.
      * @param value is the new value.
      */
     public void setExtractProtectedMethods(boolean value) {
         properties.setProperty("ExtractProtectedMethods", Boolean.toString(value));
     }
-
+    
+    /**
+     * Sets the value of the property ExtractPublicAttributes.
+     * @param value is the new value.
+     */
+    public void setExtractPublicAttributes(boolean value) {
+        properties.setProperty("ExtractPublicAttributes", Boolean.toString(value));
+    }
+    
     /**
      * Sets the value of the property ExtractStaticAttributes.
      * @param value is the new value.
