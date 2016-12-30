@@ -1,5 +1,6 @@
 package eme.generator;
 
+import static eme.model.AccessLevelModifier.PUBLIC;
 import static eme.model.AccessLevelModifier.PRIVATE;
 import static eme.model.AccessLevelModifier.PROTECTED;
 
@@ -21,6 +22,7 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.model.AccessLevelModifier;
 import eme.model.ExtractedAttribute;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedDataType;
@@ -148,11 +150,13 @@ public class EObjectGenerator {
     private void addAttributes(ExtractedType type, List<EStructuralFeature> list) {
         EAttribute eAttribute;
         for (ExtractedAttribute attribute : type.getAttributes()) {
-            eAttribute = ecoreFactory.createEAttribute(); // TODO (HIGH) isExtracteable
-            eAttribute.setName(attribute.getIdentifier());
-            eAttribute.setChangeable(!attribute.isFinal());
-            eAttribute.setEType(getEDataType(attribute));
-            list.add(eAttribute);
+            if (isExtractable(attribute)) {
+                eAttribute = ecoreFactory.createEAttribute();
+                eAttribute.setName(attribute.getIdentifier());
+                eAttribute.setChangeable(!attribute.isFinal());
+                eAttribute.setEType(getEDataType(attribute));
+                list.add(eAttribute);
+            }
         }
     }
 
@@ -301,13 +305,25 @@ public class EObjectGenerator {
     }
 
     /**
+     * Checks whether a attribute is extractable. Checks the properties and the attribute.
+     */
+    private boolean isExtractable(ExtractedAttribute attribute) {
+        AccessLevelModifier modifier = attribute.getModifier();
+        return (!attribute.isStatic() || properties.getExtractStaticMethods())// extract static attributes
+                && (modifier != PUBLIC || properties.getExtractProtectedAttributes()) // extract public attributes
+                && (modifier != PROTECTED || properties.getExtractProtectedAttributes()) // extract protected attributes
+                && (modifier != PRIVATE || properties.getExtractPrivateAttributes()); // extract private attributes
+    }
+
+    /**
      * Checks whether a method is extractable. Checks the properties and the method.
      */
     private boolean isExtractable(ExtractedMethod method) {
+        AccessLevelModifier modifier = method.getModifier();
         return (!method.isConstructor() || properties.getExtractConstructors()) // extract constructors
                 && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
                 && (!method.isStatic() || properties.getExtractStaticMethods())// extract static methods
-                && (method.getModifier() != PROTECTED || properties.getExtractProtectedMethods()) // protected methods
-                && (method.getModifier() != PRIVATE || properties.getExtractPrivateMethods()); // private methods
+                && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
+                && (modifier != PRIVATE || properties.getExtractPrivateMethods()); // extract private methods
     }
 }
