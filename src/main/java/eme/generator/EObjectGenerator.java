@@ -188,12 +188,11 @@ public class EObjectGenerator {
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
         EParameter eParameter;
         for (ExtractedVariable parameter : method.getParameters()) {
-            if (!parameter.isArray() && !parameter.isGeneric()) {  // TODO (HIGH) generics & arrays
-                eParameter = ecoreFactory.createEParameter();
-                eParameter.setName(parameter.getIdentifier());
-                eParameter.setEType(getEDataType(parameter));
-                list.add(eParameter);
-            }
+            // TODO (HIGH) generics & arrays
+            eParameter = ecoreFactory.createEParameter();
+            eParameter.setName(parameter.getIdentifier());
+            eParameter.setEType(getEDataType(parameter));
+            list.add(eParameter);
         }
     }
 
@@ -250,7 +249,7 @@ public class EObjectGenerator {
         addSuperClass(extractedClass, eSuperTypes); // get super
         addSuperInterfaces(extractedClass, eSuperTypes);
         incompleteEClasses.put(eClass, extractedClass); // finish building later
-        return eClass; // TODO (MEDIUM) remove duplicate code from class & interface
+        return eClass; // TODO (MEDIUM) remove duplicate code from class & interface. clean class.
     }
 
     /**

@@ -52,7 +52,7 @@ public class JavaProjectParser {
         }
         currentModel.print(); // print intermediate model.
         return currentModel;
-    } // TODO (MEDIUM) improve code style, maybe split class etc.
+    }
 
     /**
      * Checks if a packet fragment is a source package.
