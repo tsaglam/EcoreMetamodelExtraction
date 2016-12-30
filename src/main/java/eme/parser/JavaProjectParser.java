@@ -36,14 +36,6 @@ public class JavaProjectParser {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
-    private final boolean printModel;
-
-    /**
-     * Basic constructor.
-     */
-    public JavaProjectParser() {
-        printModel = true;
-    }
 
     /**
      * Analyzes a java project and builds an intermediate model.
@@ -58,9 +50,7 @@ public class JavaProjectParser {
         } catch (JavaModelException exception) {
             logger.fatal("Error while extracting the model.", exception);
         }
-        if (printModel) { // if printing is enabled TODO (MEDIUM) check in model class
-            currentModel.print(); // print intermediate model.
-        }
+        currentModel.print(); // print intermediate model.
         return currentModel;
     } // TODO (MEDIUM) improve code style, maybe split class etc.
 
