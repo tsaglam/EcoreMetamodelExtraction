@@ -13,11 +13,10 @@ public class ExtractedAttribute extends ExtractedVariable {
     /**
      * Basic constructor, creates the attribute.
      * @param identifier is the name of the attribute.
-     * @param simpleName is the simple name of the type of the attribute, like "String", "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and "char".
      */
-    public ExtractedAttribute(String identifier, String simpleName, String fullName, int arrayCount) {
-        super(identifier, simpleName, fullName, arrayCount);
+    public ExtractedAttribute(String identifier, String fullName, int arrayCount) {
+        super(identifier, fullName, arrayCount);
     }
 
     /**
@@ -59,6 +58,6 @@ public class ExtractedAttribute extends ExtractedVariable {
 
     @Override
     public String toString() {
-        return getClass() + "(" + getIdentifier() + ", " + getTypeName() + ", " + getFullTypeName() + ")";
+        return getClass().getSimpleName() + "(" + modifier + " " + getFullTypeName() + " " + getIdentifier() + ")";
     }
 }

@@ -69,7 +69,7 @@ public class JavaProjectParser {
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
         for (IField field : iType.getFields()) {
-            attribute = TypeParser.parseField(field, iType);
+            attribute = DataTypeParser.parseField(field, iType);
             int flags = field.getFlags();
             attribute.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isFinal(flags));
             extractedType.addAttribute(attribute);
@@ -144,10 +144,10 @@ public class JavaProjectParser {
         for (IMethod method : iType.getMethods()) { // for every method
             methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // name
             int flags = method.getFlags();
-            extractedMethod = new ExtractedMethod(methodName, TypeParser.parseReturnType(method), method.isConstructor());
+            extractedMethod = new ExtractedMethod(methodName, DataTypeParser.parseReturnType(method), method.isConstructor());
             extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags));
             for (ILocalVariable parameter : method.getParameters()) {
-                extractedMethod.addParameter(TypeParser.parseParameter(parameter, method));
+                extractedMethod.addParameter(DataTypeParser.parseParameter(parameter, method));
             }
             extractedType.addMethod(extractedMethod);
         }

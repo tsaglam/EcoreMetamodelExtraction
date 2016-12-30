@@ -1,5 +1,8 @@
 package eme.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Represents a data type in the model.
  * @author Timur Saglam
@@ -8,17 +11,20 @@ public class ExtractedDataType {
     private final String simpleName;
     private final String fullName;
     private final int arrayDimension;
-    private int genericArguments;
+    private List<ExtractedDataType> genericArguments;
 
     /**
      * Basic constructor, takes the full and the simple name.
-     * @param simpleName is the simple name of the data type, like "String", "List&ltint&gt" and "char[][]".
      * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
      */
-    public ExtractedDataType(String simpleName, String fullName, int arrayCount) {
-        this.simpleName = simpleName;
+    public ExtractedDataType(String fullName, int arrayCount) {
         this.fullName = fullName;
-        genericArguments = 0; // TODO (HIGH) detect generics
+        if (fullName.contains(".")) {
+            simpleName = fullName.substring(fullName.lastIndexOf(".") + 1);
+        } else {
+            simpleName = fullName;
+        }
+        genericArguments = new LinkedList<ExtractedDataType>();
         arrayDimension = arrayCount;
     }
 
@@ -39,10 +45,10 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the number of generic arguments.
-     * @return the the number of generic arguments, 0 if the type is not generic.
+     * getter for the generic arguments.
+     * @return the List of generic arguments of this data type.
      */
-    public int getGenericArguments() {
+    public List<ExtractedDataType> getGenericArguments() {
         return genericArguments;
     }
 
@@ -67,11 +73,19 @@ public class ExtractedDataType {
      * @return true if it is generic.
      */
     public boolean isGeneric() {
-        return genericArguments > 0;
+        return genericArguments.size() > 0;
+    }
+
+    /**
+     * Setter for the generic arguments.
+     * @param genericArguments is the list of generic arguments.
+     */
+    public void setGenericArguments(List<ExtractedDataType> genericArguments) {
+        this.genericArguments = genericArguments;
     }
 
     @Override
     public String toString() {
-        return getClass() + "(" + simpleName + ", " + fullName + ")";
+        return getClass().getSimpleName() + "(" + fullName + ")";
     }
 }
