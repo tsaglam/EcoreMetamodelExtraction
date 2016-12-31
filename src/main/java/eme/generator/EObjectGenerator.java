@@ -1,9 +1,5 @@
 package eme.generator;
 
-import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
-import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
-import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +25,6 @@ import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
-import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
@@ -52,6 +47,7 @@ public class EObjectGenerator {
     private final ExtractionProperties properties;
     private EPackage root;
     private final EDataTypeGenerator typeGenerator;
+    private final ElementSelector selector;
 
     /**
      * Basic constructor.
@@ -61,6 +57,7 @@ public class EObjectGenerator {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
         typeGenerator = new EDataTypeGenerator();
+        selector = new ElementSelector(properties);
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
     }
@@ -75,6 +72,7 @@ public class EObjectGenerator {
             addOperations(incompleteEClasses.get(eClass), eClass.getEOperations());
             addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures());
         }
+        logger.info(selector.getReport());
     }
 
     /**
@@ -119,12 +117,12 @@ public class EObjectGenerator {
         }
         ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
-            if (isExtractable(subpackage)) { // if is allowed to
+            if (selector.allowsGenerating(subpackage)) { // if is allowed to
                 ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
             }
         }
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
-            if (isExtractable(type)) { // if is allowed to
+            if (selector.allowsGenerating(type)) { // if is allowed to
                 ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
             }
         }
@@ -149,7 +147,7 @@ public class EObjectGenerator {
     private void addAttributes(ExtractedType type, List<EStructuralFeature> list) {
         EAttribute eAttribute;
         for (ExtractedAttribute attribute : type.getAttributes()) {
-            if (isExtractable(attribute)) {
+            if (selector.allowsGenerating(attribute)) {
                 eAttribute = ecoreFactory.createEAttribute();
                 eAttribute.setName(attribute.getIdentifier());
                 eAttribute.setChangeable(!attribute.isFinal());
@@ -167,7 +165,7 @@ public class EObjectGenerator {
     private void addOperations(ExtractedType type, List<EOperation> list) {
         EOperation operation;
         for (ExtractedMethod method : type.getMethods()) {
-            if (isExtractable(method)) {
+            if (selector.allowsGenerating(method)) {
                 operation = ecoreFactory.createEOperation();
                 operation.setName(method.getName());
                 if (method.getReturnType() != null) {
@@ -300,30 +298,5 @@ public class EObjectGenerator {
             root.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
         }
-    }
-
-    private boolean isExtractable(ExtractedAttribute attribute) {
-        AccessLevelModifier modifier = attribute.getModifier();
-        return (!attribute.isStatic() || properties.getExtractStaticMethods())// extract static attributes
-                && (modifier != PUBLIC || properties.getExtractProtectedAttributes()) // extract public attributes
-                && (modifier != PROTECTED || properties.getExtractProtectedAttributes()) // extract protected attributes
-                && (modifier != PRIVATE || properties.getExtractPrivateAttributes()); // extract private attributes
-    }
-
-    private boolean isExtractable(ExtractedMethod method) {
-        AccessLevelModifier modifier = method.getModifier();
-        return method.isSelected() && (!method.isConstructor() || properties.getExtractConstructors())
-                && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
-                && (!method.isStatic() || properties.getExtractStaticMethods())// extract static methods
-                && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
-                && (modifier != PRIVATE || properties.getExtractPrivateMethods()); // extract private methods
-    }
-
-    private boolean isExtractable(ExtractedPackage subpackage) {
-        return subpackage.isSelected() && (!subpackage.isEmpty() || properties.getExtractEmptyPackages());
-    }
-
-    private boolean isExtractable(ExtractedType type) {
-        return type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes());
     }
 }

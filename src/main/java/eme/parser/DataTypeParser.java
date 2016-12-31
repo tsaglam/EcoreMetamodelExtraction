@@ -15,7 +15,7 @@ import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
- * Helper class to deal with type signatures.
+ * Helper class to deal with type signatures and generate data types. Parses fields, parameters and return types.
  * @author Timur Saglam
  */
 public abstract class DataTypeParser {
