@@ -3,6 +3,10 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import eme.model.datatypes.AccessLevelModifier;
+import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedParameter;
+
 /**
  * Represents a method of a class in the model.
  * @author Timur Saglam

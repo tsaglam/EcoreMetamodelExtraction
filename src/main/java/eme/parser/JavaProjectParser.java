@@ -18,8 +18,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import eme.model.AccessLevelModifier;
-import eme.model.ExtractedAttribute;
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
@@ -27,6 +25,8 @@ import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
+import eme.model.datatypes.AccessLevelModifier;
+import eme.model.datatypes.ExtractedAttribute;
 
 /**
  * The class analyzes java projects and builds intermediate models.

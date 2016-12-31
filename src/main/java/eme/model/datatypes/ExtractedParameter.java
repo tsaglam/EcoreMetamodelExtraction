@@ -1,4 +1,4 @@
-package eme.model;
+package eme.model.datatypes;
 
 /**
  * Represents an extracted parameter in the model. Can be a method parameter or an class parameter.

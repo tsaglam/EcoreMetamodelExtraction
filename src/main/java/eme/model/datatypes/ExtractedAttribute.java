@@ -1,4 +1,4 @@
-package eme.model;
+package eme.model.datatypes;
 
 /**
  * Represents an extracted Attribute in the model

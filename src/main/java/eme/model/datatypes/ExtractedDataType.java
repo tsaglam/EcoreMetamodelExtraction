@@ -1,4 +1,4 @@
-package eme.model;
+package eme.model.datatypes;
 
 import java.util.LinkedList;
 import java.util.List;

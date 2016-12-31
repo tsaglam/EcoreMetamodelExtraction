@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
-import eme.model.ExtractedDataType;
+import eme.model.datatypes.ExtractedDataType;
 
 /**
  * Generator class for the generation of Ecore data types: EDataTypes

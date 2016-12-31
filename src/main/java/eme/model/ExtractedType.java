@@ -3,6 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import eme.model.datatypes.ExtractedAttribute;
+
 /**
  * Represents a type in the intermediate model.
  * @author Timur Saglam

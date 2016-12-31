@@ -1,8 +1,8 @@
 package eme.generator;
 
-import static eme.model.AccessLevelModifier.PRIVATE;
-import static eme.model.AccessLevelModifier.PROTECTED;
-import static eme.model.AccessLevelModifier.PUBLIC;
+import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
+import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
+import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,17 +22,17 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
-import eme.model.AccessLevelModifier;
-import eme.model.ExtractedAttribute;
 import eme.model.ExtractedClass;
-import eme.model.ExtractedDataType;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
-import eme.model.ExtractedParameter;
 import eme.model.IntermediateModel;
+import eme.model.datatypes.AccessLevelModifier;
+import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedParameter;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 

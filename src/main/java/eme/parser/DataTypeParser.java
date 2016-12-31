@@ -10,9 +10,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
-import eme.model.ExtractedAttribute;
-import eme.model.ExtractedDataType;
-import eme.model.ExtractedParameter;
+import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedParameter;
 
 /**
  * Helper class to deal with type signatures.

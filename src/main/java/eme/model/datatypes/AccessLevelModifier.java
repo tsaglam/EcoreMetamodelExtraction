@@ -1,4 +1,4 @@
-package eme.model;
+package eme.model.datatypes;
 
 import org.eclipse.jdt.core.Flags;
 
