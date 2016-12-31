@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.Signature;
 
 import eme.model.ExtractedAttribute;
 import eme.model.ExtractedDataType;
-import eme.model.ExtractedVariable;
+import eme.model.ExtractedParameter;
 
 /**
  * Helper class to deal with type signatures.
@@ -43,12 +43,12 @@ public abstract class DataTypeParser {
      * @return the extracted method parameter.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public static ExtractedVariable parseParameter(ILocalVariable parameter, IMethod iMethod) throws JavaModelException {
+    public static ExtractedParameter parseParameter(ILocalVariable parameter, IMethod iMethod) throws JavaModelException {
         String signature = parameter.getTypeSignature(); // get return type signature
         String name = parameter.getElementName(); // name of the parameter
         IType declaringType = iMethod.getDeclaringType(); // declaring type of the method
         int arrayCount = Signature.getArrayCount(signature); // amount of array dimensions
-        ExtractedVariable variable = new ExtractedVariable(name, getFullName(signature, declaringType), arrayCount);
+        ExtractedParameter variable = new ExtractedParameter(name, getFullName(signature, declaringType), arrayCount);
         variable.setGenericArguments(parseGenericTypes(signature, declaringType));
         return variable;
     }

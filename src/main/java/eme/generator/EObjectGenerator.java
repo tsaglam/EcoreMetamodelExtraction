@@ -31,7 +31,7 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
-import eme.model.ExtractedVariable;
+import eme.model.ExtractedParameter;
 import eme.model.IntermediateModel;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
@@ -186,7 +186,7 @@ public class EObjectGenerator {
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
         EParameter eParameter;
-        for (ExtractedVariable parameter : method.getParameters()) {
+        for (ExtractedParameter parameter : method.getParameters()) {
             // TODO (HIGH) generics & arrays
             eParameter = ecoreFactory.createEParameter();
             eParameter.setName(parameter.getIdentifier());

@@ -4,7 +4,7 @@ package eme.model;
  * Represents an extracted Attribute in the model
  * @author Timur Saglam
  */
-public class ExtractedAttribute extends ExtractedVariable {
+public class ExtractedAttribute extends ExtractedParameter {
 
     private boolean finalAttribute;
     private AccessLevelModifier modifier;

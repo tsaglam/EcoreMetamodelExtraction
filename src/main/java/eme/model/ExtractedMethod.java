@@ -11,7 +11,7 @@ public class ExtractedMethod extends ExtractedElement {
     private boolean abstractMethod;
     private final boolean constructor;
     private AccessLevelModifier modifier;
-    private final List<ExtractedVariable> parameters;
+    private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
     private boolean staticMethod;
 
@@ -23,7 +23,7 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean constructor) {
         super(fullName);
-        parameters = new LinkedList<ExtractedVariable>();
+        parameters = new LinkedList<ExtractedParameter>();
         this.returnType = returnType;
         this.constructor = constructor;
     }
@@ -32,7 +32,7 @@ public class ExtractedMethod extends ExtractedElement {
      * Adds a parameter to the method.
      * @param parameter is the new parameter.
      */
-    public void addParameter(ExtractedVariable parameter) {
+    public void addParameter(ExtractedParameter parameter) {
         parameters.add(parameter);
     }
 
@@ -48,7 +48,7 @@ public class ExtractedMethod extends ExtractedElement {
      * getter for the parameters.
      * @return the parameters
      */
-    public List<ExtractedVariable> getParameters() {
+    public List<ExtractedParameter> getParameters() {
         return parameters;
     }
 
