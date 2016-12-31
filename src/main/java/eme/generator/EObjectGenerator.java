@@ -119,12 +119,12 @@ public class EObjectGenerator {
         }
         ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
         for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
-            if (!subpackage.isEmpty() || properties.getExtractEmptyPackages()) { // if is allowed to
+            if (isExtractable(subpackage)) { // if is allowed to
                 ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
             }
         }
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
-            if (!type.isInnerType() || properties.getExtractNestedTypes()) { // if is allowed to
+            if (isExtractable(type)) { // if is allowed to
                 ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
             }
         }
@@ -302,9 +302,6 @@ public class EObjectGenerator {
         }
     }
 
-    /**
-     * Checks whether a attribute is extractable. Checks the properties and the attribute.
-     */
     private boolean isExtractable(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
         return (!attribute.isStatic() || properties.getExtractStaticMethods())// extract static attributes
@@ -313,15 +310,20 @@ public class EObjectGenerator {
                 && (modifier != PRIVATE || properties.getExtractPrivateAttributes()); // extract private attributes
     }
 
-    /**
-     * Checks whether a method is extractable. Checks the properties and the method.
-     */
     private boolean isExtractable(ExtractedMethod method) {
         AccessLevelModifier modifier = method.getModifier();
-        return (!method.isConstructor() || properties.getExtractConstructors()) // extract constructors
+        return method.isSelected() && (!method.isConstructor() || properties.getExtractConstructors())
                 && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
                 && (!method.isStatic() || properties.getExtractStaticMethods())// extract static methods
                 && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
                 && (modifier != PRIVATE || properties.getExtractPrivateMethods()); // extract private methods
+    }
+
+    private boolean isExtractable(ExtractedPackage subpackage) {
+        return subpackage.isSelected() && (!subpackage.isEmpty() || properties.getExtractEmptyPackages());
+    }
+
+    private boolean isExtractable(ExtractedType type) {
+        return type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes());
     }
 }

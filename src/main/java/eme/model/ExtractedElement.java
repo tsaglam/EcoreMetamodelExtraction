@@ -75,7 +75,7 @@ public abstract class ExtractedElement {
      * @return true if selected.
      */
     public boolean isSelected() {
-        return selected; // TODO (HIGH) use this for the generation.
+        return selected;
     }
 
     /**
