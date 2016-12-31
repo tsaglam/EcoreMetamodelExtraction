@@ -2,6 +2,7 @@ package eme.generator.saving;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -13,9 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import eme.parser.JavaProjectParser;
 
@@ -44,8 +47,11 @@ public abstract class AbstractSavingStrategy {
      * @param projectName is the name of the project the EPAckage was generated from.
      */
     public void save(EPackage ePackage, String projectName) {
-        beforeSaving(projectName); // TODO (HIGH) implement resource map thing
+        beforeSaving(projectName);
         ePackage.eClass(); // Initialize the EPackage:
+        Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
+        Map<String, Object> map = registry.getExtensionToFactoryMap();
+        map.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());  // add default extension
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
         try {
