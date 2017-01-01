@@ -49,7 +49,7 @@ public class SelectionHelper {
                 && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) {
             return true;
         }
-        report(attribute);
+        report("Attribute");
         return false;
     }
 
@@ -66,8 +66,11 @@ public class SelectionHelper {
                 && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
                 && (modifier != PRIVATE || properties.getExtractPrivateMethods())) {
             return true;
+        } else if (method.isConstructor()) {
+            report("Constructor");
+        } else {
+            report("Method");
         }
-        report(method);
         return false;
     }
 
@@ -80,7 +83,7 @@ public class SelectionHelper {
         if (subpackage.isSelected() && (!subpackage.isEmpty() || properties.getExtractEmptyPackages())) {
             return true;
         }
-        report(subpackage);
+        report("Package");
         return false;
     }
 
@@ -93,7 +96,7 @@ public class SelectionHelper {
         if (type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes())) {
             return true;
         }
-        report(type);
+        report(type.getClass().getSimpleName().substring(9)); // Class, Interface, Enumeration
         return false;
     }
 
@@ -107,21 +110,20 @@ public class SelectionHelper {
         } else {
             logger.info("There were ungenerated elements because of selection and/or properties:");
             for (String className : reportMap.keySet()) {
-                logger.info("   " + className + ": " + reportMap.get(className));
+                logger.info("   "  + className + ": " + reportMap.get(className));
             }
         }
     }
 
     /**
-     * Increases the number of ungenerated elements for a specific type of elements.
-     * @param element is the specific type of elements.
+     * Increases the number of ungenerated features for a specific type of features.
+     * @param feature is the specific type of features.
      */
-    private void report(Object element) {
-        String className = element.getClass().getSimpleName();
-        if (reportMap.containsKey(className)) {
-            reportMap.put(className, reportMap.get(className) + 1);
+    private void report(String feature) {
+        if (reportMap.containsKey(feature)) {
+            reportMap.put(feature, reportMap.get(feature) + 1);
         } else {
-            reportMap.put(className, 1);
+            reportMap.put(feature, 1);
         }
     }
 }
