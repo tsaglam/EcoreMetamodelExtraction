@@ -103,9 +103,9 @@ public class SelectionHelper {
         if (reportMap.isEmpty()) {
             reports.add("There were no ungenerated elements.");
         } else {
-            reports.add("There were ungenerated elements:");
+            reports.add("There were ungenerated elements because of selection and/or properties:");
             for (String className : reportMap.keySet()) {
-                reports.add(className + ": " + reportMap.get(className));
+                reports.add("   " + className + ": " + reportMap.get(className));
             }
         }
         return reports;

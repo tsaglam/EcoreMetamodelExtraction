@@ -210,7 +210,7 @@ public class EObjectGenerator {
                 try { // create from type if found in model.
                     toList.add((EClass) generateEClassifier(model.getType(superClassName)));
                 } catch (IllegalArgumentException exception) {
-                    logger.warn("Could not generate super class " + superClassName);
+                    logger.warn("Could not use external type as super class " + superClassName);
                 }
             }
         }
