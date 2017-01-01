@@ -5,15 +5,17 @@ import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
+import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -22,6 +24,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class SelectionHelper {
+    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final ExtractionProperties properties;
     private final Map<String, Integer> reportMap;
 
@@ -95,20 +98,18 @@ public class SelectionHelper {
     }
 
     /**
-     * Generates a report about the ungenerated elements.
-     * @return the report.
+     * Generates a report about the ungenerated elements. The report counts for the different elements of the
+     * intermediate models how many of them were not generated due to selection or properties.
      */
-    public List<String> getReport() {
-        List<String> reports = new LinkedList<String>();
+    public void generateReport() {
         if (reportMap.isEmpty()) {
-            reports.add("There were no ungenerated elements.");
+            logger.info("There were no ungenerated elements.");
         } else {
-            reports.add("There were ungenerated elements because of selection and/or properties:");
+            logger.info("There were ungenerated elements because of selection and/or properties:");
             for (String className : reportMap.keySet()) {
-                reports.add("   " + className + ": " + reportMap.get(className));
+                logger.info("   " + className + ": " + reportMap.get(className));
             }
         }
-        return reports;
     }
 
     /**

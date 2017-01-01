@@ -65,16 +65,14 @@ public class EObjectGenerator {
     /**
      * This method finishes the generation of the EObjects by adding methods and Attributes after the classes were
      * build. This separate part of the generation is necessary to avoid cyclic data type dependencies on ungenerated
-     * classes.
+     * classes. It also loggs some reports.
      */
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) {
             addOperations(incompleteEClasses.get(eClass), eClass.getEOperations());
             addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures());
         }
-        for (String report : selector.getReport()) {
-            logger.info(report);
-        }
+        selector.generateReport(); // print reports
     }
 
     /**
@@ -145,8 +143,6 @@ public class EObjectGenerator {
 
     /**
      * Adds the attributes of an extracted type to a specific List of EStructuralFeatures.
-     * @param type is the extracted type.
-     * @param list is the list of EStructuralFeatures.
      */
     private void addAttributes(ExtractedType type, List<EStructuralFeature> list) {
         EAttribute eAttribute;
@@ -163,8 +159,6 @@ public class EObjectGenerator {
 
     /**
      * Adds the operations of an extracted type to a specific List of EOperations.
-     * @param type is the extracted type.
-     * @param list is the list of EOperations.
      */
     private void addOperations(ExtractedType type, List<EOperation> list) {
         EOperation operation;
@@ -183,8 +177,6 @@ public class EObjectGenerator {
 
     /**
      * Adds the parameters of an extracted method to a specific List of EParameters.
-     * @param method is the extracted method.
-     * @param list is the list of EParameters.
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
         EParameter eParameter;
@@ -199,8 +191,6 @@ public class EObjectGenerator {
     /**
      * Adds the super class of an extracted class to a specific List of EClasses. If the extracted class has no super
      * class, no EClass is added.
-     * @param extractedClass is the extracted class.
-     * @param toList is the list of EClasses.
      */
     private void addSuperClass(ExtractedClass extractedClass, List<EClass> toList) {
         String superClassName = extractedClass.getSuperClass();
@@ -220,8 +210,6 @@ public class EObjectGenerator {
     /**
      * Adds all super interfaces of an extracted type to a specific List of EClasses. If the extracted type has no super
      * interfaces, no EClass is added.
-     * @param type is the extracted type.
-     * @param toList is the list of EClasses.
      */
     private void addSuperInterfaces(ExtractedType type, List<EClass> toList) {
         for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
@@ -238,10 +226,7 @@ public class EObjectGenerator {
     }
 
     /**
-     * Generates an EClass from an extractedType.
-     * @param extractedType is the extracted type, should be ExtractedClass or ExtractedInterface.
-     * @param isAbstract determines whether the EClass is abstract.
-     * @param isInterface determines whether the EClass is an interface.
+     * Generates an EClass from an extractedType (should be ExtractedClass or ExtractedInterface).
      */
     private EClass generateEClass(ExtractedType extractedType, boolean isAbstract, boolean isInterface) {
         EClass eClass = ecoreFactory.createEClass();
@@ -254,8 +239,6 @@ public class EObjectGenerator {
 
     /**
      * Generates an EEnum from an ExtractedEnumeration.
-     * @param extractedEnum is the ExtractedEnumeration.
-     * @return the EEnum.
      */
     private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
         EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
@@ -273,8 +256,6 @@ public class EObjectGenerator {
      * internally decides for one of three possibilities: The ExtractedDataType represents either (1.) a custom class
      * from the model, or (2.) or an external class that has to be created as data type, or (3.) an already known data
      * type (Basic type or already created).
-     * @param extractedDataType is the data type to translate to an EClassifier.
-     * @return the data type as an EClassifier.
      */
     private EClassifier getEDataType(ExtractedDataType extractedDataType) {
         String fullName = extractedDataType.getFullTypeName();
