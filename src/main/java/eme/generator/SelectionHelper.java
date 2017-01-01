@@ -19,7 +19,7 @@ import eme.properties.ExtractionProperties;
  * class with the selection states of the model elements themselves.
  * @author Timur Saglam
  */
-public class ElementSelector {
+public class SelectionHelper {
     private final ExtractionProperties properties;
     private final Map<String, Integer> reportMap;
 
@@ -27,7 +27,7 @@ public class ElementSelector {
      * Simple constructor, sets the properties object.
      * @param properties are the extraction properties.
      */
-    public ElementSelector(ExtractionProperties properties) {
+    public SelectionHelper(ExtractionProperties properties) {
         this.properties = properties;
         reportMap = new HashMap<String, Integer>();
     }
@@ -104,7 +104,7 @@ public class ElementSelector {
         for (String className : reportMap.keySet()) {
             builder.append(System.getProperty("line.separator"));
             builder.append(className + ": " + reportMap.get(className));
-        }
+        } // TODO (HIGH) List of strings
         return builder.toString();
     }
 

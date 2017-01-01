@@ -47,7 +47,7 @@ public class EObjectGenerator {
     private final ExtractionProperties properties;
     private EPackage root;
     private final EDataTypeGenerator typeGenerator;
-    private final ElementSelector selector;
+    private final SelectionHelper selector;
 
     /**
      * Basic constructor.
@@ -57,7 +57,7 @@ public class EObjectGenerator {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
         typeGenerator = new EDataTypeGenerator();
-        selector = new ElementSelector(properties);
+        selector = new SelectionHelper(properties);
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
     }
