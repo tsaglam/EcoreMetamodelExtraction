@@ -46,8 +46,8 @@ public class EObjectGenerator {
     private IntermediateModel model;
     private final ExtractionProperties properties;
     private EPackage root;
-    private final EDataTypeGenerator typeGenerator;
     private final SelectionHelper selector;
+    private final EDataTypeGenerator typeGenerator;
 
     /**
      * Basic constructor.
@@ -89,9 +89,11 @@ public class EObjectGenerator {
         }
         EClassifier eClassifier = null;
         if (type.getClass() == ExtractedInterface.class) {
-            eClassifier = generateEClass((ExtractedInterface) type);
+            eClassifier = generateEClass(type, true, true); // build interface
         } else if (type.getClass() == ExtractedClass.class) {
-            eClassifier = generateEClass((ExtractedClass) type);
+            EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false); // build class
+            addSuperClass((ExtractedClass) type, eClass.getESuperTypes()); // get superclass
+            eClassifier = eClass;
         } else if (type.getClass() == ExtractedEnumeration.class) {
             eClassifier = generateEEnum((ExtractedEnumeration) type);
         } else {
@@ -187,8 +189,7 @@ public class EObjectGenerator {
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) {
-            // TODO (HIGH) generics & arrays
-            eParameter = ecoreFactory.createEParameter();
+            eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) generics & arrays
             eParameter.setName(parameter.getIdentifier());
             eParameter.setEType(getEDataType(parameter));
             list.add(eParameter);
@@ -237,31 +238,17 @@ public class EObjectGenerator {
     }
 
     /**
-     * Generates an EClass from an ExtractedClass.
-     * @param extractedClass is the ExtractedClass.
-     * @return the EClass.
+     * Generates an EClass from an extractedType.
+     * @param extractedType is the extracted type, should be ExtractedClass or ExtractedInterface.
+     * @param isAbstract determines whether the EClass is abstract.
+     * @param isInterface determines whether the EClass is an interface.
      */
-    private EClass generateEClass(ExtractedClass extractedClass) {
+    private EClass generateEClass(ExtractedType extractedType, boolean isAbstract, boolean isInterface) {
         EClass eClass = ecoreFactory.createEClass();
-        eClass.setAbstract(extractedClass.isAbstract());
-        List<EClass> eSuperTypes = eClass.getESuperTypes();
-        addSuperClass(extractedClass, eSuperTypes); // get super
-        addSuperInterfaces(extractedClass, eSuperTypes);
-        incompleteEClasses.put(eClass, extractedClass); // finish building later
-        return eClass; // TODO (MEDIUM) remove duplicate code from class & interface. clean class.
-    }
-
-    /**
-     * Generates an EClass from an ExtractedInterface.
-     * @param extractedInterface is the ExtractedInterface.
-     * @return the EClass.
-     */
-    private EClass generateEClass(ExtractedInterface extractedInterface) {
-        EClass eClass = ecoreFactory.createEClass();
-        eClass.setAbstract(true);
-        eClass.setInterface(true);
-        addSuperInterfaces(extractedInterface, eClass.getESuperTypes());
-        incompleteEClasses.put(eClass, extractedInterface); // finish building later
+        eClass.setAbstract(isAbstract);
+        eClass.setInterface(isInterface);
+        addSuperInterfaces(extractedType, eClass.getESuperTypes());
+        incompleteEClasses.put(eClass, extractedType); // finish building later
         return eClass;
     }
 
