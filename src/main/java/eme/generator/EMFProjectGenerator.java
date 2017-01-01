@@ -122,7 +122,9 @@ public abstract class EMFProjectGenerator {
         try {
             metaInf.create(false, true, null);
             createFile("MANIFEST.MF", metaInf, manifestContent.toString(), null);
-        } catch (Exception exception) {
+        } catch (CoreException exception) {
+            logger.error("Error while creating the manifest file: " + exception.getMessage());
+        } catch (IOException exception) {
             logger.error("Error while creating the manifest file: " + exception.getMessage());
         }
     }

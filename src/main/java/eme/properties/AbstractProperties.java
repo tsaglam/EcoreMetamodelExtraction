@@ -40,7 +40,7 @@ public abstract class AbstractProperties {
         try {
             fileURL = FileLocator.find(bundle, path, null);
             load(); // load if file exists.
-        } catch (Error error) {
+        } catch (Error error) { // small hack. // TODO (MEDIUM) Find better solution for this hack.
             logger.warn("Could not reach properties file.", error);
         }
     }
