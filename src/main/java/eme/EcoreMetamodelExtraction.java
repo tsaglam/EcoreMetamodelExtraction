@@ -28,7 +28,7 @@ public class EcoreMetamodelExtraction {
      */
     public EcoreMetamodelExtraction() {
         BasicConfigurator.configure();
-        logger.info("Started EME");
+        logger.info("Started EME...");
         properties = new ExtractionProperties();
         parser = new JavaProjectParser();
         generator = new EcoreMetamodelGenerator(properties);

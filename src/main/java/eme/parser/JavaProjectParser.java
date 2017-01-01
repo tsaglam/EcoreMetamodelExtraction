@@ -43,7 +43,7 @@ public class JavaProjectParser {
      * @return an intermediate model that was extracted from the project.
      */
     public IntermediateModel buildIntermediateModel(IJavaProject project) {
-        logger.info("Started parsing the project");
+        logger.info("Started parsing the project...");
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
             parsePackages(project); // parse project
