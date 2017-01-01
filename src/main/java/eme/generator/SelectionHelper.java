@@ -5,6 +5,8 @@ import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import eme.model.ExtractedMethod;
@@ -96,16 +98,17 @@ public class SelectionHelper {
      * Generates a report about the ungenerated elements.
      * @return the report.
      */
-    public String getReport() {
+    public List<String> getReport() {
+        List<String> reports = new LinkedList<String>();
         if (reportMap.isEmpty()) {
-            return "There were no ungenerated elements.";
+            reports.add("There were no ungenerated elements.");
+        } else {
+            reports.add("There were ungenerated elements:");
+            for (String className : reportMap.keySet()) {
+                reports.add(className + ": " + reportMap.get(className));
+            }
         }
-        StringBuilder builder = new StringBuilder("There were ungenerated elements:");
-        for (String className : reportMap.keySet()) {
-            builder.append(System.getProperty("line.separator"));
-            builder.append(className + ": " + reportMap.get(className));
-        } // TODO (HIGH) List of strings
-        return builder.toString();
+        return reports;
     }
 
     /**

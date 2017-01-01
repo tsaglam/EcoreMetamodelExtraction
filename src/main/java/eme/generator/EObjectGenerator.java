@@ -72,7 +72,9 @@ public class EObjectGenerator {
             addOperations(incompleteEClasses.get(eClass), eClass.getEOperations());
             addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures());
         }
-        logger.info(selector.getReport());
+        for (String report : selector.getReport()) {
+            logger.info(report);
+        }
     }
 
     /**
