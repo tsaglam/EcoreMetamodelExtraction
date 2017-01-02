@@ -32,12 +32,14 @@ import eme.properties.TestProperties;
 public class EObjectGeneratorTest {
     ExtractionProperties properties;
     EObjectGenerator generator;
+    IntermediateModel model;
 
     @Before
     public void setUp() throws Exception {
         properties = new TestProperties();
         generator = new EObjectGenerator(properties);
-        generator.prepareFor(new IntermediateModel("TestProject"));
+        model = new IntermediateModel("TestProject");
+        generator.prepareFor(model);
     }
 
     @Test
@@ -70,6 +72,34 @@ public class EObjectGeneratorTest {
         assertEquals("NormalClass", result.getName());
         assertFalse(result.isAbstract());
         assertFalse(result.isInterface());
+    }
+    
+    @Test
+    public void testGenerateSuperClass() {
+        ExtractedClass subClass = new ExtractedClass("SubClass", false);
+        ExtractedClass superClass = new ExtractedClass("SuperClass", false);
+        subClass.setSuperClass("SuperClass");
+        model.add(new ExtractedPackage(""));
+        model.add(subClass);
+        model.add(superClass);
+        EClass result = (EClass) generator.generateEClassifier(subClass);
+        generator.completeGeneration();
+        assertEquals("SubClass", result.getName());
+        assertEquals("SuperClass", result.getESuperTypes().get(0).getName());
+    }
+    
+    @Test
+    public void testGenerateSuperInterface() {
+        ExtractedInterface subInterface = new ExtractedInterface("SubInterface");
+        ExtractedInterface superInterface = new ExtractedInterface("SuperInterface");
+        subInterface.addInterface("SuperInterface");
+        model.add(new ExtractedPackage(""));
+        model.add(subInterface);
+        model.add(superInterface);
+        EClass result = (EClass) generator.generateEClassifier(subInterface);
+        generator.completeGeneration();
+        assertEquals("SubInterface", result.getName());
+        assertEquals("SuperInterface", result.getESuperTypes().get(0).getName());
     }
 
     @Test
