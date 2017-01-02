@@ -1,5 +1,6 @@
 package eme.generator;
 
+import static eme.model.datatypes.AccessLevelModifier.NO_MODIFIER;
 import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
 import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
@@ -45,8 +46,9 @@ public class SelectionHelper {
     public boolean allowsGenerating(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
         if ((!attribute.isStatic() || properties.getExtractStaticMethods()) && (modifier != PUBLIC || properties.getExtractProtectedAttributes())
-                && (modifier != PROTECTED || properties.getExtractProtectedAttributes())
-                && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) {
+                && (modifier != NO_MODIFIER || properties.getExtractDefaultAttributes())  // extract default attributes
+                && (modifier != PROTECTED || properties.getExtractProtectedAttributes()) // extract protected attributes
+                && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) { // extract private attributes
             return true;
         }
         report("Attribute");
@@ -62,9 +64,10 @@ public class SelectionHelper {
         AccessLevelModifier modifier = method.getModifier();
         if (method.isSelected() && (!method.isConstructor() || properties.getExtractConstructors())
                 && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
-                && (!method.isStatic() || properties.getExtractStaticMethods())// extract static methods
+                && (!method.isStatic() || properties.getExtractStaticMethods()) // extract static methods
+                && (modifier != NO_MODIFIER || properties.getExtractDefaultMethods()) // extract default methods
                 && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
-                && (modifier != PRIVATE || properties.getExtractPrivateMethods())) {
+                && (modifier != PRIVATE || properties.getExtractPrivateMethods())) { // extract private methods
             return true;
         } else if (method.isConstructor()) {
             report("Constructor");
@@ -110,7 +113,7 @@ public class SelectionHelper {
         } else {
             logger.info("There were ungenerated elements because of selection and/or properties:");
             for (String className : reportMap.keySet()) {
-                logger.info("   "  + className + ": " + reportMap.get(className));
+                logger.info("   " + className + ": " + reportMap.get(className));
             }
         }
     }
