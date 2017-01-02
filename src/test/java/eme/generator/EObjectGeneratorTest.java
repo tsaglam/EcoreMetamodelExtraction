@@ -55,8 +55,7 @@ public class EObjectGeneratorTest {
     @Test
     public void testGenerateAttribute() {
         ExtractedClass testClass = new ExtractedClass("TestClass", false);
-        ExtractedAttribute attribute = new ExtractedAttribute("testAttribute", "java.lang.String", 0);
-        testClass.addAttribute(attribute);
+        testClass.addAttribute(new ExtractedAttribute("testAttribute", "java.lang.String", 0));
         EClass result = (EClass) generator.generateEClassifier(testClass);
         generator.completeGeneration();
         assertEquals(1, result.getEAttributes().size());
@@ -73,6 +72,20 @@ public class EObjectGeneratorTest {
         assertEquals("NormalClass", result.getName());
         assertFalse(result.isAbstract());
         assertFalse(result.isInterface());
+    }
+
+    @Test
+    public void testGenerateCustomClassAttribute() {
+        ExtractedClass testClass = new ExtractedClass("TestClass", false);
+        ExtractedClass testClass2 = new ExtractedClass("TestClass2", false);
+        testClass.addAttribute(new ExtractedAttribute("testAttribute", "TestClass2", 0));
+        generator.generateEClassifier(testClass2);
+        EClass result = (EClass) generator.generateEClassifier(testClass);
+        generator.completeGeneration();
+        assertEquals(1, result.getEAttributes().size());
+        EAttribute eAttribute = result.getEAttributes().get(0);
+        assertEquals("testAttribute", eAttribute.getName());
+        assertEquals("TestClass2", eAttribute.getEType().getName());
     }
 
     @Test
@@ -95,8 +108,7 @@ public class EObjectGeneratorTest {
         root.setAsRoot();
         model.add(root);
         ExtractedClass testClass = new ExtractedClass("TestClass", false);
-        ExtractedAttribute attribute = new ExtractedAttribute("testAttribute", "main.view.External", 0);
-        testClass.addAttribute(attribute);
+        testClass.addAttribute(new ExtractedAttribute("testAttribute", "main.view.External", 0));
         generator.generateEPackage(root);
         EClass result = (EClass) generator.generateEClassifier(testClass);
         generator.completeGeneration();
@@ -134,10 +146,9 @@ public class EObjectGeneratorTest {
     public void testGenerateMethod() {
         ExtractedClass testClass = new ExtractedClass("TestClass", false);
         ExtractedDataType returnType = new ExtractedDataType("java.lang.String", 0);
-        ExtractedParameter parameter = new ExtractedParameter("number", "int", 0);
         ExtractedMethod method = new ExtractedMethod("testMethod", returnType, false);
         method.setFlags(AccessLevelModifier.PUBLIC, false, false);
-        method.addParameter(parameter);
+        method.addParameter(new ExtractedParameter("number", "int", 0));
         testClass.addMethod(method);
         EClass result = (EClass) generator.generateEClassifier(testClass);
         generator.completeGeneration();
