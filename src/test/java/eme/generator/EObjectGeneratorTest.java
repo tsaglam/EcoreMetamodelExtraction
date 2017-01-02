@@ -30,9 +30,9 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TestProperties;
 
 public class EObjectGeneratorTest {
-    ExtractionProperties properties;
     EObjectGenerator generator;
     IntermediateModel model;
+    ExtractionProperties properties;
 
     @Before
     public void setUp() throws Exception {
@@ -40,6 +40,114 @@ public class EObjectGeneratorTest {
         generator = new EObjectGenerator(properties);
         model = new IntermediateModel("TestProject");
         generator.prepareFor(model);
+    }
+
+    @Test
+    public void testGenerateAbstractClass() {
+        ExtractedClass abstractClass = new ExtractedClass("abstractClass", true);
+        EClass result = (EClass) generator.generateEClassifier(abstractClass);
+        generator.completeGeneration();
+        assertEquals("abstractClass", result.getName());
+        assertTrue(result.isAbstract());
+        assertFalse(result.isInterface());
+    }
+
+    @Test
+    public void testGenerateAttribute() {
+        ExtractedClass testClass = new ExtractedClass("TestClass", false);
+        ExtractedAttribute attribute = new ExtractedAttribute("testAttribute", "java.lang.String", 0);
+        testClass.addAttribute(attribute);
+        EClass result = (EClass) generator.generateEClassifier(testClass);
+        generator.completeGeneration();
+        assertEquals(1, result.getEAttributes().size());
+        EAttribute eAttribute = result.getEAttributes().get(0);
+        assertEquals("testAttribute", eAttribute.getName());
+        assertEquals("EString", eAttribute.getEType().getName());
+    }
+
+    @Test
+    public void testGenerateClass() {
+        ExtractedClass normalClass = new ExtractedClass("NormalClass", false);
+        EClass result = (EClass) generator.generateEClassifier(normalClass);
+        generator.completeGeneration();
+        assertEquals("NormalClass", result.getName());
+        assertFalse(result.isAbstract());
+        assertFalse(result.isInterface());
+    }
+
+    @Test
+    public void testGenerateEnum() {
+        ExtractedEnumeration enumeration = new ExtractedEnumeration("Enum");
+        for (int i = 0; i < 5; i++) {
+            enumeration.addEnumeral("ENUMERAL_" + i);
+        }
+        EEnum result = (EEnum) generator.generateEClassifier(enumeration);
+        generator.completeGeneration();
+        assertEquals("Enum", result.getName());
+        for (int i = 0; i < 5; i++) {
+            assertNotNull(result.getEEnumLiteral("ENUMERAL_" + i));
+        }
+    }
+
+    @Test
+    public void testGenerateExternalAttribute() {
+        ExtractedPackage root = new ExtractedPackage("");
+        root.setAsRoot();
+        model.add(root);
+        ExtractedClass testClass = new ExtractedClass("TestClass", false);
+        ExtractedAttribute attribute = new ExtractedAttribute("testAttribute", "main.view.External", 0);
+        testClass.addAttribute(attribute);
+        generator.generateEPackage(root);
+        EClass result = (EClass) generator.generateEClassifier(testClass);
+        generator.completeGeneration();
+        assertEquals(1, result.getEAttributes().size());
+        EAttribute eAttribute = result.getEAttributes().get(0);
+        assertEquals("testAttribute", eAttribute.getName());
+        assertEquals("External", eAttribute.getEType().getName());
+    }
+
+    @Test
+    public void testGenerateIllegalSuper() {
+        ExtractedClass subClass = new ExtractedClass("SubClass", false);
+        subClass.setSuperClass("SuperClass");
+        subClass.addInterface("SuperInterface");
+        subClass.addInterface("SuperInterface2");
+        model.add(new ExtractedPackage(""));
+        model.add(subClass);
+        EClass result = (EClass) generator.generateEClassifier(subClass);
+        generator.completeGeneration();
+        assertEquals("SubClass", result.getName());
+        assertEquals(0, result.getESuperTypes().size());
+    }
+
+    @Test
+    public void testGenerateInterface() {
+        ExtractedInterface extractedInterface = new ExtractedInterface("Interface");
+        EClass result = (EClass) generator.generateEClassifier(extractedInterface);
+        generator.completeGeneration();
+        assertEquals("Interface", result.getName());
+        assertTrue(result.isAbstract());
+        assertTrue(result.isInterface());
+    }
+
+    @Test
+    public void testGenerateMethod() {
+        ExtractedClass testClass = new ExtractedClass("TestClass", false);
+        ExtractedDataType returnType = new ExtractedDataType("java.lang.String", 0);
+        ExtractedParameter parameter = new ExtractedParameter("number", "int", 0);
+        ExtractedMethod method = new ExtractedMethod("testMethod", returnType, false);
+        method.setFlags(AccessLevelModifier.PUBLIC, false, false);
+        method.addParameter(parameter);
+        testClass.addMethod(method);
+        EClass result = (EClass) generator.generateEClassifier(testClass);
+        generator.completeGeneration();
+        assertEquals(1, result.getEOperations().size());
+        EOperation operation = result.getEOperations().get(0);
+        assertEquals("testMethod", operation.getName());
+        assertEquals("EString", operation.getEType().getName());
+        EParameter eParameter = operation.getEParameters().get(0);
+        assertEquals("number", eParameter.getName());
+        assertEquals("EInt", eParameter.getEType().getName());
     }
 
     @Test
@@ -65,108 +173,38 @@ public class EObjectGeneratorTest {
     }
 
     @Test
-    public void testGenerateClass() {
-        ExtractedClass normalClass = new ExtractedClass("NormalClass", false);
-        EClass result = (EClass) generator.generateEClassifier(normalClass);
-        generator.completeGeneration();
-        assertEquals("NormalClass", result.getName());
-        assertFalse(result.isAbstract());
-        assertFalse(result.isInterface());
-    }
-    
-    @Test
     public void testGenerateSuperClass() {
         ExtractedClass subClass = new ExtractedClass("SubClass", false);
+        ExtractedClass subClass2 = new ExtractedClass("SubClass2", false);
         ExtractedClass superClass = new ExtractedClass("SuperClass", false);
         subClass.setSuperClass("SuperClass");
+        subClass2.setSuperClass("SuperClass");
         model.add(new ExtractedPackage(""));
-        model.add(subClass);
         model.add(superClass);
         EClass result = (EClass) generator.generateEClassifier(subClass);
+        EClass result2 = (EClass) generator.generateEClassifier(subClass2);
         generator.completeGeneration();
         assertEquals("SubClass", result.getName());
         assertEquals("SuperClass", result.getESuperTypes().get(0).getName());
+        assertEquals("SubClass2", result2.getName());
+        assertEquals("SuperClass", result2.getESuperTypes().get(0).getName());
     }
-    
+
     @Test
     public void testGenerateSuperInterface() {
         ExtractedInterface subInterface = new ExtractedInterface("SubInterface");
+        ExtractedInterface subInterface2 = new ExtractedInterface("SubInterface2");
         ExtractedInterface superInterface = new ExtractedInterface("SuperInterface");
         subInterface.addInterface("SuperInterface");
+        subInterface2.addInterface("SuperInterface");
         model.add(new ExtractedPackage(""));
-        model.add(subInterface);
         model.add(superInterface);
         EClass result = (EClass) generator.generateEClassifier(subInterface);
+        EClass result2 = (EClass) generator.generateEClassifier(subInterface2);
         generator.completeGeneration();
         assertEquals("SubInterface", result.getName());
         assertEquals("SuperInterface", result.getESuperTypes().get(0).getName());
+        assertEquals("SubInterface2", result2.getName());
+        assertEquals("SuperInterface", result2.getESuperTypes().get(0).getName());
     }
-
-    @Test
-    public void testGenerateAttribute() {
-        ExtractedClass testClass = new ExtractedClass("TestClass", false);
-        ExtractedAttribute attribute = new ExtractedAttribute("testAttribute", "java.lang.String", 0);
-        testClass.addAttribute(attribute);
-        EClass result = (EClass) generator.generateEClassifier(testClass);
-        generator.completeGeneration();
-        assertEquals(1, result.getEAttributes().size());
-        EAttribute eAttribute = result.getEAttributes().get(0);
-        assertEquals("testAttribute", eAttribute.getName());
-        assertEquals("EString", eAttribute.getEType().getName());
-    }
-
-    @Test
-    public void testGenerateMethod() {
-        ExtractedClass testClass = new ExtractedClass("TestClass", false);
-        ExtractedDataType returnType = new ExtractedDataType("java.lang.String", 0);
-        ExtractedParameter parameter = new ExtractedParameter("number", "int", 0);
-        ExtractedMethod method = new ExtractedMethod("testMethod", returnType, false);
-        method.setFlags(AccessLevelModifier.PUBLIC, false, false);
-        method.addParameter(parameter);
-        testClass.addMethod(method);
-        EClass result = (EClass) generator.generateEClassifier(testClass);
-        generator.completeGeneration();
-        assertEquals(1, result.getEOperations().size());
-        EOperation operation = result.getEOperations().get(0);
-        assertEquals("testMethod", operation.getName());
-        assertEquals("EString", operation.getEType().getName());
-        EParameter eParameter = operation.getEParameters().get(0);
-        assertEquals("number", eParameter.getName());
-        assertEquals("EInt", eParameter.getEType().getName());
-    }
-
-    @Test
-    public void testGenerateAbstractClass() {
-        ExtractedClass abstractClass = new ExtractedClass("abstractClass", true);
-        EClass result = (EClass) generator.generateEClassifier(abstractClass);
-        generator.completeGeneration();
-        assertEquals("abstractClass", result.getName());
-        assertTrue(result.isAbstract());
-        assertFalse(result.isInterface());
-    }
-
-    @Test
-    public void testGenerateInterface() {
-        ExtractedInterface extractedInterface = new ExtractedInterface("Interface");
-        EClass result = (EClass) generator.generateEClassifier(extractedInterface);
-        generator.completeGeneration();
-        assertEquals("Interface", result.getName());
-        assertTrue(result.isAbstract());
-        assertTrue(result.isInterface());
-    }
-
-    @Test
-    public void testGenerateEnum() {
-        ExtractedEnumeration enumeration = new ExtractedEnumeration("Enum");
-        for (int i = 0; i < 5; i++) {
-            enumeration.addEnumeral("ENUMERAL_" + i);
-        }
-        EEnum result = (EEnum) generator.generateEClassifier(enumeration);
-        generator.completeGeneration();
-        assertEquals("Enum", result.getName());
-        for (int i = 0; i < 5; i++) {
-            assertNotNull(result.getEEnumLiteral("ENUMERAL_" + i));
-        }
-    }
-
 }
