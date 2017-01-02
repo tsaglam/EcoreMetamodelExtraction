@@ -40,6 +40,22 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Returns the value of the property ExtractDefaultAttributes.
+     * @return the value.
+     */
+    public boolean getExtractDefaultAttributes() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractDefaultAttributes", "true"));
+    }
+
+    /**
+     * Returns the value of the property ExtractDefaultMethods.
+     * @return the value.
+     */
+    public boolean getExtractDefaultMethods() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractDefaultMethods", "true"));
+    }
+
+    /**
      * Returns the value of the property ExtractEmptyPackages.
      * @return the value.
      */
@@ -136,12 +152,14 @@ public class ExtractionProperties extends AbstractProperties {
         properties.setProperty("ExtractAbstractMethods", "false");
         properties.setProperty("ExtractStaticMethods", "false");
         properties.setProperty("ExtractStaticAttributes", "false");
+        properties.setProperty("ExtractDefaultAttributes", "true");
         properties.setProperty("ExtractPublicAttributes", "true");
         properties.setProperty("ExtractProtectedAttributes", "false");
         properties.setProperty("ExtractPrivateAttributes", "false");
         properties.setProperty("SavingStrategy", "NewProject");
+        properties.setProperty("ExtractDefaultMethods", "true");
         properties.setProperty("ExtractProtectedMethods", "true");
-        properties.setProperty("ExtractProtectedMethods", "false");
+        properties.setProperty("ExtractPrivateMethods", "false");
         properties.setProperty("ExtractConstructors", "false");
     }
 
@@ -159,6 +177,22 @@ public class ExtractionProperties extends AbstractProperties {
      */
     public void setExtractConstructors(boolean value) {
         properties.setProperty("ExtractConstructors", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractDefaultAttributes.
+     * @param value is the new value.
+     */
+    public void setExtractDefaultAttributes(boolean value) {
+        properties.setProperty("ExtractDefaultAttributes", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractDefaultMethods.
+     * @param value is the new value.
+     */
+    public void setExtractDefaultMethods(boolean value) {
+        properties.setProperty("ExtractDefaultMethods", Boolean.toString(value));
     }
 
     /**
