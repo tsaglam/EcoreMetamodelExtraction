@@ -20,7 +20,7 @@ public class ExtractedMethod extends ExtractedElement {
     private boolean staticMethod;
 
     /**
-     * Basic constructor.
+     * Basic constructor. Sets access level modifier to NO_MODIFIER, static and abstract to false;
      * @param fullName is the full name of the method, consisting out of the full class name and the method name.
      * @param returnType is the data type for the return type of the method. null if it is void.
      * @param constructor determines whether this method is an constructor.
@@ -30,6 +30,9 @@ public class ExtractedMethod extends ExtractedElement {
         parameters = new LinkedList<ExtractedParameter>();
         this.returnType = returnType;
         this.constructor = constructor;
+        modifier = AccessLevelModifier.NO_MODIFIER;
+        staticMethod = false;
+        abstractMethod = false;
     }
 
     /**
