@@ -27,7 +27,6 @@ import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 import eme.properties.ExtractionProperties;
-import eme.properties.TestProperties;
 
 public class EObjectGeneratorTest {
     EObjectGenerator generator;
@@ -36,7 +35,7 @@ public class EObjectGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        properties = new TestProperties();
+        properties = new ExtractionProperties();
         generator = new EObjectGenerator(properties);
         model = new IntermediateModel("TestProject");
         generator.prepareFor(model);

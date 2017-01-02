@@ -10,7 +10,6 @@ import eme.generator.saving.CustomPathSavingStrategy;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
-import eme.properties.TestProperties;
 
 public class EcoreMetamodelGeneratorTest {
     ExtractionProperties properties;
@@ -19,7 +18,7 @@ public class EcoreMetamodelGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        properties = new TestProperties(); // don't use real properties
+        properties = new ExtractionProperties(); // don't use real properties
         generator = new EcoreMetamodelGenerator(properties);
         model = new IntermediateModel("UnitTestProject");
     }
