@@ -45,7 +45,7 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
-        if ((!attribute.isStatic() || properties.getExtractStaticMethods()) && (modifier != PUBLIC || properties.getExtractProtectedAttributes())
+        if ((!attribute.isStatic() || properties.getExtractStaticMethods()) && (modifier != PUBLIC || properties.getExtractPublicAttributes())
                 && (modifier != NO_MODIFIER || properties.getExtractDefaultAttributes())  // extract default attributes
                 && (modifier != PROTECTED || properties.getExtractProtectedAttributes()) // extract protected attributes
                 && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) { // extract private attributes
