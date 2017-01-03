@@ -3,7 +3,9 @@ package eme.generator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -14,26 +16,63 @@ import eme.model.datatypes.ExtractedDataType;
  * @author Timur Saglam
  */
 public class EDataTypeGenerator {
+    private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
+    private EPackage root;
     private final Map<String, EDataType> typeMap;
 
     /**
      * Basic constructor, builds the type map.
+     * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
-    public EDataTypeGenerator() {
+    public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers) {
+        this.createdEClassifiers = createdEClassifiers;
         ecoreFactory = EcoreFactory.eINSTANCE;
         typeMap = new HashMap<String, EDataType>();
         fillMap();
     }
 
     /**
-     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed with the method
-     * EDataTypeGenerator.get().
+     * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes.
      * @param extractedDataType is the extracted data type.
-     * @return the new EDataType
+     * @return the data type as EClassifier, which is either (1.) a custom class from the model, or (2.) or an external
+     * class that has to be created as data type, or (3.) an already known data type (Basic type or already created).
      */
-    public EDataType create(ExtractedDataType extractedDataType) {
-        if (knows(extractedDataType)) {
+    public EClassifier generateFrom(ExtractedDataType extractedDataType) {
+        String fullName = extractedDataType.getFullTypeName();
+        if (createdEClassifiers.containsKey(fullName)) { // if is custom class
+            return createdEClassifiers.get(fullName);
+        } else if (typeMap.containsKey(fullName)) { // if is basic type or already known
+            return typeMap.get(fullName); // access EDataType
+        } else { // if its an external type
+            EDataType eDataType = create(extractedDataType); // create new EDataType
+            root.getEClassifiers().add(eDataType); // add root containment
+            return eDataType;
+        }
+    }
+
+    /**
+     * Resets the class. Removes custom generated data types from the type map, so that only the basic types are
+     * available.
+     */
+    public void reset() {
+        typeMap.clear();
+        fillMap();
+    }
+
+    /**
+     * Setter for the root package, should be called before data types are getting created.
+     * @param root is the root package.
+     */
+    public void setRoot(EPackage root) {
+        this.root = root;
+    }
+
+    /**
+     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map.
+     */
+    private EDataType create(ExtractedDataType extractedDataType) {
+        if (typeMap.containsKey(extractedDataType.getFullTypeName())) {
             throw new IllegalArgumentException("Can't create an already created data type.");
         }
         EDataType newType = ecoreFactory.createEDataType();
@@ -41,28 +80,6 @@ public class EDataTypeGenerator {
         newType.setInstanceTypeName(extractedDataType.getFullTypeName());
         typeMap.put(extractedDataType.getFullTypeName(), newType);
         return newType;
-    }
-
-    /**
-     * Returns the EDataType for a specific extracted data type, if it exists.
-     * @param extractedDataType is the specific data type.
-     * @return the EDataType, or null if the data type name is unknown.
-     */
-    public EDataType get(ExtractedDataType extractedDataType) {
-        if (!knows(extractedDataType)) {
-            throw new IllegalArgumentException("Unknown data type. Create the data type first.");
-        }
-        return typeMap.get(extractedDataType.getFullTypeName());
-    }
-
-    /**
-     * Checks whether a specific extracted data type can be accessed using the method EDataTypeGenerator.get(). If it
-     * can not be accessed it has to be created first.
-     * @param extractedDataType is the data type.
-     * @return true if it is a basic type.
-     */
-    public boolean knows(ExtractedDataType extractedDataType) {
-        return typeMap.containsKey(extractedDataType.getFullTypeName());
     }
 
     private void fillMap() {

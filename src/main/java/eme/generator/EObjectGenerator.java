@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EOperation;
@@ -26,7 +25,6 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
-import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
@@ -45,7 +43,6 @@ public class EObjectGenerator {
     private final Map<EClass, ExtractedType> incompleteEClasses;
     private IntermediateModel model;
     private final ExtractionProperties properties;
-    private EPackage root;
     private final SelectionHelper selector;
     private final EDataTypeGenerator typeGenerator;
 
@@ -56,10 +53,10 @@ public class EObjectGenerator {
     public EObjectGenerator(ExtractionProperties properties) {
         this.properties = properties;
         ecoreFactory = EcoreFactory.eINSTANCE;
-        typeGenerator = new EDataTypeGenerator();
-        selector = new SelectionHelper(properties);
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
+        typeGenerator = new EDataTypeGenerator(createdEClassifiers);
+        selector = new SelectionHelper(properties);
     }
 
     /**
@@ -110,7 +107,7 @@ public class EObjectGenerator {
     public EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) { // set root name & prefix:
-            root = ePackage; // store locally as root
+            typeGenerator.setRoot(ePackage); // give type generator the root
             ePackage.setName(properties.getDefaultPackageName());
             ePackage.setNsPrefix(properties.getDefaultPackageName());
         } else { // set name & prefix for non root packages:
@@ -138,6 +135,7 @@ public class EObjectGenerator {
     public void prepareFor(IntermediateModel model) {
         createdEClassifiers.clear();
         incompleteEClasses.clear();
+        typeGenerator.reset();
         this.model = model;
     }
 
@@ -151,7 +149,7 @@ public class EObjectGenerator {
                 eAttribute = ecoreFactory.createEAttribute();
                 eAttribute.setName(attribute.getIdentifier());
                 eAttribute.setChangeable(!attribute.isFinal());
-                eAttribute.setEType(getEDataType(attribute));
+                eAttribute.setEType(typeGenerator.generateFrom(attribute));
                 list.add(eAttribute);
             }
         }
@@ -167,7 +165,7 @@ public class EObjectGenerator {
                 operation = ecoreFactory.createEOperation();
                 operation.setName(method.getName());
                 if (method.getReturnType() != null) {
-                    operation.setEType(getEDataType(method.getReturnType()));
+                    operation.setEType(typeGenerator.generateFrom(method.getReturnType()));
                 }
                 addParameters(method, operation.getEParameters());
                 list.add(operation);
@@ -183,7 +181,7 @@ public class EObjectGenerator {
         for (ExtractedParameter parameter : method.getParameters()) {
             eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) generics & arrays
             eParameter.setName(parameter.getIdentifier());
-            eParameter.setEType(getEDataType(parameter));
+            eParameter.setEType(typeGenerator.generateFrom(parameter));
             list.add(eParameter);
         }
     }
@@ -249,24 +247,5 @@ public class EObjectGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
-    }
-
-    /**
-     * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes. It
-     * internally decides for one of three possibilities: The ExtractedDataType represents either (1.) a custom class
-     * from the model, or (2.) or an external class that has to be created as data type, or (3.) an already known data
-     * type (Basic type or already created).
-     */
-    private EClassifier getEDataType(ExtractedDataType extractedDataType) {
-        String fullName = extractedDataType.getFullTypeName();
-        if (createdEClassifiers.containsKey(fullName)) { // if is custom class
-            return createdEClassifiers.get(fullName);
-        } else if (typeGenerator.knows(extractedDataType)) { // if is basic type or already known
-            return typeGenerator.get(extractedDataType); // access EDataType
-        } else { // if its an external type
-            EDataType eDataType = typeGenerator.create(extractedDataType); // create new EDataType
-            root.getEClassifiers().add(eDataType); // add root containment
-            return eDataType;
-        }
     }
 }
