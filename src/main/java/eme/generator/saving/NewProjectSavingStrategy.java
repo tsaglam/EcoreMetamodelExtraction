@@ -29,7 +29,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      */
     private String identifier(String projectName) {
         char[] candidates = { ' ', '.', '-', '_', ':' }; // possible separators
-        char separator = Character.MIN_VALUE; // no char (empty string) is default
+        char separator = Character.MIN_VALUE; // 0000
         int max = 0;
         for (char candidate : candidates) { // for every candidate
             int ctr = 0; // count occurrences in project name:
@@ -44,6 +44,9 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
         String suffix = "Model"; // default suffix
         if (!projectName.matches(".*[A-Z].*")) { // if has no upper case
             suffix = suffix.toLowerCase(); // use lower case suffix
+        }
+        if (separator == Character.MIN_VALUE) { // no separator was chosen
+            return suffix; // return suffix without separator
         }
         return separator + suffix; // identifier = separator + suffix
     }
