@@ -27,10 +27,10 @@ public class EDataTypeGenerator {
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
     public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers) {
-        this.createdEClassifiers = createdEClassifiers;
-        ecoreFactory = EcoreFactory.eINSTANCE;
-        typeMap = new HashMap<String, EDataType>();
-        fillMap();
+        this.createdEClassifiers = createdEClassifiers; // set classifier map.
+        ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
+        typeMap = new HashMap<String, EDataType>(); // create type map.
+        fillMap(); // fill type map.
     }
 
     /**
@@ -74,8 +74,8 @@ public class EDataTypeGenerator {
      * available.
      */
     public void reset() {
-        typeMap.clear();
-        fillMap();
+        typeMap.clear(); // clear map from all types.
+        fillMap(); // add basic types.
     }
 
     /**
@@ -90,13 +90,13 @@ public class EDataTypeGenerator {
      * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map.
      */
     private EDataType create(ExtractedDataType extractedDataType) {
-        if (typeMap.containsKey(extractedDataType.getFullTypeName())) {
-            throw new IllegalArgumentException("Can't create an already created data type.");
+        if (typeMap.containsKey(extractedDataType.getFullTypeName())) { // if already created:
+            throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
         }
-        EDataType newType = ecoreFactory.createEDataType();
-        newType.setName(extractedDataType.getTypeName());
-        newType.setInstanceTypeName(extractedDataType.getFullTypeName());
-        typeMap.put(extractedDataType.getFullTypeName(), newType);
+        EDataType newType = ecoreFactory.createEDataType(); // new data type.
+        newType.setName(extractedDataType.getTypeName()); // set name
+        newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
+        typeMap.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
         return newType;
     }
 
