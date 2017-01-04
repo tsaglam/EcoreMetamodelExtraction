@@ -34,7 +34,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all generic arguments from an extracted data type to an generic type.
+     * Adds all generic arguments from an extracted data type to an generic type. For all generic arguments add their
+     * generic arguments recursively.
      * @param genericType is the generic type of an attribute, a parameter or a method.
      * @param dataType is the extracted data type, an attribute, a parameter or a return type.
      */
@@ -42,7 +43,7 @@ public class EDataTypeGenerator {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eTypeArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             eTypeArgument.setEClassifier(generateFrom(genericArgument)); // set data type
-            // TODO (HIGH) recursively add generic args.
+            addGenericArguments(eTypeArgument, genericArgument); // recursively add generic arguments of this one
             genericType.getETypeArguments().add(eTypeArgument); // add ETypeArgument to original generic type
         }
     }
