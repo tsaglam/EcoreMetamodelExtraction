@@ -3,12 +3,16 @@ package eme.generator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
+import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 
 /**
@@ -39,15 +43,26 @@ public class EDataTypeGenerator {
      * class that has to be created as data type, or (3.) an already known data type (Basic type or already created).
      */
     public EClassifier generateFrom(ExtractedDataType extractedDataType) {
+        EDataType eDataType;
         String fullName = extractedDataType.getFullTypeName();
         if (createdEClassifiers.containsKey(fullName)) { // if is custom class
             return createdEClassifiers.get(fullName);
         } else if (typeMap.containsKey(fullName)) { // if is basic type or already known
-            return typeMap.get(fullName); // access EDataType
+            eDataType = typeMap.get(fullName); // access EDataType
+            return eDataType;
         } else { // if its an external type
-            EDataType eDataType = create(extractedDataType); // create new EDataType
+            eDataType = create(extractedDataType); // create new EDataType
             root.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
+        }
+    }
+
+    public void addGenericArguments(EAttribute eAttribute, ExtractedAttribute extractedAttribute) {
+        EGenericType genericType = eAttribute.getEGenericType(); // TODO (HIGH) use this for all data types.
+        for (ExtractedDataType genericArgument : extractedAttribute.getGenericArguments()) {
+            EGenericType eTypeArgument = ecoreFactory.createEGenericType();
+            eTypeArgument.setEClassifier(generateFrom(genericArgument));
+            genericType.getETypeArguments().add(eTypeArgument);
         }
     }
 

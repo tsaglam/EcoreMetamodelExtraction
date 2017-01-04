@@ -150,6 +150,9 @@ public class EObjectGenerator {
                 eAttribute.setName(attribute.getIdentifier());
                 eAttribute.setChangeable(!attribute.isFinal());
                 eAttribute.setEType(typeGenerator.generateFrom(attribute));
+                if (attribute.isGeneric()) {
+                    typeGenerator.addGenericArguments(eAttribute, attribute);
+                }
                 list.add(eAttribute);
             }
         }
