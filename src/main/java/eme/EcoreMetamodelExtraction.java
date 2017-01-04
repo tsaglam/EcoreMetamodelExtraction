@@ -1,6 +1,5 @@
 package eme;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -27,7 +26,6 @@ public class EcoreMetamodelExtraction {
      * Basic constructor. Builds parser and generator.
      */
     public EcoreMetamodelExtraction() {
-        BasicConfigurator.configure();
         logger.info("Started EME...");
         properties = new ExtractionProperties();
         parser = new JavaProjectParser();

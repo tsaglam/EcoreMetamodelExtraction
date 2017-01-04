@@ -1,5 +1,6 @@
 package eme.handlers;
 
+import org.apache.log4j.BasicConfigurator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,6 +23,13 @@ import eme.EcoreMetamodelExtraction;
  */
 public class MainHandler extends AbstractHandler {
     private IWorkbenchWindow window;
+
+    /**
+     * Simple constructor that initializes the logger.
+     */
+    public MainHandler() {
+        BasicConfigurator.configure();
+    }
 
     /**
      * Accesses all the projects in the workspace and lets the user choose a project with a simple dialog.
