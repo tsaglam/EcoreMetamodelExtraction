@@ -3,16 +3,13 @@ package eme.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
-import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 
 /**
@@ -37,6 +34,20 @@ public class EDataTypeGenerator {
     }
 
     /**
+     * Adds all generic arguments from an extracted data type to an generic type.
+     * @param genericType is the generic type of an attribute, a parameter or a method.
+     * @param dataType is the extracted data type, an attribute, a parameter or a return type.
+     */
+    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType) {
+        for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
+            EGenericType eTypeArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
+            eTypeArgument.setEClassifier(generateFrom(genericArgument)); // set data type
+            // TODO (HIGH) recursively add generic args.
+            genericType.getETypeArguments().add(eTypeArgument); // add ETypeArgument to original generic type
+        }
+    }
+
+    /**
      * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes.
      * @param extractedDataType is the extracted data type.
      * @return the data type as EClassifier, which is either (1.) a custom class from the model, or (2.) or an external
@@ -54,15 +65,6 @@ public class EDataTypeGenerator {
             eDataType = create(extractedDataType); // create new EDataType
             root.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
-        }
-    }
-
-    public void addGenericArguments(EAttribute eAttribute, ExtractedAttribute extractedAttribute) {
-        EGenericType genericType = eAttribute.getEGenericType(); // TODO (HIGH) use this for all data types.
-        for (ExtractedDataType genericArgument : extractedAttribute.getGenericArguments()) {
-            EGenericType eTypeArgument = ecoreFactory.createEGenericType();
-            eTypeArgument.setEClassifier(generateFrom(genericArgument));
-            genericType.getETypeArguments().add(eTypeArgument);
         }
     }
 

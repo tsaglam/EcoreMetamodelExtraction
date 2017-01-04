@@ -150,9 +150,7 @@ public class EObjectGenerator {
                 eAttribute.setName(attribute.getIdentifier());
                 eAttribute.setChangeable(!attribute.isFinal());
                 eAttribute.setEType(typeGenerator.generateFrom(attribute));
-                if (attribute.isGeneric()) {
-                    typeGenerator.addGenericArguments(eAttribute, attribute);
-                }
+                typeGenerator.addGenericArguments(eAttribute.getEGenericType(), attribute);
                 list.add(eAttribute);
             }
         }
@@ -169,6 +167,7 @@ public class EObjectGenerator {
                 operation.setName(method.getName());
                 if (method.getReturnType() != null) {
                     operation.setEType(typeGenerator.generateFrom(method.getReturnType()));
+                    typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType());
                 }
                 addParameters(method, operation.getEParameters());
                 list.add(operation);
@@ -185,6 +184,7 @@ public class EObjectGenerator {
             eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) generics & arrays
             eParameter.setName(parameter.getIdentifier());
             eParameter.setEType(typeGenerator.generateFrom(parameter));
+            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter);
             list.add(eParameter);
         }
     }
