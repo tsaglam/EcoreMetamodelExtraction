@@ -36,6 +36,7 @@ public class JavaProjectParser {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
+    private int packageCounter;
 
     /**
      * Analyzes a java project and builds an intermediate model.
@@ -102,6 +103,7 @@ public class JavaProjectParser {
     private void parseCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {
         for (IPackageFragment fragment : fragments) { // for every package fragment
             currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
+            reportProgress(fragments.size());
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
                 parseTypes(unit); // extract classes
             }
@@ -188,11 +190,21 @@ public class JavaProjectParser {
             } else if (iType.isEnum()) {
                 extractedType = parseEnumeration(iType); // create enum
             }
-            parseMethods(iType, extractedType); // parse methods
             parseAttributes(iType, extractedType); // parse attributes
+            parseMethods(iType, extractedType); // parse methods
             for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
                 extractedType.addInterface(superInterface.getFullyQualifiedName()); // add interface
             }
         }
+    }
+
+    /**
+     * Reports on the parsing progress by logging the current package.
+     * @param packages is the total amount of packages in the project.
+     */
+    private void reportProgress(int packages) {
+        packageCounter++; // increase package count
+        logger.info("Parsing package " + currentPackage.getFullName() + " (" + packageCounter + "/" + packages + ")");
+        packageCounter = (packageCounter == packages) ? 0 : packageCounter; // reset to zero if finished
     }
 }

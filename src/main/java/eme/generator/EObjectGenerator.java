@@ -179,7 +179,7 @@ public class EObjectGenerator {
     private void addParameters(ExtractedMethod method, List<EParameter> list) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
-            eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) arrays
+            eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) solution for arrays.
             eParameter.setName(parameter.getIdentifier()); // set identifier
             eParameter.setEType(typeGenerator.generateFrom(parameter)); // generate type
             typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter); // add generic arguments
