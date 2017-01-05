@@ -25,6 +25,7 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
@@ -166,6 +167,9 @@ public class EObjectGenerator {
                 if (method.getReturnType() != null) { // build return type:
                     operation.setEType(typeGenerator.generateFrom(method.getReturnType()));
                     typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType());
+                }
+                for (ExtractedDataType exception : method.getThrowsDeclarations()) {
+                    operation.getEExceptions().add(typeGenerator.generateFrom(exception));
                 }
                 addParameters(method, operation.getEParameters()); // add parameters
                 list.add(operation);

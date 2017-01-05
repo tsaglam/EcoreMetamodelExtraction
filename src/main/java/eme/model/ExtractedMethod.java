@@ -14,6 +14,7 @@ import eme.model.datatypes.ExtractedParameter;
 public class ExtractedMethod extends ExtractedElement {
     private boolean abstractMethod;
     private final boolean constructor;
+    private final List<ExtractedDataType> exceptions;
     private AccessLevelModifier modifier;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
@@ -28,6 +29,7 @@ public class ExtractedMethod extends ExtractedElement {
     public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean constructor) {
         super(fullName);
         parameters = new LinkedList<ExtractedParameter>();
+        exceptions = new LinkedList<ExtractedDataType>();
         this.returnType = returnType;
         this.constructor = constructor;
         modifier = AccessLevelModifier.NO_MODIFIER;
@@ -41,6 +43,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public void addParameter(ExtractedParameter parameter) {
         parameters.add(parameter);
+    }
+
+    /**
+     * Adds a throws declaration to the method.
+     * @param exception is the throws declaration.
+     */
+    public void addThrowsDeclaration(ExtractedDataType exception) {
+        exceptions.add(exception);
     }
 
     /**
@@ -65,6 +75,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public ExtractedDataType getReturnType() {
         return returnType;
+    }
+
+    /**
+     * getter for the throws declarations.
+     * @return the throws declarations
+     */
+    public List<ExtractedDataType> getThrowsDeclarations() {
+        return exceptions;
     }
 
     /**

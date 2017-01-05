@@ -21,6 +21,21 @@ import eme.model.datatypes.ExtractedParameter;
 public abstract class DataTypeParser {
 
     /**
+     * Creates extracted data type from a signature and a declaring type. Use this method if the other methods of the
+     * class do not fit your needs (e.g. for throws declarations).
+     * @param signature is the signature of the data type.
+     * @param declaringType is the declaring type of the signature.
+     * @return the extracted data type.
+     * @throws JavaModelException if there are problems with the JDT API.
+     */
+    public static ExtractedDataType parseDataType(String signature, IType declaringType) throws JavaModelException {
+        int arrayCount = Signature.getArrayCount(signature);
+        ExtractedDataType dataType = new ExtractedDataType(getFullName(signature, declaringType), arrayCount);
+        dataType.setGenericArguments(parseGenericTypes(signature, declaringType));
+        return dataType;
+    }
+
+    /**
      * Creates extracted attribute from a field and its type.
      * @param field is the field.
      * @param iType is the type of the field.
@@ -79,16 +94,6 @@ public abstract class DataTypeParser {
             return simpleName.substring(0, simpleName.indexOf('<'));
         }
         return simpleName;
-    }
-
-    /**
-     * Creates extracted data type from a signature and a declaring type.
-     */
-    private static ExtractedDataType parseDataType(String signature, IType declaringType) throws JavaModelException {
-        int arrayCount = Signature.getArrayCount(signature);
-        ExtractedDataType dataType = new ExtractedDataType(getFullName(signature, declaringType), arrayCount);
-        dataType.setGenericArguments(parseGenericTypes(signature, declaringType));
-        return dataType;
     }
 
     /**

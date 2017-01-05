@@ -151,6 +151,9 @@ public class JavaProjectParser {
             for (ILocalVariable parameter : method.getParameters()) {
                 extractedMethod.addParameter(DataTypeParser.parseParameter(parameter, method));
             }
+            for (String exception : method.getExceptionTypes()) {
+                extractedMethod.addThrowsDeclaration(DataTypeParser.parseDataType(exception, iType));
+            }
             extractedType.addMethod(extractedMethod);
         }
     }
