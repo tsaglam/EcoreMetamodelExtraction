@@ -53,19 +53,19 @@ public abstract class DataTypeParser {
 
     /**
      * Creates extracted method parameter from a parameter and its method.
-     * @param parameter is the parameter.
+     * @param variable is the parameter.
      * @param iMethod is the method of the parameter.
      * @return the extracted method parameter.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public static ExtractedParameter parseParameter(ILocalVariable parameter, IMethod iMethod) throws JavaModelException {
-        String signature = parameter.getTypeSignature(); // get return type signature
-        String name = parameter.getElementName(); // name of the parameter
+    public static ExtractedParameter parseParameter(ILocalVariable variable, IMethod iMethod) throws JavaModelException {
+        String signature = variable.getTypeSignature(); // get return type signature
+        String name = variable.getElementName(); // name of the parameter
         IType declaringType = iMethod.getDeclaringType(); // declaring type of the method
         int arrayCount = Signature.getArrayCount(signature); // amount of array dimensions
-        ExtractedParameter variable = new ExtractedParameter(name, getFullName(signature, declaringType), arrayCount);
-        variable.setGenericArguments(parseGenericTypes(signature, declaringType));
-        return variable;
+        ExtractedParameter parameter = new ExtractedParameter(name, getFullName(signature, declaringType), arrayCount);
+        parameter.setGenericArguments(parseGenericTypes(signature, declaringType));
+        return parameter;
     }
 
     /**
@@ -86,14 +86,14 @@ public abstract class DataTypeParser {
      * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
      */
     private static String getFullName(String signature, IType declaringType) throws JavaModelException {
-        String simpleName = Signature.getSignatureSimpleName(Signature.getElementType(signature));
-        String[][] resolvedType = declaringType.resolveType(simpleName); // resolve type
-        if (resolvedType != null && resolvedType[0] != null) {
-            return Signature.toQualifiedName(resolvedType[0]);
-        } else if (simpleName.contains("<")) {
-            return simpleName.substring(0, simpleName.indexOf('<'));
+        String simpleName = Signature.getSignatureSimpleName(Signature.getElementType(signature)); // plain name
+        String[][] resolvedType = declaringType.resolveType(simpleName); // resolve type from name
+        if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
+            return Signature.toQualifiedName(resolvedType[0]); // return full name
+        } else if (simpleName.contains("<")) { // else return simple name:
+            return simpleName.substring(0, simpleName.indexOf('<')); // without generic arguments if it has some
         }
-        return simpleName;
+        return simpleName; // or as it is if it has no generic arguments.
     }
 
     /**
@@ -101,8 +101,8 @@ public abstract class DataTypeParser {
      */
     private static List<ExtractedDataType> parseGenericTypes(String signature, IType declaringType) throws JavaModelException {
         List<ExtractedDataType> genericTypes = new LinkedList<ExtractedDataType>();
-        for (String genericTypeSignature : Signature.getTypeArguments(signature)) {
-            genericTypes.add(parseDataType(genericTypeSignature, declaringType));
+        for (String genericTypeSignature : Signature.getTypeArguments(signature)) { // for every argument
+            genericTypes.add(parseDataType(genericTypeSignature, declaringType)); // add generic type argument
         }
         return genericTypes;
     }
