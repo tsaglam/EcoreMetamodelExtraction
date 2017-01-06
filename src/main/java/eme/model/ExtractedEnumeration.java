@@ -3,6 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.IType;
+
 /**
  * Represents an enumeration in the intermediate model.
  * @author Timur Saglam
@@ -16,7 +18,17 @@ public class ExtractedEnumeration extends ExtractedType {
      * @param fullName is the full name, containing name and package name.
      */
     public ExtractedEnumeration(String fullName) {
-        super(fullName);
+        super(fullName, null);
+        enumerals = new LinkedList<String>();
+    }
+
+    /**
+     * Constructor that also takes the JDT representation.
+     * @param fullName is the full name, containing name and package name.
+     * @param iType is the JDT representation.
+     */
+    public ExtractedEnumeration(String fullName, IType iType) {
+        super(fullName, iType);
         enumerals = new LinkedList<String>();
     }
 

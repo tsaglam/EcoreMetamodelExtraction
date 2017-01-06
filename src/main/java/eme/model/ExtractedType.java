@@ -3,6 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.IType;
+
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
@@ -12,6 +14,7 @@ import eme.model.datatypes.ExtractedAttribute;
 public abstract class ExtractedType extends ExtractedElement {
     protected final List<ExtractedAttribute> attributes;
     protected boolean innerType;
+    protected IType iType;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
     protected String superClass;
@@ -21,8 +24,9 @@ public abstract class ExtractedType extends ExtractedElement {
      * Basic constructor.
      * @param fullName is the full name, containing name and package name.
      */
-    public ExtractedType(String fullName) {
+    public ExtractedType(String fullName, IType iType) {
         super(fullName);
+        this.iType = iType;
         superInterfaces = new LinkedList<String>();
         methods = new LinkedList<ExtractedMethod>();
         attributes = new LinkedList<ExtractedAttribute>();
@@ -73,6 +77,14 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public List<ExtractedAttribute> getAttributes() {
         return attributes;
+    }
+
+    /**
+     * Getter for the JDT representation.
+     * @return the JDT representation, an iType.
+     */
+    public IType getJDTRepresentation() {
+        return iType;
     }
 
     /**
