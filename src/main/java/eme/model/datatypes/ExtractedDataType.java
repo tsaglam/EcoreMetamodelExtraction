@@ -8,10 +8,10 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedDataType {
-    private final String simpleName;
-    private final String fullName;
     private final int arrayDimension;
+    private final String fullName;
     private List<ExtractedDataType> genericArguments;
+    private final String simpleName;
 
     /**
      * Basic constructor, takes the full and the simple name.

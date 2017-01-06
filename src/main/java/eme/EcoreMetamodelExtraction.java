@@ -18,9 +18,9 @@ import eme.properties.ExtractionProperties;
  */
 public class EcoreMetamodelExtraction {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
-    private final ExtractionProperties properties;
-    private final JavaProjectParser parser;
     private final EcoreMetamodelGenerator generator;
+    private final JavaProjectParser parser;
+    private final ExtractionProperties properties;
 
     /**
      * Basic constructor. Builds parser and generator.

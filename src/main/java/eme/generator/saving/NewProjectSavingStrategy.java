@@ -11,8 +11,8 @@ import eme.generator.EMFProjectGenerator;
  * @author Timur Saglam
  */
 public class NewProjectSavingStrategy extends AbstractSavingStrategy {
-    private String generatedProjectName;
     private String fileName;
+    private String generatedProjectName;
 
     /**
      * Basic constructor.
