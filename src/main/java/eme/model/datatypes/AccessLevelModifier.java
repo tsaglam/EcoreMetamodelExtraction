@@ -7,7 +7,25 @@ import org.eclipse.jdt.core.Flags;
  * @author Timur Saglam
  */
 public enum AccessLevelModifier {
-    NO_MODIFIER, PRIVATE, PROTECTED, PUBLIC;
+    /**
+     * Represents the default Java modifier.
+     */
+    NO_MODIFIER,
+
+    /**
+     * Represents the Java modifier <code>private</code>.
+     */
+    PRIVATE,
+
+    /**
+     * Represents the Java modifier <code>protected</code>.
+     */
+    PROTECTED,
+
+    /**
+     * Represents the Java modifier <code>public</code>.
+     */
+    PUBLIC;
 
     /**
      * Generate the access level modifier from an flags integer (see {@link org.eclipse.jdt.core.Flags})
