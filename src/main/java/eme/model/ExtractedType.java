@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedGenericType;
 
 /**
  * Represents a type in the intermediate model.
@@ -11,6 +12,7 @@ import eme.model.datatypes.ExtractedAttribute;
  */
 public abstract class ExtractedType extends ExtractedElement {
     protected final List<ExtractedAttribute> attributes;
+    protected final List<ExtractedGenericType> genericTypes;
     protected boolean innerType;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
@@ -26,6 +28,7 @@ public abstract class ExtractedType extends ExtractedElement {
         superInterfaces = new LinkedList<String>();
         methods = new LinkedList<ExtractedMethod>();
         attributes = new LinkedList<ExtractedAttribute>();
+        genericTypes = new LinkedList<ExtractedGenericType>();
         if (name.contains("$")) { // dollar in name means its a nested type
             innerType = true; // set nested true and adapt parent
             outerType = name.substring(0, name.lastIndexOf('$'));
@@ -54,6 +57,14 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public void addMethod(ExtractedMethod method) {
         methods.add(method);
+    }
+    
+    /**
+     * Adds a generic type to the type.
+     * @param genericType is the new generic type.
+     */
+    public void addMethod(ExtractedGenericType genericType ){
+        genericTypes.add(genericType);
     }
 
     /**
