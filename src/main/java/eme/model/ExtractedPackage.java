@@ -3,6 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.IPackageFragment;
+
 /**
  * Is the representation of a package in the intermediate model.
  * @author Timur Saglam
@@ -11,6 +13,7 @@ public class ExtractedPackage extends ExtractedElement {
     private final List<ExtractedClass> classes;
     private final List<ExtractedEnumeration> enumerations;
     private final List<ExtractedInterface> interfaces;
+    private List<IPackageFragment> iPackageFragments;
     private final List<ExtractedPackage> subpackages;
     protected boolean root;
 
@@ -24,6 +27,7 @@ public class ExtractedPackage extends ExtractedElement {
         classes = new LinkedList<ExtractedClass>();
         interfaces = new LinkedList<ExtractedInterface>();
         enumerations = new LinkedList<ExtractedEnumeration>();
+        iPackageFragments = new LinkedList<IPackageFragment>();
         root = false;
     }
 
@@ -50,6 +54,14 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
+     * Adds an JDT representation to the package.
+     * @param iPackageFragment is the new JDT representation.
+     */
+    public void addJDTRepresentation(IPackageFragment iPackageFragment) {
+        iPackageFragments.add(iPackageFragment);
+    }
+
+    /**
      * Getter for the classes.
      * @return the classes.
      */
@@ -71,6 +83,14 @@ public class ExtractedPackage extends ExtractedElement {
      */
     public List<ExtractedInterface> getInterfaces() {
         return interfaces;
+    }
+
+    /**
+     * Getter for the JDT representations.
+     * @return the JDT representations, an List<IPackageFragment>.
+     */
+    public List<IPackageFragment> getJDTRepresenations() {
+        return iPackageFragments;
     }
 
     /**
