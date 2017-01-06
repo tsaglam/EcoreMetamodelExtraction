@@ -3,6 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.IMethod;
+
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
@@ -15,6 +17,7 @@ public class ExtractedMethod extends ExtractedElement {
     private boolean abstractMethod;
     private final boolean constructor;
     private final List<ExtractedDataType> exceptions;
+    private IMethod iMethod;
     private AccessLevelModifier modifier;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
@@ -38,6 +41,19 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
+     * Constructor that also takes the JDT representation. Sets access level modifier to NO_MODIFIER, static and
+     * abstract to false;
+     * @param fullName is the full name of the method, consisting out of the full class name and the method name.
+     * @param returnType is the data type for the return type of the method. null if it is void.
+     * @param constructor determines whether this method is an constructor.
+     * @param iMethod is the JDT representation.
+     */
+    public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean constructor, IMethod iMethod) {
+        this(fullName, returnType, constructor);
+        this.iMethod = iMethod;
+    }
+
+    /**
      * Adds a parameter to the method.
      * @param parameter is the new parameter.
      */
@@ -51,6 +67,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public void addThrowsDeclaration(ExtractedDataType exception) {
         exceptions.add(exception);
+    }
+
+    /**
+     * Getter for the JDT representation.
+     * @return the JDT representation, an IMethod.
+     */
+    public IMethod getJDTRepresentation() {
+        return iMethod;
     }
 
     /**
