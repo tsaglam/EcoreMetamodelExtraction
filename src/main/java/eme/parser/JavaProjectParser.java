@@ -85,6 +85,7 @@ public class JavaProjectParser {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
         newClass.setSuperClass(type.getSuperclassName());
+        DataTypeParser.parseGenericTypes(type, newClass); // TODO
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
             if (superType != null) { // could be null, prevents exception

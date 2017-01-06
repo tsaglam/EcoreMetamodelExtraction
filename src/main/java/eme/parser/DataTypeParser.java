@@ -10,8 +10,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedGenericType;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
@@ -49,6 +51,24 @@ public abstract class DataTypeParser {
         ExtractedAttribute attribute = new ExtractedAttribute(name, getFullName(signature, iType), arrayCount);
         attribute.setGenericArguments(parseGenericTypes(signature, iType));
         return attribute;
+    }
+
+    /**
+     * Parses all generic types of an IType and adds the to an ExtractedType.
+     * @param iType is the IType.
+     * @param type is the ExtractedType.
+     * @throws @throws JavaModelException if there are problems with the JDT API.
+     */
+    public static void parseGenericTypes(IType iType, ExtractedType type) throws JavaModelException {
+        ExtractedGenericType genericType;
+        for (String signature : iType.getTypeParameterSignatures()) { // for every generic type
+            genericType = new ExtractedGenericType((Signature.getTypeVariable(signature))); // create representation
+            for (String typeParameter : Signature.getTypeParameterBounds(signature)) { // if has extended type:
+                genericType.setExtendedType(getFullName(typeParameter, iType)); // add to representation
+            }
+            type.addMethod(genericType); // add to extracted type
+            System.err.println(genericType); // TODO
+        }
     }
 
     /**
