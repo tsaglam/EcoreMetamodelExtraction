@@ -52,19 +52,19 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
+     * Adds a generic type to the type.
+     * @param genericType is the new generic type.
+     */
+    public void addMethod(ExtractedGenericType genericType) {
+        genericTypes.add(genericType);
+    }
+
+    /**
      * Adds a method to the type.
      * @param method is the new method.
      */
     public void addMethod(ExtractedMethod method) {
         methods.add(method);
-    }
-    
-    /**
-     * Adds a generic type to the type.
-     * @param genericType is the new generic type.
-     */
-    public void addMethod(ExtractedGenericType genericType ){
-        genericTypes.add(genericType);
     }
 
     /**
@@ -84,6 +84,14 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public List<ExtractedAttribute> getAttributes() {
         return attributes;
+    }
+
+    /**
+     * Getter for the list of generic types.
+     * @return the list of generic types.
+     */
+    public List<ExtractedGenericType> getGenericTypes() {
+        return genericTypes;
     }
 
     /**
