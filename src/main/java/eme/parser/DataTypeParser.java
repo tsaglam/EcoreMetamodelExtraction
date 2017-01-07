@@ -64,7 +64,7 @@ public abstract class DataTypeParser {
         for (String signature : iType.getTypeParameterSignatures()) { // for every generic type
             genericType = new ExtractedGenericType((Signature.getTypeVariable(signature))); // create representation
             for (String typeParameter : Signature.getTypeParameterBounds(signature)) { // if has extended type:
-                genericType.setExtendedType(getFullName(typeParameter, iType)); // add to representation
+                genericType.add(parseDataType(typeParameter, iType)); // add to representation
             }
             type.addMethod(genericType); // add to extracted type
             System.err.println(genericType); // TODO
