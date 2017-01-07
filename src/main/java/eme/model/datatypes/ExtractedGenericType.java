@@ -1,11 +1,14 @@
 package eme.model.datatypes;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * This class represents a generic data type of a Java class.
  * @author Timur Saglam
  */
 public class ExtractedGenericType {
-    private String extendedType;
+    private List<ExtractedDataType> extendedTypes; // TODO can be multiple, should be data type
     private final String identifier;
 
     /**
@@ -14,6 +17,15 @@ public class ExtractedGenericType {
      */
     public ExtractedGenericType(String identifier) {
         this.identifier = identifier;
+        extendedTypes = new LinkedList<ExtractedDataType>();
+    }
+
+    /**
+     * Adds an extended type to the generic type.
+     * @param extendedType is the new extended type.
+     */
+    public void add(ExtractedDataType extendedType) {
+        extendedTypes.add(extendedType);
     }
 
     /**
@@ -21,15 +33,15 @@ public class ExtractedGenericType {
      * @return if it extends a type.
      */
     public boolean extendsType() {
-        return extendedType != null;
+        return !extendedTypes.isEmpty();
     }
 
     /**
-     * Getter for the extended type.
-     * @return the extended type of the generic type, null if it has no type.
+     * Getter for the extended types.
+     * @return the extended types of the generic type.
      */
-    public String getExtendedType() {
-        return extendedType;
+    public List<ExtractedDataType> getExtendedTypes() {
+        return extendedTypes;
     }
 
     /**
@@ -40,18 +52,10 @@ public class ExtractedGenericType {
         return identifier;
     }
 
-    /**
-     * Setter for the extended type. Adds an extended type to the generic type.
-     * @param extendedType is the new extended type.
-     */
-    public void setExtendedType(String extendedType) {
-        this.extendedType = extendedType;
-    }
-
     @Override
     public String toString() {
         if (extendsType()) {
-            return identifier + " extends " + extendedType;
+            return identifier + " extends " + extendedTypes.toString();
         }
         return identifier;
     }
