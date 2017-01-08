@@ -12,6 +12,7 @@ public class ExtractedDataType {
     private final String fullName;
     private List<ExtractedDataType> genericArguments;
     private final String simpleName;
+    private boolean typeParameter;
 
     /**
      * Basic constructor, takes the full and the simple name.
@@ -75,6 +76,14 @@ public class ExtractedDataType {
      */
     public boolean isGeneric() {
         return genericArguments.size() > 0;
+    }
+
+    /**
+     * Checks whether the data type is a type parameter.
+     * @return true if it is a type parameter.
+     */
+    public boolean isTypeParameter() {
+        return fullName.length() == 1; // TODO (HIGH) return type parameter
     }
 
     /**

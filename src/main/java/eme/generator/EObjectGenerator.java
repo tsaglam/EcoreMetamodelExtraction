@@ -37,7 +37,6 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EObjectGenerator {
-
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
@@ -67,8 +66,8 @@ public class EObjectGenerator {
      */
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
-            addOperations(incompleteEClasses.get(eClass), eClass.getEOperations()); // add methods
-            addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures()); // add attributes
+            addOperations(incompleteEClasses.get(eClass), eClass.getEOperations(), eClass); // add methods
+            addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures(), eClass); // add attributes
         }
         selector.generateReport(); // print reports
     }
@@ -142,15 +141,20 @@ public class EObjectGenerator {
     /**
      * Adds the attributes of an extracted type to a specific List of EStructuralFeatures.
      */
-    private void addAttributes(ExtractedType type, List<EStructuralFeature> list) {
+    private void addAttributes(ExtractedType type, List<EStructuralFeature> list, EClassifier classifier) {
         EAttribute eAttribute;
         for (ExtractedAttribute attribute : type.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
                 eAttribute = ecoreFactory.createEAttribute(); // create object
                 eAttribute.setName(attribute.getIdentifier()); // set name
                 eAttribute.setChangeable(!attribute.isFinal()); // make unchangeable if final
-                eAttribute.setEType(typeGenerator.generateFrom(attribute)); // generate data type
-                typeGenerator.addGenericArguments(eAttribute.getEGenericType(), attribute); // add generic arguments
+                if (attribute.isTypeParameter()) {
+                    eAttribute.setEGenericType(typeGenerator.generate(attribute, classifier));
+                } else {
+                    eAttribute.setEType(typeGenerator.generate(attribute)); // generate data type
+                }
+                typeGenerator.addGenericArguments(eAttribute.getEGenericType(), attribute, classifier); // add generic
+                                                                                                        // arguments
                 list.add(eAttribute);
             }
         }
@@ -159,20 +163,30 @@ public class EObjectGenerator {
     /**
      * Adds the operations of an extracted type to a specific List of EOperations.
      */
-    private void addOperations(ExtractedType type, List<EOperation> list) {
+    private void addOperations(ExtractedType type, List<EOperation> list, EClassifier classifier) {
         EOperation operation;
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
                 operation = ecoreFactory.createEOperation(); // create object
                 operation.setName(method.getName()); // set name
                 if (method.getReturnType() != null) { // build return type:
-                    operation.setEType(typeGenerator.generateFrom(method.getReturnType()));
-                    typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType());
+                    ExtractedDataType returnType = method.getReturnType();
+                    if (returnType.isTypeParameter()) {
+                        operation.setEGenericType(typeGenerator.generate(returnType, classifier));
+                    } else {
+                        operation.setEType(typeGenerator.generate(returnType)); // generate data type
+                    }
+                    typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType(), classifier);
                 }
                 for (ExtractedDataType exception : method.getThrowsDeclarations()) {
-                    operation.getEExceptions().add(typeGenerator.generateFrom(exception));
+                    if (exception.isTypeParameter()) {
+                        operation.getEGenericExceptions().add(typeGenerator.generate(exception, classifier));
+                    } else {
+                        operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
+                    }
+
                 }
-                addParameters(method, operation.getEParameters()); // add parameters
+                addParameters(method, operation.getEParameters(), classifier); // add parameters
                 list.add(operation);
             }
         }
@@ -181,13 +195,18 @@ public class EObjectGenerator {
     /**
      * Adds the parameters of an extracted method to a specific List of EParameters.
      */
-    private void addParameters(ExtractedMethod method, List<EParameter> list) {
+    private void addParameters(ExtractedMethod method, List<EParameter> list, EClassifier classifier) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
             eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) solution for arrays.
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            eParameter.setEType(typeGenerator.generateFrom(parameter)); // generate type
-            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter); // add generic arguments
+            if (parameter.isTypeParameter()) {
+                eParameter.setEGenericType(typeGenerator.generate(parameter, classifier));
+            } else {
+                eParameter.setEType(typeGenerator.generate(parameter)); // generate data type
+            }
+            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter, classifier); // add generic
+                                                                                                    // arguments
             list.add(eParameter);
         }
     }
