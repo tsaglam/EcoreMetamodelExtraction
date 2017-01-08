@@ -54,20 +54,19 @@ public abstract class DataTypeParser {
     }
 
     /**
-     * Parses all generic types of an IType and adds the to an ExtractedType.
+     * Parses all type parameters of an IType and adds the to an ExtractedType.
      * @param iType is the IType.
      * @param type is the ExtractedType.
      * @throws @throws JavaModelException if there are problems with the JDT API.
      */
-    public static void parseGenericTypes(IType iType, ExtractedType type) throws JavaModelException {
-        ExtractedTypeParameter genericType;
-        for (String signature : iType.getTypeParameterSignatures()) { // for every generic type
-            genericType = new ExtractedTypeParameter((Signature.getTypeVariable(signature))); // create representation
-            for (String typeParameter : Signature.getTypeParameterBounds(signature)) { // if has extended type:
-                genericType.add(parseDataType(typeParameter, iType)); // add to representation
+    public static void parseTypeParameters(IType iType, ExtractedType type) throws JavaModelException {
+        ExtractedTypeParameter parameter;
+        for (String signature : iType.getTypeParameterSignatures()) { // for every type parameter
+            parameter = new ExtractedTypeParameter((Signature.getTypeVariable(signature))); // create representation
+            for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
+                parameter.add(parseDataType(bound, iType)); // add to representation
             }
-            type.addMethod(genericType); // add to extracted type
-            System.err.println(genericType); // TODO
+            type.addMethod(parameter); // add to extracted type
         }
     }
 

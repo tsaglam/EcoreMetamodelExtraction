@@ -85,7 +85,6 @@ public class JavaProjectParser {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
         newClass.setSuperClass(type.getSuperclassName());
-        DataTypeParser.parseGenericTypes(type, newClass); // TODO
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
             if (superType != null) { // could be null, prevents exception
@@ -194,6 +193,7 @@ public class JavaProjectParser {
             } else if (iType.isEnum()) {
                 extractedType = parseEnumeration(iType); // create enum
             }
+            DataTypeParser.parseTypeParameters(iType, extractedType);
             parseAttributes(iType, extractedType); // parse attributes
             parseMethods(iType, extractedType); // parse methods
             for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
