@@ -93,6 +93,7 @@ public class EObjectGenerator {
         } else if (type.getClass() == ExtractedEnumeration.class) { // build enum:
             eClassifier = generateEEnum((ExtractedEnumeration) type);
         }
+        typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
         eClassifier.setName(type.getName()); // set name
         createdEClassifiers.put(fullName, eClassifier); // store created classifier
         return eClassifier;

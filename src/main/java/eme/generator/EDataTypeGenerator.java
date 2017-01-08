@@ -7,10 +7,13 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
+import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedTypeParameter;
 
 /**
  * Generator class for the generation of Ecore data types: EDataTypes
@@ -45,6 +48,27 @@ public class EDataTypeGenerator {
             eTypeArgument.setEClassifier(generateFrom(genericArgument)); // set data type
             addGenericArguments(eTypeArgument, genericArgument); // recursively add generic arguments of this one
             genericType.getETypeArguments().add(eTypeArgument); // add ETypeArgument to original generic type
+        }
+    }
+
+    /**
+     * Adds all generic type parameters from an extracted type to a classifier.
+     * @param classifier is the classifier.
+     * @param type is the extracted type.
+     */
+    public void addTypeParameters(EClassifier classifier, ExtractedType type) {
+        ETypeParameter eTypeParameter; // ecore type parameter
+        EGenericType eBound; // ecore type parameter bound
+        for (ExtractedTypeParameter typeParameter : type.getTypeParameters()) { // for all type parameters
+            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
+            eTypeParameter.setName(typeParameter.getIdentifier()); // set name
+            for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
+                eBound = ecoreFactory.createEGenericType(); // create object
+                eBound.setEClassifier(generateFrom(bound)); // set data type
+                addGenericArguments(eBound, bound); // add generic arguments
+                eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
+            }
+            classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
         }
     }
 
