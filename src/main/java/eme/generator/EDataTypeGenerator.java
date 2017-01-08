@@ -3,8 +3,6 @@ package eme.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
@@ -16,14 +14,12 @@ import org.eclipse.emf.ecore.EcorePackage;
 import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
-import eme.parser.JavaProjectParser;
 
 /**
  * Generator class for the generation of Ecore data types: EDataTypes
  * @author Timur Saglam
  */
 public class EDataTypeGenerator {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private EPackage root;
@@ -50,7 +46,7 @@ public class EDataTypeGenerator {
     public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eTypeArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
-            if (genericArgument.isTypeParameter()) {
+            if (isTypeParameter(genericArgument, classifier)) {
                 eTypeArgument.setETypeParameter(getETypeParameter(genericArgument.getFullTypeName(), classifier));
             } else {
                 eTypeArgument.setEClassifier(generate(genericArgument));
@@ -74,7 +70,7 @@ public class EDataTypeGenerator {
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
             for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
                 eBound = ecoreFactory.createEGenericType(); // create object
-                if (bound.isTypeParameter()) {
+                if (isTypeParameter(bound, classifier)) {
                     eBound.setETypeParameter(getETypeParameter(bound.getFullTypeName(), classifier));
                 } else {
                     eBound.setEClassifier(generate(bound));
@@ -114,7 +110,7 @@ public class EDataTypeGenerator {
      * @return the EGenericType.
      */
     public EGenericType generate(ExtractedDataType dataType, EClassifier classifier) {
-        if (dataType.isTypeParameter()) {
+        if (isTypeParameter(dataType, classifier)) {
             EGenericType genericType = ecoreFactory.createEGenericType();
             genericType.setETypeParameter(getETypeParameter(dataType.getFullTypeName(), classifier));
             return genericType;
@@ -123,11 +119,20 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes.
-     * @param extractedDataType is the extracted data type.
-     * @return the data type as EClassifier, which is either (1.) a custom class from the model, or (2.) or an external
-     * class that has to be created as data type, or (3.) an already known data type (Basic type or already created).
+     * Checks whether an extracted data type is a type parameter in a specific EClassifier.
+     * @param dataType is the extracted data type.
+     * @param classifier is the specific EClassifier.
+     * @return true if the extracted data type is a type parameter.
      */
+    public boolean isTypeParameter(ExtractedDataType dataType, EClassifier classifier) {
+        String dataTypeName = dataType.getFullTypeName();
+        for (ETypeParameter parameter : classifier.getETypeParameters()) {
+            if (parameter.getName().equals(dataTypeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Resets the class. Removes custom generated data types from the type map, so that only the basic types are
@@ -193,7 +198,6 @@ public class EDataTypeGenerator {
                 return parameter;
             }
         }
-        logger.error("There is no ETypeParameter " + name + " in " + classifier.toString());
-        return null; // TODO (MEDUM) make this an exception if wild cards are implemented
+        throw new IllegalArgumentException("There is no ETypeParameter " + name + " in " + classifier.toString());
     }
 }

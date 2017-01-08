@@ -148,7 +148,7 @@ public class EObjectGenerator {
                 eAttribute = ecoreFactory.createEAttribute(); // create object
                 eAttribute.setName(attribute.getIdentifier()); // set name
                 eAttribute.setChangeable(!attribute.isFinal()); // make unchangeable if final
-                if (attribute.isTypeParameter()) {
+                if (typeGenerator.isTypeParameter(attribute, classifier)) {
                     eAttribute.setEGenericType(typeGenerator.generate(attribute, classifier));
                 } else {
                     eAttribute.setEType(typeGenerator.generate(attribute)); // generate data type
@@ -171,7 +171,7 @@ public class EObjectGenerator {
                 operation.setName(method.getName()); // set name
                 if (method.getReturnType() != null) { // build return type:
                     ExtractedDataType returnType = method.getReturnType();
-                    if (returnType.isTypeParameter()) {
+                    if (typeGenerator.isTypeParameter(returnType, classifier)) {
                         operation.setEGenericType(typeGenerator.generate(returnType, classifier));
                     } else {
                         operation.setEType(typeGenerator.generate(returnType)); // generate data type
@@ -179,7 +179,7 @@ public class EObjectGenerator {
                     typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType(), classifier);
                 }
                 for (ExtractedDataType exception : method.getThrowsDeclarations()) {
-                    if (exception.isTypeParameter()) {
+                    if (typeGenerator.isTypeParameter(exception, classifier)) {
                         operation.getEGenericExceptions().add(typeGenerator.generate(exception, classifier));
                     } else {
                         operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
@@ -200,7 +200,7 @@ public class EObjectGenerator {
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
             eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) solution for arrays.
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            if (parameter.isTypeParameter()) {
+            if (typeGenerator.isTypeParameter(parameter, classifier)) {
                 eParameter.setEGenericType(typeGenerator.generate(parameter, classifier));
             } else {
                 eParameter.setEType(typeGenerator.generate(parameter)); // generate data type

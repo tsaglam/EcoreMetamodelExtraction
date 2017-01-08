@@ -12,7 +12,6 @@ public class ExtractedDataType {
     private final String fullName;
     private List<ExtractedDataType> genericArguments;
     private final String simpleName;
-    private boolean typeParameter;
 
     /**
      * Basic constructor, takes the full and the simple name.
@@ -21,11 +20,7 @@ public class ExtractedDataType {
      */
     public ExtractedDataType(String fullName, int arrayCount) {
         this.fullName = fullName;
-        if (fullName.contains(".")) {
-            simpleName = fullName.substring(fullName.lastIndexOf(".") + 1);
-        } else {
-            simpleName = fullName;
-        }
+        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf(".") + 1) : fullName;
         genericArguments = new LinkedList<ExtractedDataType>();
         arrayDimension = arrayCount;
     }
@@ -76,14 +71,6 @@ public class ExtractedDataType {
      */
     public boolean isGeneric() {
         return genericArguments.size() > 0;
-    }
-
-    /**
-     * Checks whether the data type is a type parameter.
-     * @return true if it is a type parameter.
-     */
-    public boolean isTypeParameter() {
-        return fullName.length() == 1; // TODO (HIGH) return type parameter
     }
 
     /**
