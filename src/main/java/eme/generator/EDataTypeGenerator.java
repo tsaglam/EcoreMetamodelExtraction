@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
+import eme.model.datatypes.WildcardStatus;
 
 /**
  * Generator class for the generation of Ecore data types: EDataTypes
@@ -46,13 +47,23 @@ public class EDataTypeGenerator {
     public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eTypeArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
-            if (isTypeParameter(genericArgument, classifier)) {
+            if (genericArgument.isWildcard()) {
+                WildcardStatus status = genericArgument.getWildcardStatus();
+                eTypeArgument.setETypeParameter(ecoreFactory.createETypeParameter());
+                EGenericType bound = ecoreFactory.createEGenericType();
+                if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
+                    bound.setEClassifier(generate(genericArgument));
+                    eTypeArgument.setELowerBound(bound);
+                } else if (status == WildcardStatus.WILDCARD_UPPER_BOUND) { // TODO (HIGH) code quality & duplicates.
+                    bound.setEClassifier(generate(genericArgument));
+                    eTypeArgument.setEUpperBound(bound);
+                }
+            } else if (isTypeParameter(genericArgument, classifier)) {
                 eTypeArgument.setETypeParameter(getETypeParameter(genericArgument.getFullTypeName(), classifier));
             } else {
                 eTypeArgument.setEClassifier(generate(genericArgument));
             }
-            addGenericArguments(eTypeArgument, genericArgument, classifier); // recursively add generic arguments of
-                                                                             // this one
+            addGenericArguments(eTypeArgument, genericArgument, classifier); // recursively add generic arguments
             genericType.getETypeArguments().add(eTypeArgument); // add ETypeArgument to original generic type
         }
     }
