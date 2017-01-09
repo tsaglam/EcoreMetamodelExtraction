@@ -14,6 +14,7 @@ import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
+import eme.model.datatypes.WildcardStatus;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
@@ -33,7 +34,7 @@ public abstract class DataTypeParser {
     public static ExtractedDataType parseDataType(String signature, IType declaringType) throws JavaModelException {
         int arrayCount = Signature.getArrayCount(signature);
         ExtractedDataType dataType = new ExtractedDataType(getFullName(signature, declaringType), arrayCount);
-        dataType.setGenericArguments(parseGenericTypes(signature, declaringType));
+        dataType.setGenericArguments(parseGenericArguments(signature, declaringType));
         return dataType;
     }
 
@@ -49,7 +50,7 @@ public abstract class DataTypeParser {
         int arrayCount = Signature.getArrayCount(signature);
         String name = field.getElementName(); // name of the field
         ExtractedAttribute attribute = new ExtractedAttribute(name, getFullName(signature, iType), arrayCount);
-        attribute.setGenericArguments(parseGenericTypes(signature, iType));
+        attribute.setGenericArguments(parseGenericArguments(signature, iType));
         return attribute;
     }
 
@@ -83,7 +84,7 @@ public abstract class DataTypeParser {
         IType declaringType = iMethod.getDeclaringType(); // declaring type of the method
         int arrayCount = Signature.getArrayCount(signature); // amount of array dimensions
         ExtractedParameter parameter = new ExtractedParameter(name, getFullName(signature, declaringType), arrayCount);
-        parameter.setGenericArguments(parseGenericTypes(signature, declaringType));
+        parameter.setGenericArguments(parseGenericArguments(signature, declaringType));
         return parameter;
     }
 
@@ -105,7 +106,11 @@ public abstract class DataTypeParser {
      * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
      */
     private static String getFullName(String signature, IType declaringType) throws JavaModelException {
-        String simpleName = Signature.getSignatureSimpleName(Signature.getElementType(signature)); // plain name
+        String reducedSignature = Signature.getElementType(signature); // remove array information
+        if (reducedSignature.charAt(0) == Signature.C_SUPER || reducedSignature.charAt(0) == Signature.C_EXTENDS) {
+            reducedSignature = reducedSignature.substring(1); // remove wild card parameter
+        }
+        String simpleName = Signature.getSignatureSimpleName(reducedSignature); // get plain name
         String[][] resolvedType = declaringType.resolveType(simpleName); // resolve type from name
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             return Signature.toQualifiedName(resolvedType[0]); // return full name
@@ -116,13 +121,29 @@ public abstract class DataTypeParser {
     }
 
     /**
-     * Parses generic types from type signature and returns them in a list.
+     * Parses generic arguments from type signature and returns them in a list.
      */
-    private static List<ExtractedDataType> parseGenericTypes(String signature, IType declaringType) throws JavaModelException {
-        List<ExtractedDataType> genericTypes = new LinkedList<ExtractedDataType>();
-        for (String genericTypeSignature : Signature.getTypeArguments(signature)) { // for every argument
-            genericTypes.add(parseDataType(genericTypeSignature, declaringType)); // add generic type argument
+    private static List<ExtractedDataType> parseGenericArguments(String signature, IType declaringType) throws JavaModelException {
+        List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
+        for (String argumentSignature : Signature.getTypeArguments(signature)) { // for every argument
+            ExtractedDataType genericArgument = parseDataType(argumentSignature, declaringType);
+            genericArgument.setWildcardStatus(parseWildcardStatus(argumentSignature));
+            genericArguments.add(genericArgument); // add generic type argument
         }
-        return genericTypes;
+        return genericArguments;
+    }
+
+    /**
+     * Parses signature and return wild card status.
+     */
+    private static WildcardStatus parseWildcardStatus(String signature) {
+        if (signature.contains(Character.toString(Signature.C_STAR))) {
+            return WildcardStatus.WILDCARD;
+        } else if (signature.contains(Character.toString(Signature.C_EXTENDS))) {
+            return WildcardStatus.WILDCARD_UPPER_BOUND;
+        } else if (signature.contains(Character.toString(Signature.C_SUPER))) {
+            return WildcardStatus.WILDCARD_LOWER_BOUND;
+        }
+        return WildcardStatus.NO_WILDCARD;
     }
 }

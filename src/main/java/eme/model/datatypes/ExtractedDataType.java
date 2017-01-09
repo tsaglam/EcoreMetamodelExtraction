@@ -12,6 +12,7 @@ public class ExtractedDataType {
     private final String fullName;
     private List<ExtractedDataType> genericArguments;
     private final String simpleName;
+    private WildcardStatus wildcardStatus;
 
     /**
      * Basic constructor, takes the full and the simple name.
@@ -23,6 +24,7 @@ public class ExtractedDataType {
         simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf(".") + 1) : fullName;
         genericArguments = new LinkedList<ExtractedDataType>();
         arrayDimension = arrayCount;
+        wildcardStatus = WildcardStatus.NO_WILDCARD;
     }
 
     /**
@@ -58,6 +60,14 @@ public class ExtractedDataType {
     }
 
     /**
+     * getter for the wild card status.
+     * @return the wild card status.
+     */
+    public WildcardStatus getWildcardStatus() {
+        return wildcardStatus;
+    }
+
+    /**
      * Checks whether the data type is an array.
      * @return true if it is an array.
      */
@@ -74,11 +84,27 @@ public class ExtractedDataType {
     }
 
     /**
+     * Checks whether the data type is an wild card.
+     * @return true if it is an wild card.
+     */
+    public boolean isWildcard() {
+        return wildcardStatus != WildcardStatus.NO_WILDCARD;
+    }
+
+    /**
      * Setter for the generic arguments.
      * @param genericArguments is the list of generic arguments.
      */
     public void setGenericArguments(List<ExtractedDataType> genericArguments) {
         this.genericArguments = genericArguments;
+    }
+
+    /**
+     * Sets the wild card status of the data type.
+     * @param status
+     */
+    public void setWildcardStatus(WildcardStatus status) {
+        wildcardStatus = status;
     }
 
     @Override
