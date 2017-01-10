@@ -3,6 +3,8 @@ package eme.generator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
@@ -21,6 +23,7 @@ import eme.model.datatypes.WildcardStatus;
  * @author Timur Saglam
  */
 public class EDataTypeGenerator {
+    private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private EPackage root;
@@ -46,25 +49,16 @@ public class EDataTypeGenerator {
      */
     public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
-            EGenericType eTypeArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
+            EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) {
-                WildcardStatus status = genericArgument.getWildcardStatus();
-                eTypeArgument.setETypeParameter(ecoreFactory.createETypeParameter());
-                EGenericType bound = ecoreFactory.createEGenericType();
-                if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
-                    bound.setEClassifier(generate(genericArgument));
-                    eTypeArgument.setELowerBound(bound);
-                } else if (status == WildcardStatus.WILDCARD_UPPER_BOUND) { // TODO (HIGH) code quality & duplicates.
-                    bound.setEClassifier(generate(genericArgument));
-                    eTypeArgument.setEUpperBound(bound);
-                }
+                addBound(eArgument, genericArgument);
             } else if (isTypeParameter(genericArgument, classifier)) {
-                eTypeArgument.setETypeParameter(getETypeParameter(genericArgument.getFullTypeName(), classifier));
+                eArgument.setETypeParameter(getETypeParameter(genericArgument.getFullTypeName(), classifier));
             } else {
-                eTypeArgument.setEClassifier(generate(genericArgument));
+                eArgument.setEClassifier(generate(genericArgument));
             }
-            addGenericArguments(eTypeArgument, genericArgument, classifier); // recursively add generic arguments
-            genericType.getETypeArguments().add(eTypeArgument); // add ETypeArgument to original generic type
+            addGenericArguments(eArgument, genericArgument, classifier); // recursively add generic arguments
+            genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
         }
     }
 
@@ -108,7 +102,8 @@ public class EDataTypeGenerator {
             eDataType = typeMap.get(fullName); // access EDataType
             return eDataType;
         } else { // if its an external type
-            eDataType = create(extractedDataType); // create new EDataType
+            eDataType = generateExternal(extractedDataType); // create new EDataType
+            addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
             root.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
         }
@@ -120,7 +115,7 @@ public class EDataTypeGenerator {
      * @param classifier is the EClassifier that owns the the EGenericType
      * @return the EGenericType.
      */
-    public EGenericType generate(ExtractedDataType dataType, EClassifier classifier) {
+    public EGenericType generateGeneric(ExtractedDataType dataType, EClassifier classifier) {
         if (isTypeParameter(dataType, classifier)) {
             EGenericType genericType = ecoreFactory.createEGenericType();
             genericType.setETypeParameter(getETypeParameter(dataType.getFullTypeName(), classifier));
@@ -138,7 +133,7 @@ public class EDataTypeGenerator {
     public boolean isTypeParameter(ExtractedDataType dataType, EClassifier classifier) {
         String dataTypeName = dataType.getFullTypeName();
         for (ETypeParameter parameter : classifier.getETypeParameters()) {
-            if (parameter.getName().equals(dataTypeName)) {
+            if (parameter.getName() != null && parameter.getName().equals(dataTypeName)) {
                 return true;
             }
         }
@@ -163,17 +158,38 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map.
+     * Adds a bound to an wild card argument if it has one.
      */
-    private EDataType create(ExtractedDataType extractedDataType) {
-        if (typeMap.containsKey(extractedDataType.getFullTypeName())) { // if already created:
-            throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
+    private void addBound(EGenericType eArgument, ExtractedDataType genericArgument) {
+        WildcardStatus status = genericArgument.getWildcardStatus(); // get wild card status
+        if (status != WildcardStatus.WILDCARD) { // if has bounds:
+            EGenericType bound = ecoreFactory.createEGenericType(); // create bound
+            bound.setEClassifier(generate(genericArgument)); // generate bound type
+            if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
+                eArgument.setELowerBound(bound); // add lower bound
+            } else {
+                eArgument.setEUpperBound(bound); // add upper bound
+            }
         }
-        EDataType newType = ecoreFactory.createEDataType(); // new data type.
-        newType.setName(extractedDataType.getTypeName()); // set name
-        newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
-        typeMap.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
-        return newType;
+    }
+
+    /**
+     * Adds bland generic type arguments to an classifier through a extracted data type. This should only be used for
+     * external data types because it does not extract the actual types of the type parameters.
+     */
+    private void addTypeParameters(EClassifier classifier, ExtractedDataType dataType) {
+        ETypeParameter eTypeParameter; // ecore type parameter
+        char name = 'A';
+        for (int i = 0; i < dataType.getGenericArguments().size(); i++) {
+            if (name == 'Z' + 1) {
+                logger.error("Can only generate up to 26 type parameters for " + dataType.toString());
+                return;
+            }
+            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
+            eTypeParameter.setName(Character.toString(name)); // set name
+            classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
+            name++; // next letter.
+        }
     }
 
     private void fillMap() {
@@ -198,6 +214,20 @@ public class EDataTypeGenerator {
         typeMap.put("java.lang.Class", EcorePackage.eINSTANCE.getEJavaClass());
         typeMap.put("java.util.List", EcorePackage.eINSTANCE.getEEList());
         typeMap.put("java.util.Map", EcorePackage.eINSTANCE.getEMap());
+    }
+
+    /**
+     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map.
+     */
+    private EDataType generateExternal(ExtractedDataType extractedDataType) {
+        if (typeMap.containsKey(extractedDataType.getFullTypeName())) { // if already created:
+            throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
+        }
+        EDataType newType = ecoreFactory.createEDataType(); // new data type.
+        newType.setName(extractedDataType.getTypeName()); // set name
+        newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
+        typeMap.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
+        return newType;
     }
 
     /**

@@ -149,7 +149,7 @@ public class EObjectGenerator {
                 eAttribute.setName(attribute.getIdentifier()); // set name
                 eAttribute.setChangeable(!attribute.isFinal()); // make unchangeable if final
                 if (typeGenerator.isTypeParameter(attribute, classifier)) {
-                    eAttribute.setEGenericType(typeGenerator.generate(attribute, classifier));
+                    eAttribute.setEGenericType(typeGenerator.generateGeneric(attribute, classifier));
                 } else {
                     eAttribute.setEType(typeGenerator.generate(attribute)); // generate data type
                 }
@@ -172,7 +172,7 @@ public class EObjectGenerator {
                 if (method.getReturnType() != null) { // build return type:
                     ExtractedDataType returnType = method.getReturnType();
                     if (typeGenerator.isTypeParameter(returnType, classifier)) {
-                        operation.setEGenericType(typeGenerator.generate(returnType, classifier));
+                        operation.setEGenericType(typeGenerator.generateGeneric(returnType, classifier));
                     } else {
                         operation.setEType(typeGenerator.generate(returnType)); // generate data type
                     }
@@ -180,7 +180,7 @@ public class EObjectGenerator {
                 }
                 for (ExtractedDataType exception : method.getThrowsDeclarations()) {
                     if (typeGenerator.isTypeParameter(exception, classifier)) {
-                        operation.getEGenericExceptions().add(typeGenerator.generate(exception, classifier));
+                        operation.getEGenericExceptions().add(typeGenerator.generateGeneric(exception, classifier));
                     } else {
                         operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
                     }
@@ -201,7 +201,7 @@ public class EObjectGenerator {
             eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) solution for arrays.
             eParameter.setName(parameter.getIdentifier()); // set identifier
             if (typeGenerator.isTypeParameter(parameter, classifier)) {
-                eParameter.setEGenericType(typeGenerator.generate(parameter, classifier));
+                eParameter.setEGenericType(typeGenerator.generateGeneric(parameter, classifier));
             } else {
                 eParameter.setEType(typeGenerator.generate(parameter)); // generate data type
             }
