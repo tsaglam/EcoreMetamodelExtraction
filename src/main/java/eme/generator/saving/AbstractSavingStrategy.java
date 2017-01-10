@@ -20,14 +20,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
-import eme.parser.JavaProjectParser;
-
 /**
  * This is the abstract super class for all saving strategies.
  * @author Timur Saglam
  */
 public abstract class AbstractSavingStrategy {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(AbstractSavingStrategy.class.getName());
     private final boolean saveInProject;
 
     /**

@@ -11,7 +11,6 @@ import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.generator.saving.SameProjectSavingStrategy;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
-import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -20,7 +19,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EcoreMetamodelGenerator {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private EPackage ecoreMetamodel;
     private final EObjectGenerator eObjectGenerator;

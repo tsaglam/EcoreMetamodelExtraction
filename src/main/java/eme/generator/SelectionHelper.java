@@ -16,7 +16,6 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
-import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -25,7 +24,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class SelectionHelper {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(SelectionHelper.class.getName());
     private final ExtractionProperties properties;
     private final Map<String, Integer> reportMap;
 

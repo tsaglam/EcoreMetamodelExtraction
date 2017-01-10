@@ -13,9 +13,9 @@ import org.eclipse.jdt.core.Signature;
 import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedParameter;
 import eme.model.datatypes.ExtractedTypeParameter;
 import eme.model.datatypes.WildcardStatus;
-import eme.model.datatypes.ExtractedParameter;
 
 /**
  * Helper class to deal with type signatures and generate data types. Parses fields, parameters and return types.

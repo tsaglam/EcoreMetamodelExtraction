@@ -23,8 +23,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import eme.parser.JavaProjectParser;
-
 /**
  * Utility class for creating an empty EMF project. For this class the following code snippet was used to design the
  * project creation:
@@ -32,7 +30,7 @@ import eme.parser.JavaProjectParser;
  * @author Timur Saglam
  */
 public abstract class EMFProjectGenerator {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(EMFProjectGenerator.class.getName());
 
     /**
      * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that name already exits

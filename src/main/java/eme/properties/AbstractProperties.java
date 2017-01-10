@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import eme.parser.JavaProjectParser;
-
 /**
  * The class is the super class for the class ExtractionProperties. It separates the loading, saving and creating
  * process of the properties file from the actual getters and setters in the ExtractionProperties class. This class also
@@ -23,7 +21,7 @@ import eme.parser.JavaProjectParser;
  * @author Timur Saglam
  */
 public abstract class AbstractProperties {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(AbstractProperties.class.getName());
     private final String fileComment;
     private URL fileURL;
     protected Properties properties;

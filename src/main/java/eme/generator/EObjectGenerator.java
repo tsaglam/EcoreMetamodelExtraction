@@ -27,7 +27,6 @@ import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
-import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -37,7 +36,7 @@ import eme.properties.ExtractionProperties;
  * @author Timur Saglam
  */
 public class EObjectGenerator {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(EObjectGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private final Map<EClass, ExtractedType> incompleteEClasses;

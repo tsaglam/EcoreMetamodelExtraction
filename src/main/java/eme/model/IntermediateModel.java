@@ -6,14 +6,12 @@ import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import eme.parser.JavaProjectParser;
-
 /**
  * Base class for an intermediate model.
  * @author Timur Saglam
  */
 public class IntermediateModel {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+    private static final Logger logger = LogManager.getLogger(IntermediateModel.class.getName());
     private final Set<ExtractedPackage> packages;
     private final String projectName;
     private ExtractedPackage rootElement;
