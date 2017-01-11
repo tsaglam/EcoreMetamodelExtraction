@@ -88,7 +88,7 @@ public abstract class ExtractedElement {
 
     @Override
     public String toString() {
-        return name;
+        return getClass().getSimpleName() + "" + getFullName() + "";
     }
 
     /**

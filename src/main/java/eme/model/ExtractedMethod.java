@@ -121,4 +121,9 @@ public class ExtractedMethod extends ExtractedElement {
         this.staticMethod = staticMethod;
         this.abstractMethod = abstractMethod;
     }
+
+    @Override
+    public String toString() {
+        return modifier + " " + name + parent.toString() + " : " + returnType.toString();
+    }
 }
