@@ -8,7 +8,7 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedTypeParameter {
-    private List<ExtractedDataType> bounds;
+    private final List<ExtractedDataType> bounds;
     private final String identifier;
 
     /**

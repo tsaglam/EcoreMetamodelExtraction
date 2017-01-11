@@ -21,7 +21,7 @@ public class ExtractedDataType {
      */
     public ExtractedDataType(String fullName, int arrayCount) {
         this.fullName = fullName;
-        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf(".") + 1) : fullName;
+        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf('.') + 1) : fullName;
         genericArguments = new LinkedList<ExtractedDataType>();
         arrayDimension = arrayCount;
         wildcardStatus = WildcardStatus.NO_WILDCARD;
@@ -80,7 +80,7 @@ public class ExtractedDataType {
      * @return true if it is generic.
      */
     public boolean isGeneric() {
-        return genericArguments.size() > 0;
+        return !genericArguments.isEmpty();
     }
 
     /**

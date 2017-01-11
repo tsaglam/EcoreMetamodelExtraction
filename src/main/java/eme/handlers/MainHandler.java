@@ -1,6 +1,8 @@
 package eme.handlers;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,12 +24,14 @@ import eme.EcoreMetamodelExtraction;
  * @author Timur Saglam
  */
 public class MainHandler extends AbstractHandler {
+    private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
 
     /**
      * Simple constructor that initializes the logger.
      */
     public MainHandler() {
+        super();
         BasicConfigurator.configure();
     }
 
@@ -77,7 +81,7 @@ public class MainHandler extends AbstractHandler {
         try {
             return project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature");
         } catch (CoreException exception) {
-            exception.printStackTrace();
+            logger.error(exception.getMessage());
         }
         return false;
     }

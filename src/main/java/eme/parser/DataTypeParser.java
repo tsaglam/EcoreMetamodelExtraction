@@ -63,7 +63,7 @@ public abstract class DataTypeParser {
     public static void parseTypeParameters(IType iType, ExtractedType type) throws JavaModelException {
         ExtractedTypeParameter parameter;
         for (String signature : iType.getTypeParameterSignatures()) { // for every type parameter
-            parameter = new ExtractedTypeParameter((Signature.getTypeVariable(signature))); // create representation
+            parameter = new ExtractedTypeParameter(Signature.getTypeVariable(signature)); // create representation
             for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
                 parameter.add(parseDataType(bound, iType)); // add to representation
             }
