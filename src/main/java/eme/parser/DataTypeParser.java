@@ -58,7 +58,7 @@ public abstract class DataTypeParser {
      * Parses all type parameters of an IType and adds the to an ExtractedType.
      * @param iType is the IType.
      * @param type is the ExtractedType.
-     * @throws @throws JavaModelException if there are problems with the JDT API.
+     * @throws JavaModelException if there are problems with the JDT API.
      */
     public static void parseTypeParameters(IType iType, ExtractedType type) throws JavaModelException {
         ExtractedTypeParameter parameter;

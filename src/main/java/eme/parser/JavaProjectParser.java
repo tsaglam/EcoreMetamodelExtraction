@@ -144,14 +144,14 @@ public class JavaProjectParser {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // name
+            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
             int flags = method.getFlags();
             extractedMethod = new ExtractedMethod(methodName, DataTypeParser.parseReturnType(method), method.isConstructor());
             extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags));
-            for (ILocalVariable parameter : method.getParameters()) {
+            for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(DataTypeParser.parseParameter(parameter, method));
             }
-            for (String exception : method.getExceptionTypes()) {
+            for (String exception : method.getExceptionTypes()) { // parse throw declarations:
                 extractedMethod.addThrowsDeclaration(DataTypeParser.parseDataType(exception, iType));
             }
             extractedType.addMethod(extractedMethod);

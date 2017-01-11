@@ -101,7 +101,7 @@ public class ExtractedDataType {
 
     /**
      * Sets the wild card status of the data type.
-     * @param status
+     * @param status is the status to set.
      */
     public void setWildcardStatus(WildcardStatus status) {
         wildcardStatus = status;

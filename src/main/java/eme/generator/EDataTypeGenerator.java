@@ -65,7 +65,7 @@ public class EDataTypeGenerator {
 
     /**
      * Adds all generic type parameters from an extracted type to a classifier.
-     * @param eClass is the classifier.
+     * @param classifier is the classifier.
      * @param type is the extracted type.
      */
     public void addTypeParameters(EClassifier classifier, ExtractedType type) {
