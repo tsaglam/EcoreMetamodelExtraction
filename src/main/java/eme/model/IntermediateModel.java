@@ -62,6 +62,15 @@ public class IntermediateModel {
     }
 
     /**
+     * Checks whether the model contains an extracted type whose full name matches a given full name.
+     * @param fullName is the given full name.
+     * @return true if it contains the extracted type, false if not.
+     */
+    public boolean contains(String fullName) {
+        return getType(fullName) != null;
+    }
+
+    /**
      * Returns the package of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
      * @return the package with the matching name.
@@ -96,7 +105,7 @@ public class IntermediateModel {
     /**
      * Returns the type of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
-     * @return the type with the matching name.
+     * @return the type with the matching name or null if the name is not found.
      */
     public ExtractedType getType(String fullName) {
         for (ExtractedType type : types) { // for all packages
@@ -104,7 +113,7 @@ public class IntermediateModel {
                 return type; // can only have on parent
             }
         }
-        throw new IllegalArgumentException("Could not find type " + fullName + " in the IntermediateModel");
+        return null;
     }
 
     /**

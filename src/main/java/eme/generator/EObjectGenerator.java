@@ -64,7 +64,7 @@ public class EObjectGenerator {
      */
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
-            addOperations(incompleteEClasses.get(eClass), eClass.getEOperations(), eClass); // add methods
+            addOperations(incompleteEClasses.get(eClass), eClass); // add methods
             addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
         }
         selector.generateReport(); // print reports
@@ -152,33 +152,31 @@ public class EObjectGenerator {
     }
 
     /**
+     * Adds the declared exceptions of an extracted method to an EOperation.
+     */
+    private void addExceptions(EOperation operation, ExtractedMethod method, EClass eClass) {
+        for (ExtractedDataType exception : method.getThrowsDeclarations()) {
+            if (typeGenerator.isTypeParameter(exception, eClass)) {
+                operation.getEGenericExceptions().add(typeGenerator.generateGeneric(exception, eClass));
+            } else {
+                operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
+            }
+        }
+    }
+
+    /**
      * Adds the operations of an extracted type to a specific List of EOperations.
      */
-    private void addOperations(ExtractedType type, List<EOperation> list, EClassifier classifier) {
+    private void addOperations(ExtractedType type, EClass eClass) { // TODO (HIGH) split this method
         EOperation operation;
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
                 operation = ecoreFactory.createEOperation(); // create object
                 operation.setName(method.getName()); // set name
-                if (method.getReturnType() != null) { // build return type:
-                    ExtractedDataType returnType = method.getReturnType();
-                    if (typeGenerator.isTypeParameter(returnType, classifier)) {
-                        operation.setEGenericType(typeGenerator.generateGeneric(returnType, classifier));
-                    } else {
-                        operation.setEType(typeGenerator.generate(returnType)); // generate data type
-                    }
-                    typeGenerator.addGenericArguments(operation.getEGenericType(), method.getReturnType(), classifier);
-                }
-                for (ExtractedDataType exception : method.getThrowsDeclarations()) {
-                    if (typeGenerator.isTypeParameter(exception, classifier)) {
-                        operation.getEGenericExceptions().add(typeGenerator.generateGeneric(exception, classifier));
-                    } else {
-                        operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
-                    }
-
-                }
-                addParameters(method, operation.getEParameters(), classifier); // add parameters
-                list.add(operation);
+                addReturnType(operation, method.getReturnType(), eClass); // add return type
+                addExceptions(operation, method, eClass); // add throws declarations
+                addParameters(method, operation.getEParameters(), eClass); // add parameters
+                eClass.getEOperations().add(operation);
             }
         }
     }
@@ -186,19 +184,32 @@ public class EObjectGenerator {
     /**
      * Adds the parameters of an extracted method to a specific List of EParameters.
      */
-    private void addParameters(ExtractedMethod method, List<EParameter> list, EClassifier classifier) {
+    private void addParameters(ExtractedMethod method, List<EParameter> list, EClass eClass) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
-            eParameter = ecoreFactory.createEParameter(); // TODO (HIGH) solution for arrays.
+            eParameter = ecoreFactory.createEParameter(); // TODO (MEDIUM) solution for arrays.
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            if (typeGenerator.isTypeParameter(parameter, classifier)) {
-                eParameter.setEGenericType(typeGenerator.generateGeneric(parameter, classifier));
+            if (typeGenerator.isTypeParameter(parameter, eClass)) {
+                eParameter.setEGenericType(typeGenerator.generateGeneric(parameter, eClass));
             } else {
                 eParameter.setEType(typeGenerator.generate(parameter)); // generate data type
             }
-            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter, classifier); // add generic
-                                                                                                    // arguments
+            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter, eClass); // add generic
             list.add(eParameter);
+        }
+    }
+
+    /**
+     * Adds the return type of an extracted method to an EOperation.
+     */
+    private void addReturnType(EOperation operation, ExtractedDataType returnType, EClass eClass) {
+        if (returnType != null) { // if return type is not void
+            if (typeGenerator.isTypeParameter(returnType, eClass)) {
+                operation.setEGenericType(typeGenerator.generateGeneric(returnType, eClass));
+            } else {
+                operation.setEType(typeGenerator.generate(returnType)); // generate data type
+            }
+            typeGenerator.addGenericArguments(operation.getEGenericType(), returnType, eClass);
         }
     }
 
@@ -227,12 +238,10 @@ public class EObjectGenerator {
         if (superClassName != null) { // if actually has super type
             if (createdEClassifiers.containsKey(superClassName)) { // if is already created:
                 toList.add((EClass) createdEClassifiers.get(superClassName)); // get from map.
-            } else { // if not already created:
-                try { // create from type if found in model.
-                    toList.add((EClass) generateEClassifier(model.getType(superClassName)));
-                } catch (IllegalArgumentException exception) { // exception if it is external
-                    logger.warn("Could not use external type as super class: " + superClassName);
-                } // TODO (HIGH) external super classes.
+            } else if (model.contains(superClassName)) { // if is not created yet
+                toList.add((EClass) generateEClassifier(model.getType(superClassName))); // create
+            } else { // else: is external type
+                logger.warn("Could not use external type as super class: " + superClassName);
             }
         }
     }
@@ -245,13 +254,12 @@ public class EObjectGenerator {
         for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
             if (createdEClassifiers.containsKey(interfaceName)) { // if already created
                 toList.add((EClass) createdEClassifiers.get(interfaceName)); // add
-            } else {
-                try { // if not already created, try to create with type from model
-                    toList.add((EClass) generateEClassifier(model.getType(interfaceName)));
-                } catch (IllegalArgumentException exception) {  // exception if it is external
-                    logger.warn("Could not use external type as super interface: " + interfaceName);
-                } // TODO (HIGH) external super interfaces.
+            } else if (model.contains(interfaceName)) { // if is not created yet
+                toList.add((EClass) generateEClassifier(model.getType(interfaceName))); // create
+            } else { // else: is external type
+                logger.warn("Could not use external type as super interface: " + interfaceName);
             }
+
         }
     }
 

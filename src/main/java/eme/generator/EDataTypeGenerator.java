@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
@@ -64,7 +65,7 @@ public class EDataTypeGenerator {
 
     /**
      * Adds all generic type parameters from an extracted type to a classifier.
-     * @param classifier is the classifier.
+     * @param eClass is the classifier.
      * @param type is the extracted type.
      */
     public void addTypeParameters(EClassifier classifier, ExtractedType type) {
@@ -112,13 +113,13 @@ public class EDataTypeGenerator {
     /**
      * Returns an EGenericType for an ExtractedDataType that can be used as generic type for Methods and Attributes.
      * @param dataType is the ExtractedDataType.
-     * @param classifier is the EClassifier that owns the the EGenericType
+     * @param eClass is the EClass that owns the the EGenericType
      * @return the EGenericType.
      */
-    public EGenericType generateGeneric(ExtractedDataType dataType, EClassifier classifier) {
-        if (isTypeParameter(dataType, classifier)) {
+    public EGenericType generateGeneric(ExtractedDataType dataType, EClass eClass) {
+        if (isTypeParameter(dataType, eClass)) {
             EGenericType genericType = ecoreFactory.createEGenericType();
-            genericType.setETypeParameter(getETypeParameter(dataType.getFullTypeName(), classifier));
+            genericType.setETypeParameter(getETypeParameter(dataType.getFullTypeName(), eClass));
             return genericType;
         }
         throw new IllegalArgumentException("The data type is not an type parameter: " + dataType.toString());
