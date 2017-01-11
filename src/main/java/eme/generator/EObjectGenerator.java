@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -66,7 +65,7 @@ public class EObjectGenerator {
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
             addOperations(incompleteEClasses.get(eClass), eClass.getEOperations(), eClass); // add methods
-            addAttributes(incompleteEClasses.get(eClass), eClass.getEStructuralFeatures(), eClass); // add attributes
+            addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
         }
         selector.generateReport(); // print reports
     }
@@ -140,21 +139,14 @@ public class EObjectGenerator {
     /**
      * Adds the attributes of an extracted type to a specific List of EStructuralFeatures.
      */
-    private void addAttributes(ExtractedType type, List<EStructuralFeature> list, EClassifier classifier) {
-        EAttribute eAttribute;
-        for (ExtractedAttribute attribute : type.getAttributes()) { // for every attribute
+    private void addAttributes(ExtractedType extractedType, EClass eClass) {
+        for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
-                eAttribute = ecoreFactory.createEAttribute(); // create object
-                eAttribute.setName(attribute.getIdentifier()); // set name
-                eAttribute.setChangeable(!attribute.isFinal()); // make unchangeable if final
-                if (typeGenerator.isTypeParameter(attribute, classifier)) {
-                    eAttribute.setEGenericType(typeGenerator.generateGeneric(attribute, classifier));
-                } else {
-                    eAttribute.setEType(typeGenerator.generate(attribute)); // generate data type
+                if (createdEClassifiers.containsKey(attribute.getFullTypeName())) { // if type is EClass:
+                    addStructuralFeature(ecoreFactory.createEReference(), attribute, eClass); // build reference
+                } else { // if it is EDataType:
+                    addStructuralFeature(ecoreFactory.createEAttribute(), attribute, eClass); // build attribute
                 }
-                typeGenerator.addGenericArguments(eAttribute.getEGenericType(), attribute, classifier); // add generic
-                                                                                                        // arguments
-                list.add(eAttribute);
             }
         }
     }
@@ -208,6 +200,22 @@ public class EObjectGenerator {
                                                                                                     // arguments
             list.add(eParameter);
         }
+    }
+
+    /**
+     * Builds and adds a structural feature from an extracted attribute to an EClass. A structural feature can be an
+     * EAttribute or an EReference.
+     */
+    private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
+        feature.setName(attribute.getIdentifier()); // set name
+        feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
+        if (typeGenerator.isTypeParameter(attribute, eClass)) { // if is generic
+            feature.setEGenericType(typeGenerator.generateGeneric(attribute, eClass)); // generate generic
+        } else {
+            feature.setEType(typeGenerator.generate(attribute)); // generate data type
+        }
+        typeGenerator.addGenericArguments(feature.getEGenericType(), attribute, eClass); // add generic args
+        eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
 
     /**
