@@ -124,6 +124,10 @@ public class ExtractedMethod extends ExtractedElement {
 
     @Override
     public String toString() {
-        return modifier + " " + name + parent.toString() + " : " + returnType.toString();
+        String result = modifier + " " + parent.toString() + "." + name;
+        if (returnType != null) {
+            result += " : " + returnType.toString();
+        }
+        return result;
     }
 }
