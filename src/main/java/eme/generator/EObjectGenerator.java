@@ -167,7 +167,7 @@ public class EObjectGenerator {
     /**
      * Adds the operations of an extracted type to a specific List of EOperations.
      */
-    private void addOperations(ExtractedType type, EClass eClass) { // TODO (HIGH) split this method
+    private void addOperations(ExtractedType type, EClass eClass) {
         EOperation operation;
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
