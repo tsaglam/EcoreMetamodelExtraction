@@ -184,7 +184,7 @@ public class EDataTypeGenerator {
         for (int i = 0; i < dataType.getGenericArguments().size(); i++) {
             if (name == 'Z' + 1) {
                 logger.error("Can only generate up to 26 type parameters for " + dataType.toString());
-                return;
+                return; // TODO (HIGH) replace this approximation through exact solution
             }
             eTypeParameter = ecoreFactory.createETypeParameter(); // create object
             eTypeParameter.setName(Character.toString(name)); // set name
