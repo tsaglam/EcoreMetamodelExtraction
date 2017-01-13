@@ -106,11 +106,11 @@ public abstract class DataTypeParser {
      * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
      */
     private static String getFullName(String signature, IType declaringType) throws JavaModelException {
-        String reducedSignature = Signature.getElementType(signature); // remove array information
-        if (reducedSignature.charAt(0) == Signature.C_SUPER || reducedSignature.charAt(0) == Signature.C_EXTENDS) {
-            reducedSignature = reducedSignature.substring(1); // remove wild card parameter
+        // String reducedSignature = Signature.getElementType(signature); // remove array information
+        if (signature.charAt(0) == Signature.C_SUPER || signature.charAt(0) == Signature.C_EXTENDS) {
+            signature = signature.substring(1); // remove wild card parameter
         }
-        String simpleName = Signature.getSignatureSimpleName(reducedSignature); // get plain name
+        String simpleName = Signature.getSignatureSimpleName(signature); // get plain name
         String[][] resolvedType = declaringType.resolveType(simpleName); // resolve type from name
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             return Signature.toQualifiedName(resolvedType[0]); // return full name
