@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
@@ -142,8 +143,10 @@ public class EObjectGenerator {
     private void addAttributes(ExtractedType extractedType, EClass eClass) {
         for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
-                if (createdEClassifiers.containsKey(attribute.getFullTypeName())) { // if type is EClass:
-                    addStructuralFeature(ecoreFactory.createEReference(), attribute, eClass); // build reference
+                if (isEClass(attribute.getFullTypeName())) { // if type is EClass:
+                    EReference reference = ecoreFactory.createEReference();
+                    reference.setContainment(true); // has to be contained
+                    addStructuralFeature(reference, attribute, eClass); // build reference
                 } else { // if it is EDataType:
                     addStructuralFeature(ecoreFactory.createEAttribute(), attribute, eClass); // build attribute
                 }
@@ -214,8 +217,8 @@ public class EObjectGenerator {
     }
 
     /**
-     * Builds and adds a structural feature from an extracted attribute to an EClass. A structural feature can be an
-     * EAttribute or an EReference.
+     * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
+     * EAttribute or an EReference. If it is a reference, containment has to be set manually.
      */
     private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
         feature.setName(attribute.getIdentifier()); // set name
@@ -287,5 +290,12 @@ public class EObjectGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
+    }
+
+    /**
+     * Checks whether a specific type name is an already created EClass.
+     */
+    private boolean isEClass(String typeName) {
+        return createdEClassifiers.containsKey(typeName) && !(createdEClassifiers.get(typeName) instanceof EEnum);
     }
 }
