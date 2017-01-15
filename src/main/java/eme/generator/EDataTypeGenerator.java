@@ -25,19 +25,21 @@ import eme.model.datatypes.WildcardStatus;
  */
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
+    private final Map<String, EDataType> arrayTypeMap;
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private EPackage root;
     private final Map<String, EDataType> typeMap;
 
     /**
-     * Basic constructor, builds the type map.
+     * Basic constructor, builds the type maps.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
     public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers) {
         this.createdEClassifiers = createdEClassifiers; // set classifier map.
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
+        arrayTypeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
     }
 
@@ -54,7 +56,7 @@ public class EDataTypeGenerator {
             if (genericArgument.isWildcard()) {
                 addBound(eArgument, genericArgument);
             } else if (isTypeParameter(genericArgument, classifier)) {
-                eArgument.setETypeParameter(getETypeParameter(genericArgument.getFullTypeName(), classifier));
+                eArgument.setETypeParameter(findTypeParameter(genericArgument, classifier));
             } else {
                 eArgument.setEClassifier(generate(genericArgument));
             }
@@ -70,20 +72,10 @@ public class EDataTypeGenerator {
      */
     public void addTypeParameters(EClassifier classifier, ExtractedType type) {
         ETypeParameter eTypeParameter; // ecore type parameter
-        EGenericType eBound; // ecore type parameter bound
         for (ExtractedTypeParameter typeParameter : type.getTypeParameters()) { // for all type parameters
             eTypeParameter = ecoreFactory.createETypeParameter(); // create object
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
-            for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
-                eBound = ecoreFactory.createEGenericType(); // create object
-                if (isTypeParameter(bound, classifier)) {
-                    eBound.setETypeParameter(getETypeParameter(bound.getFullTypeName(), classifier));
-                } else {
-                    eBound.setEClassifier(generate(bound));
-                }
-                addGenericArguments(eBound, bound, classifier); // add generic arguments of bound
-                eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
-            }
+            addBounds(eTypeParameter, typeParameter, classifier);
             classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
         }
     }
@@ -99,9 +91,10 @@ public class EDataTypeGenerator {
         String fullName = extractedDataType.getFullTypeName();
         if (createdEClassifiers.containsKey(fullName)) { // if is custom class
             return createdEClassifiers.get(fullName);
-        } else if (typeMap.containsKey(fullName)) { // if is basic type or already known
-            eDataType = typeMap.get(fullName); // access EDataType
-            return eDataType;
+        } else if (!extractedDataType.isArray() && typeMap.containsKey(fullName)) { // if is basic type or already known
+            return typeMap.get(fullName); // access EDataType
+        } else if (extractedDataType.isArray() && arrayTypeMap.containsKey(fullName)) {
+            return arrayTypeMap.get(fullName); // access array EDataType
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
@@ -119,7 +112,7 @@ public class EDataTypeGenerator {
     public EGenericType generateGeneric(ExtractedDataType dataType, EClass eClass) {
         if (isTypeParameter(dataType, eClass)) {
             EGenericType genericType = ecoreFactory.createEGenericType();
-            genericType.setETypeParameter(getETypeParameter(dataType.getFullTypeName(), eClass));
+            genericType.setETypeParameter(findTypeParameter(dataType, eClass));
             return genericType;
         }
         throw new IllegalArgumentException("The data type is not an type parameter: " + dataType.toString());
@@ -142,11 +135,12 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Resets the class. Removes custom generated data types from the type map, so that only the basic types are
+     * Resets the class. Removes custom generated data types from the type maps, so that only the basic types are
      * available.
      */
     public void reset() {
         typeMap.clear(); // clear map from all types.
+        arrayTypeMap.clear();
         fillMap(); // add basic types.
     }
 
@@ -171,6 +165,24 @@ public class EDataTypeGenerator {
             } else {
                 eArgument.setEUpperBound(bound); // add upper bound
             }
+        }
+    }
+
+    /**
+     * Adds all bounds of an extracted type parameter to a ETypeParameter
+     * @param classifier
+     */
+    private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier classifier) {
+        EGenericType eBound; // ecore type parameter bound
+        for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
+            eBound = ecoreFactory.createEGenericType(); // create object
+            if (isTypeParameter(bound, classifier)) {
+                eBound.setETypeParameter(findTypeParameter(bound, classifier));
+            } else {
+                eBound.setEClassifier(generate(bound));
+            }
+            addGenericArguments(eBound, bound, classifier); // add generic arguments of bound
+            eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
         }
     }
 
@@ -218,28 +230,31 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map.
-     */
-    private EDataType generateExternal(ExtractedDataType extractedDataType) {
-        if (typeMap.containsKey(extractedDataType.getFullTypeName())) { // if already created:
-            throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
-        }
-        EDataType newType = ecoreFactory.createEDataType(); // new data type.
-        newType.setName(extractedDataType.getTypeName()); // set name
-        newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
-        typeMap.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
-        return newType;
-    }
-
-    /**
      * Gets an ETypeParameter with a specific name from an specific EClassifier.
      */
-    private ETypeParameter getETypeParameter(String name, EClassifier classifier) {
+    private ETypeParameter findTypeParameter(ExtractedDataType dataType, EClassifier classifier) {
+        String name = dataType.getFullTypeName();
         for (ETypeParameter parameter : classifier.getETypeParameters()) {
             if (parameter.getName().equals(name)) {
                 return parameter;
             }
         }
         throw new IllegalArgumentException("There is no ETypeParameter " + name + " in " + classifier.toString());
+    }
+
+    /**
+     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map or
+     * array type map.
+     */
+    private EDataType generateExternal(ExtractedDataType extractedDataType) {
+        Map<String, EDataType> map = extractedDataType.isArray() ? arrayTypeMap : typeMap; // choose map
+        if (map.containsKey(extractedDataType.getFullTypeName())) { // if already created:
+            throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
+        }
+        EDataType newType = ecoreFactory.createEDataType(); // new data type.
+        newType.setName(extractedDataType.getTypeName()); // set name
+        newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
+        map.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
+        return newType;
     }
 }

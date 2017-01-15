@@ -105,9 +105,9 @@ public abstract class DataTypeParser {
     /**
      * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
      */
-    private static String getFullName(String signature, IType declaringType) throws JavaModelException {
+    private static String getFullName(String typeSignature, IType declaringType) throws JavaModelException {
         // TODO (MEDIUM) decide on this:
-        // String reducedSignature = Signature.getElementType(signature); // remove array information
+        String signature = Signature.getElementType(typeSignature); // remove array information
         if (signature.charAt(0) == Signature.C_SUPER || signature.charAt(0) == Signature.C_EXTENDS) {
             signature = signature.substring(1); // remove wild card parameter
         }

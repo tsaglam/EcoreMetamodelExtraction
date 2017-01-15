@@ -11,7 +11,7 @@ public class ExtractedDataType {
     private final int arrayDimension;
     private final String fullName;
     private List<ExtractedDataType> genericArguments;
-    private final String simpleName;
+    private String simpleName;
     private WildcardStatus wildcardStatus;
 
     /**
@@ -22,6 +22,11 @@ public class ExtractedDataType {
     public ExtractedDataType(String fullName, int arrayCount) {
         this.fullName = fullName;
         simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf('.') + 1) : fullName;
+        if (arrayCount > 0) {
+            for (int i = 0; i < arrayCount; i++) {
+                simpleName += "[]"; // TODO (MEDIUM) optimize this (code style)
+            }
+        }
         genericArguments = new LinkedList<ExtractedDataType>();
         arrayDimension = arrayCount;
         wildcardStatus = WildcardStatus.NO_WILDCARD;
