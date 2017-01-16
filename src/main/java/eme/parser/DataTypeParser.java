@@ -106,7 +106,6 @@ public abstract class DataTypeParser {
      * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
      */
     private static String getFullName(String typeSignature, IType declaringType) throws JavaModelException {
-        // TODO (MEDIUM) decide on this:
         String signature = Signature.getElementType(typeSignature); // remove array information
         if (signature.charAt(0) == Signature.C_SUPER || signature.charAt(0) == Signature.C_EXTENDS) {
             signature = signature.substring(1); // remove wild card parameter
@@ -115,10 +114,10 @@ public abstract class DataTypeParser {
         String[][] resolvedType = declaringType.resolveType(simpleName); // resolve type from name
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             return Signature.toQualifiedName(resolvedType[0]); // return full name
-        } else if (simpleName.contains("<")) { // else return simple name:
-            return simpleName.substring(0, simpleName.indexOf('<')); // without generic arguments if it has some
-        }
-        return simpleName; // or as it is if it has no generic arguments.
+        } else if (signature.charAt(0) == Signature.C_UNRESOLVED) { // if resolved
+            return signature.substring(1, signature.length() - 2); // return unresolved name
+        } // else:
+        return simpleName; // return primitive type name
     }
 
     /**
