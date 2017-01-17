@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
  */
 public class IntermediateModel {
     private static final Logger logger = LogManager.getLogger(IntermediateModel.class.getName());
+    private final Set<ExtractedType> externalTypes;
     private final Set<ExtractedPackage> packages;
     private final String projectName;
     private ExtractedPackage rootElement;
@@ -24,6 +25,7 @@ public class IntermediateModel {
     public IntermediateModel(String projectName) {
         packages = new LinkedHashSet<ExtractedPackage>();
         types = new LinkedHashSet<ExtractedType>();
+        externalTypes = new LinkedHashSet<ExtractedType>();
         this.projectName = projectName;
     }
 
@@ -51,6 +53,14 @@ public class IntermediateModel {
     }
 
     /**
+     * Adds a new external type to the intermediate model.
+     * @param type is the new external type to add.
+     */
+    public void addExternal(ExtractedType type) {
+        externalTypes.add(type);
+    }
+
+    /**
      * Adds a new type to the intermediate model and to a specific parent package if it is not already added.
      * @param type is the new type to add.
      * @param parent is the parent package.
@@ -68,6 +78,24 @@ public class IntermediateModel {
      */
     public boolean contains(String fullName) {
         return getType(fullName) != null;
+    }
+
+    /**
+     * Checks whether the model contains an external type whose full name matches a given full name.
+     * @param fullName is the given full name.
+     * @return true if it contains the external type, false if not.
+     */
+    public boolean containsExternal(String fullName) {
+        return getExternalType(fullName) != null;
+    }
+
+    /**
+     * Returns the external type of the intermediate model whose full name matches the given full name.
+     * @param fullName is the given full name.
+     * @return the external type with the matching name or null if the name is not found.
+     */
+    public ExtractedType getExternalType(String fullName) {
+        return getTypeFrom(fullName, externalTypes);
     }
 
     /**
@@ -108,12 +136,7 @@ public class IntermediateModel {
      * @return the type with the matching name or null if the name is not found.
      */
     public ExtractedType getType(String fullName) {
-        for (ExtractedType type : types) { // for all packages
-            if (type.getFullName().equals(fullName)) { // if parent
-                return type; // can only have on parent
-            }
-        }
-        return null;
+        return getTypeFrom(fullName, types);
     }
 
     /**
@@ -123,6 +146,7 @@ public class IntermediateModel {
         logger.info(toString());
         logger.info("   with packages " + packages.toString());
         logger.info("   with types " + types.toString());
+        logger.info("   with external types " + externalTypes.toString());
         // TODO (LOW) keep up to date.
     }
 
@@ -130,5 +154,20 @@ public class IntermediateModel {
     public String toString() {
         return "IntermediateModel of " + projectName + ": [Packages=" + packages.size() + ", Types=" + types.size() + "]";
         // TODO (LOW) keep up to date.
+    }
+
+    /**
+     * Finds extracted type from set of extracted type by its full name.
+     * @param fullName is full name.
+     * @param typeSet is the set of extracted types.
+     * @return the extracted type with the matching name or null if the name is not found.
+     */
+    private ExtractedType getTypeFrom(String fullName, Set<ExtractedType> typeSet) {
+        for (ExtractedType type : typeSet) { // for all packages
+            if (type.getFullName().equals(fullName)) { // if parent
+                return type; // can only have on parent
+            }
+        }
+        return null;
     }
 }

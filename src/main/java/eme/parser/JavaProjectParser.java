@@ -2,6 +2,7 @@ package eme.parser;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -36,7 +37,9 @@ public class JavaProjectParser {
     private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
+    private IJavaProject currentProject;
     private int packageCounter;
+    private DataTypeParser typeParser;
 
     /**
      * Analyzes a java project and builds an intermediate model.
@@ -45,9 +48,12 @@ public class JavaProjectParser {
      */
     public IntermediateModel buildIntermediateModel(IJavaProject project) {
         logger.info("Started parsing the project...");
+        currentProject = project; // set project
+        typeParser = new DataTypeParser();
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
         try {
             parsePackages(project); // parse project
+            parseExternalTypes(typeParser.getPotentialExternalTypes()); // parse potential external types.
         } catch (JavaModelException exception) {
             logger.fatal("Error while extracting the model.", exception);
         }
@@ -70,10 +76,12 @@ public class JavaProjectParser {
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
         for (IField field : iType.getFields()) {
-            attribute = DataTypeParser.parseField(field, iType);
             int flags = field.getFlags();
-            attribute.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isFinal(flags));
-            extractedType.addAttribute(attribute);
+            if (!Flags.isEnum(flags)) { // if is no enumeral
+                attribute = typeParser.parseField(field, iType);
+                attribute.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isFinal(flags));
+                extractedType.addAttribute(attribute);
+            }
         }
     }
 
@@ -91,7 +99,6 @@ public class JavaProjectParser {
                 newClass.setSuperClass(superType.getFullyQualifiedName()); // set super type name.
             }
         }
-        currentModel.addTo(newClass, currentPackage);
         return newClass;
     }
 
@@ -105,7 +112,9 @@ public class JavaProjectParser {
             currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
             reportProgress(fragments.size());
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
-                parseTypes(unit); // extract classes
+                for (IType iType : unit.getAllTypes()) { // for all types
+                    currentModel.addTo(parseType(iType), currentPackage);
+                }
             }
         }
     }
@@ -121,18 +130,22 @@ public class JavaProjectParser {
                 newEnum.addEnumeral(field.getElementName()); // add to enum
             }
         }
-        currentModel.addTo(newEnum, currentPackage);
         return newEnum;
     }
 
     /**
-     * Parses an IType that has been identified as interface.
-     * @param type is the IType.
+     * Parses a list of potential external types. If the model does not contain the type, and an IType can be found, it
+     * will add an external ExtractedType to the model.
      */
-    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
-        ExtractedInterface newInterface = new ExtractedInterface(type.getFullyQualifiedName());
-        currentModel.addTo(newInterface, currentPackage);
-        return newInterface;
+    private void parseExternalTypes(Set<String> externalTypes) throws JavaModelException {
+        for (String typeName : externalTypes) { // for every potential external type
+            if (!currentModel.contains(typeName)) { // if is not a model type:
+                IType iType = currentProject.findType(typeName); // try to find IType
+                if (iType != null) { // if IType was found:
+                    currentModel.addExternal(parseType(iType));  // add to model.
+                }
+            }
+        }
     }
 
     /**
@@ -146,13 +159,13 @@ public class JavaProjectParser {
         for (IMethod method : iType.getMethods()) { // for every method
             methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
             int flags = method.getFlags();
-            extractedMethod = new ExtractedMethod(methodName, DataTypeParser.parseReturnType(method), method.isConstructor());
+            extractedMethod = new ExtractedMethod(methodName, typeParser.parseReturnType(method), method.isConstructor());
             extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
-                extractedMethod.addParameter(DataTypeParser.parseParameter(parameter, method));
+                extractedMethod.addParameter(typeParser.parseParameter(parameter, method));
             }
             for (String exception : method.getExceptionTypes()) { // parse throw declarations:
-                extractedMethod.addThrowsDeclaration(DataTypeParser.parseDataType(exception, iType));
+                extractedMethod.addThrowsDeclaration(typeParser.parseDataType(exception, iType));
             }
             extractedType.addMethod(extractedMethod);
         }
@@ -180,26 +193,26 @@ public class JavaProjectParser {
     }
 
     /**
-     * Parses ICompilationUnit. Detects (abstract) classes, interfaces and enumerations.
-     * @param compilationUnit is the given ICompilationUnit.
+     * Parses IType. Detects whether the type is a (abstract) class, an interface or an enumeration.
+     * @param iType is the IType to parse.
+     * @param addToModel determines whether the new ExtractedType should be added to the model.
      */
-    private void parseTypes(ICompilationUnit compilationUnit) throws JavaModelException {
+    private ExtractedType parseType(IType iType) throws JavaModelException {
         ExtractedType extractedType = null;
-        for (IType iType : compilationUnit.getAllTypes()) { // for all types
-            if (iType.isClass()) {
-                extractedType = parseClass(iType); // create class
-            } else if (iType.isInterface()) {
-                extractedType = parseInterface(iType); // create interface
-            } else if (iType.isEnum()) {
-                extractedType = parseEnumeration(iType); // create enum
-            }
-            DataTypeParser.parseTypeParameters(iType, extractedType);
-            parseAttributes(iType, extractedType); // parse attributes
-            parseMethods(iType, extractedType); // parse methods
-            for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
-                extractedType.addInterface(superInterface.getFullyQualifiedName()); // add interface
-            }
+        if (iType.isClass()) {
+            extractedType = parseClass(iType); // create class
+        } else if (iType.isInterface()) {
+            extractedType = new ExtractedInterface(iType.getFullyQualifiedName()); // create interface
+        } else if (iType.isEnum()) {
+            extractedType = parseEnumeration(iType); // create enum
         }
+        typeParser.parseTypeParameters(iType, extractedType);
+        parseAttributes(iType, extractedType); // parse attributes
+        parseMethods(iType, extractedType); // parse methods
+        for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
+            extractedType.addInterface(superInterface.getFullyQualifiedName()); // add interface
+        }
+        return extractedType;
     }
 
     /**
