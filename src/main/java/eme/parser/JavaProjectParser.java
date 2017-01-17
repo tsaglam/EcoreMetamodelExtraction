@@ -138,11 +138,13 @@ public class JavaProjectParser {
      * will add an external ExtractedType to the model.
      */
     private void parseExternalTypes(Set<String> externalTypes) throws JavaModelException {
+        logger.info("Parsing external types...");
         for (String typeName : externalTypes) { // for every potential external type
             if (!currentModel.contains(typeName)) { // if is not a model type:
                 IType iType = currentProject.findType(typeName); // try to find IType
                 if (iType != null) { // if IType was found:
                     currentModel.addExternal(parseType(iType));  // add to model.
+                    logger.info("Resolved external type " + typeName);
                 }
             }
         }
