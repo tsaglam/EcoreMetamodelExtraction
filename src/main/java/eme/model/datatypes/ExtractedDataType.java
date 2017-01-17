@@ -9,9 +9,9 @@ import java.util.List;
  */
 public class ExtractedDataType {
     private final int arrayDimension;
-    private String fullName;
+    private String fullTypeName;
     private List<ExtractedDataType> genericArguments;
-    private String simpleName;
+    private String typeName;
     private WildcardStatus wildcardStatus;
 
     /**
@@ -20,7 +20,7 @@ public class ExtractedDataType {
      * @param arrayDimension is the amount of array dimensions, should be 0 if it is not an array.
      */
     public ExtractedDataType(String fullName, int arrayDimension) {
-        this.fullName = fullName;
+        this.fullTypeName = fullName;
         this.arrayDimension = arrayDimension;
         genericArguments = new LinkedList<ExtractedDataType>();
         wildcardStatus = WildcardStatus.NO_WILDCARD;
@@ -36,11 +36,11 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the full type name.
+     * getter for the full type name, which includes the packages and the array brackets.
      * @return the full type name.
      */
-    public String getFullTypeName() {
-        return fullName;
+    public String getFullType() {
+        return fullTypeName;
     }
 
     /**
@@ -52,11 +52,11 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the simple type name.
-     * @return the simple type name.
+     * getter for the simple type name, which is the basic name.
+     * @return the simple type name or, if it is an array type, the array type name.
      */
-    public String getTypeName() {
-        return simpleName;
+    public String getType() {
+        return typeName;
     }
 
     /**
@@ -109,18 +109,18 @@ public class ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + fullName + ")";
+        return getClass().getSimpleName() + "(" + fullTypeName + ")";
     }
 
     /**
      * Builds the full and simple name from the initial full name. The full name has to be set.
      */
     private void buildNames() {
-        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf('.') + 1) : fullName;
-        simpleName = isArray() ? simpleName + "Array" : simpleName; // add "Array" if is array
-        simpleName = arrayDimension > 1 ? simpleName + arrayDimension + "D" : simpleName; // add dimension
+        typeName = fullTypeName.contains(".") ? fullTypeName.substring(fullTypeName.lastIndexOf('.') + 1) : fullTypeName;
+        typeName = isArray() ? typeName + "Array" : typeName; // add "Array" if is array
+        typeName = arrayDimension > 1 ? typeName + arrayDimension + "D" : typeName; // add dimension
         for (int i = 0; i < arrayDimension; i++) { // adjust array names to dimension
-            this.fullName += "[]"; // TODO (MEDIUM) optimize this (code style)
+            this.fullTypeName += "[]"; // TODO (MEDIUM) optimize this (code style)
         }
     }
 }

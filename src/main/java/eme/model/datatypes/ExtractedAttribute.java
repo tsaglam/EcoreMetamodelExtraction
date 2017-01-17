@@ -62,6 +62,6 @@ public class ExtractedAttribute extends ExtractedParameter {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + modifier + " " + getFullTypeName() + " " + getIdentifier() + ")";
+        return getClass().getSimpleName() + "(" + modifier + " " + getFullType() + " " + getIdentifier() + ")";
     }
 }

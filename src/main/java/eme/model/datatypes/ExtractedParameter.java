@@ -28,6 +28,6 @@ public class ExtractedParameter extends ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + getFullTypeName() + " " + identifier + ")";
+        return getClass().getSimpleName() + "(" + getFullType() + " " + identifier + ")";
     }
 }

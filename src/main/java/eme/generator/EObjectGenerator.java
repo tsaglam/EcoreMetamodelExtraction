@@ -143,7 +143,7 @@ public class EObjectGenerator {
     private void addAttributes(ExtractedType extractedType, EClass eClass) {
         for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
-                if (isEClass(attribute.getFullTypeName())) { // if type is EClass:
+                if (isEClass(attribute.getFullType())) { // if type is EClass:
                     EReference reference = ecoreFactory.createEReference();
                     reference.setContainment(true); // has to be contained
                     addStructuralFeature(reference, attribute, eClass); // build reference
