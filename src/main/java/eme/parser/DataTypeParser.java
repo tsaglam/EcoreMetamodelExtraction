@@ -115,7 +115,7 @@ public abstract class DataTypeParser {
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             return Signature.toQualifiedName(resolvedType[0]); // return full name
         } else if (signature.charAt(0) == Signature.C_UNRESOLVED) { // if resolved
-            return signature.substring(1, signature.length() - 2); // return unresolved name
+            return signature.substring(1, signature.length() - 1); // return unresolved name
         } // else:
         return simpleName; // return primitive type name
     }
