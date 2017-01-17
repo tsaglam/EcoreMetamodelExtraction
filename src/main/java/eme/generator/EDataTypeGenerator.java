@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import eme.model.ExtractedType;
+import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
 import eme.model.datatypes.WildcardStatus;
@@ -27,6 +28,7 @@ public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
+    private final IntermediateModel model;
     private EPackage root;
     private final Map<String, EDataType> typeMap;
 
@@ -34,8 +36,9 @@ public class EDataTypeGenerator {
      * Basic constructor, builds the type maps.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
-    public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers) {
+    public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers, IntermediateModel model) {
         this.createdEClassifiers = createdEClassifiers; // set classifier map.
+        this.model = model;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
@@ -169,15 +172,17 @@ public class EDataTypeGenerator {
      */
     private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier classifier) {
         EGenericType eBound; // ecore type parameter bound
-        for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
-            eBound = ecoreFactory.createEGenericType(); // create object
-            if (isTypeParameter(bound, classifier)) {
-                eBound.setETypeParameter(findTypeParameter(bound, classifier));
-            } else {
-                eBound.setEClassifier(generate(bound));
+        for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds+
+            if (!"java.lang.Object".equals(bound.getFullType())) { // ignore object bound
+                eBound = ecoreFactory.createEGenericType(); // create object
+                if (isTypeParameter(bound, classifier)) {
+                    eBound.setETypeParameter(findTypeParameter(bound, classifier));
+                } else {
+                    eBound.setEClassifier(generate(bound));
+                }
+                addGenericArguments(eBound, bound, classifier); // add generic arguments of bound
+                eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
             }
-            addGenericArguments(eBound, bound, classifier); // add generic arguments of bound
-            eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
         }
     }
 
@@ -186,17 +191,11 @@ public class EDataTypeGenerator {
      * external data types because it does not extract the actual types of the type parameters.
      */
     private void addTypeParameters(EClassifier classifier, ExtractedDataType dataType) {
-        ETypeParameter eTypeParameter; // ecore type parameter
-        char name = 'A';
-        for (int i = 0; i < dataType.getGenericArguments().size(); i++) {
-            if (name == 'Z' + 1) {
-                logger.error("Can only generate up to 26 type parameters for " + dataType.toString());
-                return; // TODO (HIGH) replace this approximation through exact solution
-            }
-            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
-            eTypeParameter.setName(Character.toString(name)); // set name
-            classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
-            name++; // next letter.
+        String typeName = dataType.getFullType(); // get type name
+        if (model.containsExternal(typeName)) { // if is external type in model
+            addTypeParameters(classifier, model.getExternalType(typeName)); // add parameters from external model type
+        } else if (!dataType.getGenericArguments().isEmpty()) { // if external type is unknown
+            logger.error("Can not resolve type parameters for " + dataType.toString());
         }
     }
 
@@ -220,8 +219,6 @@ public class EDataTypeGenerator {
         typeMap.put("java.lang.String", EcorePackage.eINSTANCE.getEString());
         typeMap.put("java.lang.Object", EcorePackage.eINSTANCE.getEJavaObject());
         typeMap.put("java.lang.Class", EcorePackage.eINSTANCE.getEJavaClass());
-        // typeMap.put("java.util.List", EcorePackage.eINSTANCE.getEEList()); // TODO (MEDIUM) decide on this.
-        // typeMap.put("java.util.Map", EcorePackage.eINSTANCE.getEMap());
     }
 
     /**

@@ -117,7 +117,7 @@ public class DataTypeParser {
             for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
                 parameter.add(parseDataType(bound, iType)); // add to representation
             }
-            type.addMethod(parameter); // add to extracted type
+            type.addTypeParameter(parameter); // add to extracted type
         }
     }
 

@@ -43,7 +43,7 @@ public class EObjectGenerator {
     private IntermediateModel model;
     private final ExtractionProperties properties;
     private final SelectionHelper selector;
-    private final EDataTypeGenerator typeGenerator;
+    private EDataTypeGenerator typeGenerator;
 
     /**
      * Basic constructor.
@@ -54,7 +54,6 @@ public class EObjectGenerator {
         ecoreFactory = EcoreFactory.eINSTANCE;
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
-        typeGenerator = new EDataTypeGenerator(createdEClassifiers);
         selector = new SelectionHelper(properties);
     }
 
@@ -69,32 +68,6 @@ public class EObjectGenerator {
             addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
         }
         selector.generateReport(); // print reports
-    }
-
-    /**
-     * Generates a EClassifier from an ExtractedType, if the type was not already generated.
-     * @param type is the ExtractedType.
-     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
-     */
-    public EClassifier generateEClassifier(ExtractedType type) {
-        String fullName = type.getFullName();
-        if (createdEClassifiers.containsKey(fullName)) { // if already created:
-            return createdEClassifiers.get(fullName); // just return from map.
-        }
-        EClassifier eClassifier = null;
-        if (type.getClass() == ExtractedInterface.class) { // build interface:
-            eClassifier = generateEClass(type, true, true);
-        } else if (type.getClass() == ExtractedClass.class) { // build class:
-            EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false);
-            addSuperClass((ExtractedClass) type, eClass.getESuperTypes()); // get superclass
-            eClassifier = eClass;
-        } else if (type.getClass() == ExtractedEnumeration.class) { // build enum:
-            eClassifier = generateEEnum((ExtractedEnumeration) type);
-        }
-        typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
-        eClassifier.setName(type.getName()); // set name
-        createdEClassifiers.put(fullName, eClassifier); // store created classifier
-        return eClassifier;
     }
 
     /**
@@ -131,10 +104,10 @@ public class EObjectGenerator {
      * @param model is the new model.
      */
     public void prepareFor(IntermediateModel model) {
+        this.model = model; // set model
         createdEClassifiers.clear(); // clear created classifiers
         incompleteEClasses.clear(); // clear unfinished classes.
-        typeGenerator.reset(); // reset type generator to avoid duplicate data types.
-        this.model = model; // set model
+        typeGenerator = new EDataTypeGenerator(createdEClassifiers, model);
     }
 
     /**
@@ -276,6 +249,32 @@ public class EObjectGenerator {
         addSuperInterfaces(extractedType, eClass.getESuperTypes()); // add super interfaces
         incompleteEClasses.put(eClass, extractedType); // finish building later
         return eClass;
+    }
+
+    /**
+     * Generates a EClassifier from an ExtractedType, if the type was not already generated.
+     * @param type is the ExtractedType.
+     * @return the EClassifier, which is either an EClass, an EInterface or an EEnum.
+     */
+    private EClassifier generateEClassifier(ExtractedType type) {
+        String fullName = type.getFullName();
+        if (createdEClassifiers.containsKey(fullName)) { // if already created:
+            return createdEClassifiers.get(fullName); // just return from map.
+        }
+        EClassifier eClassifier = null;
+        if (type.getClass() == ExtractedInterface.class) { // build interface:
+            eClassifier = generateEClass(type, true, true);
+        } else if (type.getClass() == ExtractedClass.class) { // build class:
+            EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false);
+            addSuperClass((ExtractedClass) type, eClass.getESuperTypes()); // get superclass
+            eClassifier = eClass;
+        } else if (type.getClass() == ExtractedEnumeration.class) { // build enum:
+            eClassifier = generateEEnum((ExtractedEnumeration) type);
+        }
+        typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
+        eClassifier.setName(type.getName()); // set name
+        createdEClassifiers.put(fullName, eClassifier); // store created classifier
+        return eClassifier;
     }
 
     /**

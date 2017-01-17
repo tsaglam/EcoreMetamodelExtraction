@@ -63,7 +63,7 @@ public abstract class ExtractedType extends ExtractedElement {
      * Adds a generic type parameter to the type.
      * @param typeParameter is the new generic type.
      */
-    public void addMethod(ExtractedTypeParameter typeParameter) {
+    public void addTypeParameter(ExtractedTypeParameter typeParameter) {
         typeParameters.add(typeParameter);
     }
 
