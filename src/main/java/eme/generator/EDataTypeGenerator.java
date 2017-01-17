@@ -25,7 +25,6 @@ import eme.model.datatypes.WildcardStatus;
  */
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
-    private final Map<String, EDataType> arrayTypeMap;
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private EPackage root;
@@ -39,7 +38,6 @@ public class EDataTypeGenerator {
         this.createdEClassifiers = createdEClassifiers; // set classifier map.
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
-        arrayTypeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
     }
 
@@ -91,10 +89,8 @@ public class EDataTypeGenerator {
         String fullName = extractedDataType.getFullTypeName();
         if (createdEClassifiers.containsKey(fullName)) { // if is custom class
             return createdEClassifiers.get(fullName);
-        } else if (!extractedDataType.isArray() && typeMap.containsKey(fullName)) { // if is basic type or already known
+        } else if (typeMap.containsKey(fullName)) { // if is basic type or already known
             return typeMap.get(fullName); // access EDataType
-        } else if (extractedDataType.isArray() && arrayTypeMap.containsKey(fullName)) {
-            return arrayTypeMap.get(fullName); // access array EDataType
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
@@ -140,7 +136,6 @@ public class EDataTypeGenerator {
      */
     public void reset() {
         typeMap.clear(); // clear map from all types.
-        arrayTypeMap.clear();
         fillMap(); // add basic types.
     }
 
@@ -247,14 +242,13 @@ public class EDataTypeGenerator {
      * array type map.
      */
     private EDataType generateExternal(ExtractedDataType extractedDataType) {
-        Map<String, EDataType> map = extractedDataType.isArray() ? arrayTypeMap : typeMap; // choose map
-        if (map.containsKey(extractedDataType.getFullTypeName())) { // if already created:
+        if (typeMap.containsKey(extractedDataType.getFullTypeName())) { // if already created:
             throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
         }
         EDataType newType = ecoreFactory.createEDataType(); // new data type.
         newType.setName(extractedDataType.getTypeName()); // set name
         newType.setInstanceTypeName(extractedDataType.getFullTypeName()); // set full name
-        map.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
+        typeMap.put(extractedDataType.getFullTypeName(), newType); // store in map for later use
         return newType;
     }
 }

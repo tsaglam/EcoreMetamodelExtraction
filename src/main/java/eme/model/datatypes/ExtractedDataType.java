@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ExtractedDataType {
     private final int arrayDimension;
-    private final String fullName;
+    private String fullName;
     private List<ExtractedDataType> genericArguments;
     private String simpleName;
     private WildcardStatus wildcardStatus;
@@ -17,19 +17,14 @@ public class ExtractedDataType {
     /**
      * Basic constructor, takes the full and the simple name.
      * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
-     * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.
+     * @param arrayDimension is the amount of array dimensions, should be 0 if it is not an array.
      */
-    public ExtractedDataType(String fullName, int arrayCount) {
+    public ExtractedDataType(String fullName, int arrayDimension) {
         this.fullName = fullName;
-        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf('.') + 1) : fullName;
-        if (arrayCount > 0) {
-            for (int i = 0; i < arrayCount; i++) {
-                simpleName += "[]"; // TODO (MEDIUM) optimize this (code style)
-            }
-        }
+        this.arrayDimension = arrayDimension;
         genericArguments = new LinkedList<ExtractedDataType>();
-        arrayDimension = arrayCount;
         wildcardStatus = WildcardStatus.NO_WILDCARD;
+        buildNames(); // build full and simple name
     }
 
     /**
@@ -115,5 +110,17 @@ public class ExtractedDataType {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" + fullName + ")";
+    }
+
+    /**
+     * Builds the full and simple name from the initial full name. The full name has to be set.
+     */
+    private void buildNames() {
+        simpleName = fullName.contains(".") ? fullName.substring(fullName.lastIndexOf('.') + 1) : fullName;
+        simpleName = isArray() ? simpleName + "Array" : simpleName; // add "Array" if is array
+        simpleName = arrayDimension > 1 ? simpleName + arrayDimension + "D" : simpleName; // add dimension
+        for (int i = 0; i < arrayDimension; i++) { // adjust array names to dimension
+            this.fullName += "[]"; // TODO (MEDIUM) optimize this (code style)
+        }
     }
 }
