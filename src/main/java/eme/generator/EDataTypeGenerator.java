@@ -9,7 +9,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -27,19 +26,19 @@ import eme.model.datatypes.WildcardStatus;
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
+    private final DataTypeHierarchy dataTypeHierarchy;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
-    private final EPackage dataTypePackage;
     private final Map<String, EDataType> typeMap;
 
     /**
      * Basic constructor, builds the type maps.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
-    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers,  EPackage dataTypePackage) {
+    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, DataTypeHierarchy dataTypeHierarchy) {
         this.model = model;
         this.createdEClassifiers = createdEClassifiers; // set classifier map.
-        this.dataTypePackage = dataTypePackage;
+        this.dataTypeHierarchy = dataTypeHierarchy;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
@@ -98,7 +97,7 @@ public class EDataTypeGenerator {
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
-            dataTypePackage.getEClassifiers().add(eDataType); // add root containment
+            dataTypeHierarchy.add(eDataType);
             return eDataType;
         }
     }

@@ -38,12 +38,12 @@ import eme.properties.ExtractionProperties;
 public class EObjectGenerator {
     private static final Logger logger = LogManager.getLogger(EObjectGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
+    private EPackage dataTypePackage;
     private final EcoreFactory ecoreFactory;
     private final Map<EClass, ExtractedType> incompleteEClasses;
     private IntermediateModel model;
     private final ExtractionProperties properties;
     private final SelectionHelper selector;
-    private EPackage dataTypePackage;
     private EDataTypeGenerator typeGenerator;
 
     /**
@@ -108,8 +108,10 @@ public class EObjectGenerator {
         this.model = model; // set model
         createdEClassifiers.clear(); // clear created classifiers
         incompleteEClasses.clear(); // clear unfinished classes.
-        dataTypePackage = generateEPackage(new ExtractedPackage("DATATYPES")); // TODO (HIGH) properties
-        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, dataTypePackage);
+        String basePath = properties.getDefaultPackageName() + "." + "DATATYPES";// TODO (HIGH) properties
+        dataTypePackage = generateEPackage(new ExtractedPackage(basePath));
+        DataTypeHierarchy hierarchy = new DataTypeHierarchy(this, dataTypePackage, basePath);
+        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, hierarchy);
     }
 
     /**
