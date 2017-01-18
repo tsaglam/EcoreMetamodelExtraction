@@ -43,6 +43,7 @@ public class EObjectGenerator {
     private IntermediateModel model;
     private final ExtractionProperties properties;
     private final SelectionHelper selector;
+    private EPackage dataTypePackage;
     private EDataTypeGenerator typeGenerator;
 
     /**
@@ -64,8 +65,8 @@ public class EObjectGenerator {
      */
     public void completeGeneration() {
         for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
-            addOperations(incompleteEClasses.get(eClass), eClass); // add methods
             addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
+            addOperations(incompleteEClasses.get(eClass), eClass); // add methods
         }
         selector.generateReport(); // print reports
     }
@@ -78,9 +79,9 @@ public class EObjectGenerator {
     public EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage = ecoreFactory.createEPackage();
         if (extractedPackage.isRoot()) { // set root name & prefix:
-            typeGenerator.setRoot(ePackage); // give type generator the root
             ePackage.setName(properties.getDefaultPackageName());
             ePackage.setNsPrefix(properties.getDefaultPackageName());
+            ePackage.getESubpackages().add(dataTypePackage); // add data type package
         } else { // set name & prefix for non root packages:
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());
@@ -107,7 +108,8 @@ public class EObjectGenerator {
         this.model = model; // set model
         createdEClassifiers.clear(); // clear created classifiers
         incompleteEClasses.clear(); // clear unfinished classes.
-        typeGenerator = new EDataTypeGenerator(createdEClassifiers, model);
+        dataTypePackage = generateEPackage(new ExtractedPackage("DATATYPES")); // TODO (HIGH) properties
+        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, dataTypePackage);
     }
 
     /**
@@ -144,7 +146,7 @@ public class EObjectGenerator {
      * Adds the operations of an extracted type to a specific List of EOperations.
      */
     private void addOperations(ExtractedType type, EClass eClass) {
-        EOperation operation;
+        EOperation operation; // TODO (HIGH) detect getter and setter
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
                 operation = ecoreFactory.createEOperation(); // create object

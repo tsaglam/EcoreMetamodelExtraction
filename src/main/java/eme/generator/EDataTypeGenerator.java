@@ -29,16 +29,17 @@ public class EDataTypeGenerator {
     private final Map<String, EClassifier> createdEClassifiers;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
-    private EPackage root;
+    private final EPackage dataTypePackage;
     private final Map<String, EDataType> typeMap;
 
     /**
      * Basic constructor, builds the type maps.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
-    public EDataTypeGenerator(Map<String, EClassifier> createdEClassifiers, IntermediateModel model) {
-        this.createdEClassifiers = createdEClassifiers; // set classifier map.
+    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers,  EPackage dataTypePackage) {
         this.model = model;
+        this.createdEClassifiers = createdEClassifiers; // set classifier map.
+        this.dataTypePackage = dataTypePackage;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
@@ -97,7 +98,7 @@ public class EDataTypeGenerator {
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
-            root.getEClassifiers().add(eDataType); // add root containment
+            dataTypePackage.getEClassifiers().add(eDataType); // add root containment
             return eDataType;
         }
     }
@@ -140,14 +141,6 @@ public class EDataTypeGenerator {
     public void reset() {
         typeMap.clear(); // clear map from all types.
         fillMap(); // add basic types.
-    }
-
-    /**
-     * Setter for the root package, should be called before data types are getting created.
-     * @param root is the root package.
-     */
-    public void setRoot(EPackage root) {
-        this.root = root;
     }
 
     /**
