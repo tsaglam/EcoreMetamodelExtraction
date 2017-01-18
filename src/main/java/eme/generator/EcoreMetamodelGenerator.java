@@ -1,7 +1,14 @@
 package eme.generator;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.generator.saving.AbstractSavingStrategy;
@@ -67,9 +74,10 @@ public class EcoreMetamodelGenerator {
             throw new IllegalArgumentException("The root of an model can't be null or deselected: " + model.toString());
         }
         projectName = model.getProjectName(); // get project name.
-        eObjectGenerator.prepareFor(model);
-        ecoreMetamodel = eObjectGenerator.generateEPackage(root); // generate model.
-        eObjectGenerator.completeGeneration();
+        eObjectGenerator.prepareFor(model); // prepare generators
+        ecoreMetamodel = eObjectGenerator.generateEPackage(root); // generate base model.
+        eObjectGenerator.completeGeneration(); // finish generation
+        sort(ecoreMetamodel.getEClassifiers()); // sort data types
         return ecoreMetamodel;
     }
 
@@ -82,5 +90,21 @@ public class EcoreMetamodelGenerator {
             throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
         }
         savingStrategy.save(ecoreMetamodel, projectName);
+    }
+
+    /**
+     * Sorts a list of EClassifiers. EClassifier does not implement the Interface {@link Comparable}.
+     */
+    private void sort(List<EClassifier> list) {
+        Map<String, EClassifier> classifierMap = new HashMap<String, EClassifier>();
+        for (EClassifier dataType : list) { // for every classifier:
+            classifierMap.put(dataType.getName(), dataType); // map with its name as key
+        }
+        list.clear(); // clear original list
+        List<String> classifierNames = new LinkedList<String>(classifierMap.keySet()); // add names to list
+        Collections.sort(classifierNames, String.CASE_INSENSITIVE_ORDER); // sort names
+        for (String name : classifierNames) { // in sorted order
+            list.add(classifierMap.get(name)); // add classifiers from map to original list
+        }
     }
 }
