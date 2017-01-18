@@ -1,12 +1,20 @@
 package eme.generator;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.model.ExtractedPackage;
 
 /**
- * This class allows to build a package structure from a list of EDataTypes.
+ * This class allows to build a package structure, a data type package hierarchy from a list of EDataTypes.
  * @author Timur Saglam
  */
 public class DataTypeHierarchy {
@@ -26,8 +34,8 @@ public class DataTypeHierarchy {
     }
 
     /**
-     * TODO comment
-     * @param dataType
+     * Adds an EDataType to the data type package hierarchy. Generates the missing packages for the hierarchy.
+     * @param dataType is the new EDataType.
      */
     public void add(EDataType dataType) {
         String[] path = packagePath(dataType.getInstanceTypeName()); // get packages from name
@@ -39,6 +47,13 @@ public class DataTypeHierarchy {
             fullName += "."; // add separator to full name
         }
         currentPackage.getEClassifiers().add(dataType); // add data type
+    }
+
+    /**
+     * Sorts the content of the data type package hierarchy.
+     */
+    public void sort() {
+        sort(basePackage);
     }
 
     /**
@@ -64,6 +79,33 @@ public class DataTypeHierarchy {
             return name.substring(0, name.lastIndexOf('.')).split("\\."); // get path
         } else {
             return new String[] {}; // no package.
+        }
+    }
+
+    /**
+     * Sorts a list of ENamedElements. {@link ENamedElement} does not implement the Interface {@link Comparable}.
+     */
+    private <T extends ENamedElement> void sort(EList<T> list) { // TODO (MEDIUM) sort all classifiers.
+        Map<String, T> elementMap = new HashMap<String, T>();
+        for (T element : list) { // for every classifier:
+            elementMap.put(element.getName(), element); // map with its name as key
+        }
+        list.clear(); // clear original list
+        List<String> elementNames = new LinkedList<String>(elementMap.keySet()); // add names to list
+        Collections.sort(elementNames, String.CASE_INSENSITIVE_ORDER); // sort names
+        for (String name : elementNames) { // in sorted order
+            list.add(elementMap.get(name)); // add classifiers from map to original list
+        }
+    }
+
+    /**
+     * Recursive sort method. See <code>DataTypeHierarchy.sort()</code>.
+     */
+    private void sort(EPackage ePackage) {
+        sort(ePackage.getEClassifiers());
+        sort(ePackage.getESubpackages());
+        for (EPackage subpackage : ePackage.getESubpackages()) {
+            sort(subpackage);
         }
     }
 
