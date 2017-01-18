@@ -57,6 +57,7 @@ public class JavaProjectParser {
         } catch (JavaModelException exception) {
             logger.fatal("Error while extracting the model.", exception);
         }
+        currentModel.sort(); // sort model content
         currentModel.print(); // print intermediate model.
         return currentModel;
     }

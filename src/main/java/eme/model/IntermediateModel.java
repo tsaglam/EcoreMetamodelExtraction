@@ -150,6 +150,13 @@ public class IntermediateModel {
         // TODO (LOW) keep up to date.
     }
 
+    /**
+     * Sorts the content of the root package. Sorts its types, its subpackages and all the content of every subpackage.
+     */
+    public void sort() {
+        rootElement.sort();
+    }
+
     @Override
     public String toString() {
         return "IntermediateModel of " + projectName + ": [Packages=" + packages.size() + ", Types=" + types.size() + ", ExternalTypes="

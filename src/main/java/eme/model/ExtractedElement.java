@@ -5,7 +5,7 @@ package eme.model;
  * the implicit model of the code files and the Ecore metamodel.
  * @author Timur Saglam
  */
-public abstract class ExtractedElement {
+public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     protected String name;
     protected String parent;
     protected boolean selected; // selection for saving.
@@ -18,6 +18,17 @@ public abstract class ExtractedElement {
         name = createName(fullName);
         parent = createPath(fullName);
         selected = true;
+    }
+
+    /**
+     * @see Comparable#compareTo(Object)
+     */
+    @Override
+    public int compareTo(ExtractedElement o) {
+        if (o == null) {
+            throw new NullPointerException("Cannot compare " + toString() + " with null!");
+        }
+        return name.compareTo(o.getName());
     }
 
     /**

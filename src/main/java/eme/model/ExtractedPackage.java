@@ -1,5 +1,6 @@
 package eme.model;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class ExtractedPackage extends ExtractedElement {
     private final List<ExtractedClass> classes;
     private final List<ExtractedEnumeration> enumerations;
     private final List<ExtractedInterface> interfaces;
+    private final List<ExtractedType> types;
     private final List<ExtractedPackage> subpackages;
     protected boolean root;
 
@@ -24,6 +26,7 @@ public class ExtractedPackage extends ExtractedElement {
         classes = new LinkedList<ExtractedClass>();
         interfaces = new LinkedList<ExtractedInterface>();
         enumerations = new LinkedList<ExtractedEnumeration>();
+        types = new LinkedList<ExtractedType>();
         root = false;
     }
 
@@ -47,6 +50,7 @@ public class ExtractedPackage extends ExtractedElement {
         } else if (type.getClass() == ExtractedEnumeration.class) {
             enumerations.add((ExtractedEnumeration) type);
         }
+        types.add(type);
     }
 
     /**
@@ -86,10 +90,6 @@ public class ExtractedPackage extends ExtractedElement {
      * @return the types.
      */
     public List<ExtractedType> getTypes() {
-        List<ExtractedType> types = new LinkedList<>();
-        types.addAll(classes);
-        types.addAll(interfaces);
-        types.addAll(enumerations);
         return types;
     }
 
@@ -103,7 +103,7 @@ public class ExtractedPackage extends ExtractedElement {
                 return false;
             }
         }
-        return classes.size() + interfaces.size() + enumerations.size() == 0;
+        return types.size() == 0;
     }
 
     /**
@@ -119,6 +119,20 @@ public class ExtractedPackage extends ExtractedElement {
      */
     public void setAsRoot() {
         root = true;
+    }
+
+    /**
+     * Sorts the content of the package. Sorts its types, its subpackages and all the content of every subpackage.
+     */
+    public void sort() {
+        Collections.sort(interfaces);
+        Collections.sort(classes);
+        Collections.sort(enumerations);
+        Collections.sort(types);
+        Collections.sort(subpackages);
+        for (ExtractedPackage subpackage : subpackages) {
+            subpackage.sort(); // sort the content of alles subpackages.
+        }
     }
 
     @Override
