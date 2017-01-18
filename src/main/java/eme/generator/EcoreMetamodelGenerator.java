@@ -95,7 +95,7 @@ public class EcoreMetamodelGenerator {
     /**
      * Sorts a list of EClassifiers. EClassifier does not implement the Interface {@link Comparable}.
      */
-    private void sort(List<EClassifier> list) {
+    private void sort(List<EClassifier> list) { // TODO (MEDIUM) sort all classifiers.
         Map<String, EClassifier> classifierMap = new HashMap<String, EClassifier>();
         for (EClassifier dataType : list) { // for every classifier:
             classifierMap.put(dataType.getName(), dataType); // map with its name as key

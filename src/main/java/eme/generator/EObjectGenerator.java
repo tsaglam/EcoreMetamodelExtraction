@@ -163,7 +163,7 @@ public class EObjectGenerator {
     private void addParameters(ExtractedMethod method, List<EParameter> list, EClass eClass) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
-            eParameter = ecoreFactory.createEParameter(); // TODO (MEDIUM) solution for arrays.
+            eParameter = ecoreFactory.createEParameter();
             eParameter.setName(parameter.getIdentifier()); // set identifier
             if (typeGenerator.isTypeParameter(parameter, eClass)) {
                 eParameter.setEGenericType(typeGenerator.generateGeneric(parameter, eClass));

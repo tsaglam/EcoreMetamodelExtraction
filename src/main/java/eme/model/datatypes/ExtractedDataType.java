@@ -120,7 +120,7 @@ public class ExtractedDataType {
         typeName = isArray() ? typeName + "Array" : typeName; // add "Array" if is array
         typeName = arrayDimension > 1 ? typeName + arrayDimension + "D" : typeName; // add dimension
         for (int i = 0; i < arrayDimension; i++) { // adjust array names to dimension
-            this.fullTypeName += "[]"; // TODO (MEDIUM) optimize this (code style)
+            this.fullTypeName += "[]";
         }
     }
 }

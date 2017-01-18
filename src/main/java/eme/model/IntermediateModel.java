@@ -152,7 +152,8 @@ public class IntermediateModel {
 
     @Override
     public String toString() {
-        return "IntermediateModel of " + projectName + ": [Packages=" + packages.size() + ", Types=" + types.size() + "]";
+        return "IntermediateModel of " + projectName + ": [Packages=" + packages.size() + ", Types=" + types.size() + ", ExternalTypes="
+                + externalTypes.size() + "]";
         // TODO (LOW) keep up to date.
     }
 
