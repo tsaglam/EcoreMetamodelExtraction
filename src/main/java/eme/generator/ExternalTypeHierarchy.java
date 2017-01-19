@@ -14,10 +14,10 @@ import org.eclipse.emf.ecore.EPackage;
 import eme.model.ExtractedPackage;
 
 /**
- * This class allows to build a package structure, a data type package hierarchy from a list of EDataTypes.
+ * This class allows to build a package structure, a external type package hierarchy from a list of EDataTypes.
  * @author Timur Saglam
  */
-public class DataTypeHierarchy {
+public class ExternalTypeHierarchy {
     private final EPackage basePackage;
     private final String basePath;
     private final EObjectGenerator eObjectGenerator;
@@ -27,14 +27,14 @@ public class DataTypeHierarchy {
      * @param eObjectGenerator is the eObjectGenerator that uses this hierarchy.
      * @param basePackage is the base package for the hierarchy.
      */
-    public DataTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage, String basePath) {
+    public ExternalTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage, String basePath) {
         this.eObjectGenerator = eObjectGenerator;
         this.basePackage = basePackage;
         this.basePath = basePath;
     }
 
     /**
-     * Adds an EDataType to the data type package hierarchy. Generates the missing packages for the hierarchy.
+     * Adds an EDataType to the external type package hierarchy. Generates the missing packages for the hierarchy.
      * @param dataType is the new EDataType.
      */
     public void add(EDataType dataType) {
@@ -50,7 +50,7 @@ public class DataTypeHierarchy {
     }
 
     /**
-     * Sorts the content of the data type package hierarchy.
+     * Sorts the content of the external type package hierarchy.
      */
     public void sort() {
         sort(basePackage);
@@ -60,14 +60,13 @@ public class DataTypeHierarchy {
      * Returns a specific sub package of an EPackage. Creates a new one from the package path if it does not exist.
      */
     private EPackage getSubpackage(String name, String fullName, EPackage superPackage) {
-        for (EPackage subpackage : superPackage.getESubpackages()) {
-            if (name.equals(subpackage.getName())) {
+        for (EPackage subpackage : superPackage.getESubpackages()) { // for all subpackages
+            if (name.equals(subpackage.getName())) { // check if it is the wanted package
                 return subpackage;
             }
-        }
-
+        } // if wanted package does not exist, create it:
         EPackage ePackage = eObjectGenerator.generateEPackage(new ExtractedPackage(basePath + "." + fullName));
-        superPackage.getESubpackages().add(ePackage);
+        superPackage.getESubpackages().add(ePackage); // add to the super package
         return ePackage;
     }
 
@@ -85,7 +84,7 @@ public class DataTypeHierarchy {
     /**
      * Sorts a list of ENamedElements. {@link ENamedElement} does not implement the Interface {@link Comparable}.
      */
-    private <T extends ENamedElement> void sort(EList<T> list) { // TODO (MEDIUM) sort all classifiers.
+    private <T extends ENamedElement> void sort(EList<T> list) {
         Map<String, T> elementMap = new HashMap<String, T>();
         for (T element : list) { // for every classifier:
             elementMap.put(element.getName(), element); // map with its name as key
@@ -102,11 +101,10 @@ public class DataTypeHierarchy {
      * Recursive sort method. See <code>DataTypeHierarchy.sort()</code>.
      */
     private void sort(EPackage ePackage) {
-        sort(ePackage.getEClassifiers());
-        sort(ePackage.getESubpackages());
+        sort(ePackage.getEClassifiers()); // sort classifiers
+        sort(ePackage.getESubpackages()); // sort packages
         for (EPackage subpackage : ePackage.getESubpackages()) {
-            sort(subpackage);
+            sort(subpackage); // recursive call for every subpackage
         }
     }
-
 }

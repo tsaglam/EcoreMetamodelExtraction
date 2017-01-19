@@ -16,6 +16,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Returns the value of the property DataTypePackageName.
+     * @return the value.
+     */
+    public String getDataTypePackageName() {
+        return properties.getProperty("DataTypePackageName", "DATATYPES");
+    }
+
+    /**
      * Returns the value of the property DefaultPackageName.
      * @return the value.
      */
@@ -136,17 +144,25 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Sets the value of the property DataTypePackageName.
+     * @param value is the new value.
+     */
+    public void setDataTypePackageName(String value) {
+        properties.setProperty("DataTypePackageName", value);
+    }
+
+    /**
      * Sets the value of the property DefaultPackageName.
      * @param value is the new value.
      */
     public void setDefaultPackageName(String value) {
-
         properties.setProperty("DefaultPackageName", value);
     }
 
     @Override
     public void setDefaultValues() {
         properties.setProperty("DefaultPackageName", "DEFAULT");
+        properties.setProperty("DataTypePackageName", "DATATYPES");
         properties.setProperty("ExtractEmptyPackages", "true");
         properties.setProperty("ExtractNestedTypes", "true");
         properties.setProperty("ExtractAbstractMethods", "false");

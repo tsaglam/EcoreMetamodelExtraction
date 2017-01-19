@@ -26,7 +26,7 @@ import eme.model.datatypes.WildcardStatus;
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
-    private final DataTypeHierarchy dataTypeHierarchy;
+    private final ExternalTypeHierarchy externalTypeHierarchy;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
     private final Map<String, EDataType> typeMap;
@@ -35,10 +35,10 @@ public class EDataTypeGenerator {
      * Basic constructor, builds the type maps.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
      */
-    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, DataTypeHierarchy dataTypeHierarchy) {
+    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, ExternalTypeHierarchy externalTypeHierarchy) {
         this.model = model;
         this.createdEClassifiers = createdEClassifiers; // set classifier map.
-        this.dataTypeHierarchy = dataTypeHierarchy;
+        this.externalTypeHierarchy = externalTypeHierarchy;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
@@ -97,7 +97,7 @@ public class EDataTypeGenerator {
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
-            dataTypeHierarchy.add(eDataType);
+            externalTypeHierarchy.add(eDataType);
             return eDataType;
         }
     }

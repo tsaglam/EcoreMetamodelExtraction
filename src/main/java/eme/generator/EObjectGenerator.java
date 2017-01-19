@@ -38,7 +38,7 @@ import eme.properties.ExtractionProperties;
 public class EObjectGenerator {
     private static final Logger logger = LogManager.getLogger(EObjectGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
-    private DataTypeHierarchy dataTypeHierarchy;
+    private ExternalTypeHierarchy externalTypeHierarchy;
     private EPackage dataTypePackage;
     private final EcoreFactory ecoreFactory;
     private final Map<EClass, ExtractedType> incompleteEClasses;
@@ -69,7 +69,7 @@ public class EObjectGenerator {
             addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
             addOperations(incompleteEClasses.get(eClass), eClass); // add methods
         }
-        dataTypeHierarchy.sort();
+        externalTypeHierarchy.sort();
         selector.generateReport(); // print reports
     }
 
@@ -110,10 +110,10 @@ public class EObjectGenerator {
         this.model = model; // set model
         createdEClassifiers.clear(); // clear created classifiers
         incompleteEClasses.clear(); // clear unfinished classes.
-        String basePath = properties.getDefaultPackageName() + "." + "DATATYPES";// TODO (HIGH) properties
+        String basePath = properties.getDefaultPackageName() + "." + properties.getDataTypePackageName();
         dataTypePackage = generateEPackage(new ExtractedPackage(basePath));
-        dataTypeHierarchy = new DataTypeHierarchy(this, dataTypePackage, basePath);
-        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, dataTypeHierarchy);
+        externalTypeHierarchy = new ExternalTypeHierarchy(this, dataTypePackage, basePath);
+        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypeHierarchy);
     }
 
     /**
