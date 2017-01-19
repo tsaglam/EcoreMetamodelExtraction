@@ -54,7 +54,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the classes.
+     * accessor for the classes.
      * @return the classes.
      */
     public List<ExtractedClass> getClasses() {
@@ -62,7 +62,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the enumerations.
+     * accessor for the enumerations.
      * @return the enumerations.
      */
     public List<ExtractedEnumeration> getEnumerations() {
@@ -70,7 +70,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the interfaces.
+     * accessor for the interfaces.
      * @return the interfaces.
      */
     public List<ExtractedInterface> getInterfaces() {
@@ -78,7 +78,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the subpackages.
+     * accessor for the subpackages.
      * @return the subpackages.
      */
     public List<ExtractedPackage> getSubpackages() {
@@ -86,7 +86,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Getter for the types (interfaces, classes and enumerations).
+     * accessor for the types (interfaces, classes and enumerations).
      * @return the types.
      */
     public List<ExtractedType> getTypes() {

@@ -29,7 +29,7 @@ public class ExtractedEnumeration extends ExtractedType {
     }
 
     /**
-     * Getter for the enumerals of the enumeration.
+     * accessor for the enumerals of the enumeration.
      * @return the enumerals in a List.
      */
     public List<String> getEnumerals() {

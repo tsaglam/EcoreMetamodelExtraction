@@ -79,7 +79,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Getter for the list of attributes.
+     * accessor for the list of attributes.
      * @return the list of attributes.
      */
     public List<ExtractedAttribute> getAttributes() {
@@ -87,7 +87,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Getter for the list of methods.
+     * accessor for the list of methods.
      * @return the list of methods.
      */
     public List<ExtractedMethod> getMethods() {
@@ -103,7 +103,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Getter for the list of super interface names.
+     * accessor for the list of super interface names.
      * @return the list of super interface names.
      */
     public List<String> getSuperInterfaces() {
@@ -111,7 +111,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Getter for the list of generic type parameters.
+     * accessor for the list of generic type parameters.
      * @return the list of generic type parameters.
      */
     public List<ExtractedTypeParameter> getTypeParameters() {

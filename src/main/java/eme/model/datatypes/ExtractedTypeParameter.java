@@ -29,7 +29,7 @@ public class ExtractedTypeParameter {
     }
 
     /**
-     * Getter for the bounds.
+     * accessor for the bounds.
      * @return the bounds of the type parameter.
      */
     public List<ExtractedDataType> getBounds() {
@@ -37,7 +37,7 @@ public class ExtractedTypeParameter {
     }
 
     /**
-     * Getter for the identifier.
+     * accessor for the identifier.
      * @return the identifier of the type parameter.
      */
     public String getIdentifier() {

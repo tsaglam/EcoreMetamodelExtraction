@@ -28,7 +28,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * Getter for the array dimension.
+     * accessor for the array dimension.
      * @return the array dimension, 0 if the type is not an array.
      */
     public int getArrayDimension() {
@@ -36,7 +36,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the full type name, which includes the packages and the array brackets.
+     * accessor for the full type name, which includes the packages and the array brackets.
      * @return the full type name.
      */
     public String getFullType() {
@@ -44,7 +44,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the generic arguments.
+     * accessor for the generic arguments.
      * @return the List of generic arguments of this data type.
      */
     public List<ExtractedDataType> getGenericArguments() {
@@ -52,7 +52,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the simple type name, which is the basic name.
+     * accessor for the simple type name, which is the basic name.
      * @return the simple type name or, if it is an array type, the array type name.
      */
     public String getType() {
@@ -60,7 +60,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * getter for the wild card status.
+     * accessor for the wild card status.
      * @return the wild card status.
      */
     public WildcardStatus getWildcardStatus() {
@@ -92,7 +92,7 @@ public class ExtractedDataType {
     }
 
     /**
-     * Setter for the generic arguments.
+     * mutator for the generic arguments.
      * @param genericArguments is the list of generic arguments.
      */
     public void setGenericArguments(List<ExtractedDataType> genericArguments) {

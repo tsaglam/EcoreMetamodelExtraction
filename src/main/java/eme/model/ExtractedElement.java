@@ -43,7 +43,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Getter for the full element name.
+     * accessor for the full element name.
      * @return the full name of the element, consisting out of the package path and the element name separated by an
      * dot.
      */
@@ -55,7 +55,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Getter for the element name.
+     * accessor for the element name.
      * @return the element name.
      */
     public String getName() {
@@ -63,7 +63,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Getter for the name of the elements parent.
+     * accessor for the name of the elements parent.
      * @return the parent name.
      */
     public String getParentName() {

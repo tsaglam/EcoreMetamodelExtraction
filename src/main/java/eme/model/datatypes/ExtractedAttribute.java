@@ -24,7 +24,7 @@ public class ExtractedAttribute extends ExtractedParameter {
     }
 
     /**
-     * Getter for the access level modifier.
+     * accessor for the access level modifier.
      * @return the access level modifier of the method.
      */
     public AccessLevelModifier getModifier() {

@@ -115,7 +115,7 @@ public class IntermediateModel {
     }
 
     /**
-     * Getter for the name of the project.
+     * accessor for the name of the project.
      * @return the name.
      */
     public String getProjectName() {
@@ -123,7 +123,7 @@ public class IntermediateModel {
     }
 
     /**
-     * Getter for the root package of the model.
+     * accessor for the root package of the model.
      * @return the root package.
      */
     public ExtractedPackage getRoot() {

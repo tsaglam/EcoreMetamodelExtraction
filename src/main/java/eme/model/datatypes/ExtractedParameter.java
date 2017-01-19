@@ -19,7 +19,7 @@ public class ExtractedParameter extends ExtractedDataType {
     }
 
     /**
-     * Getter for the identifier of the parameter.
+     * accessor for the identifier of the parameter.
      * @return the identifier.
      */
     public String getIdentifier() {

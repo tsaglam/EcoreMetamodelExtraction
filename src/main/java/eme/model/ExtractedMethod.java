@@ -54,7 +54,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * Getter for the access level modifier.
+     * accessor for the access level modifier.
      * @return the access level modifier of the method.
      */
     public AccessLevelModifier getModifier() {
@@ -62,7 +62,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * getter for the parameters.
+     * accessor for the parameters.
      * @return the parameters
      */
     public List<ExtractedParameter> getParameters() {
@@ -70,7 +70,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * getter for the return type;
+     * accessor for the return type;
      * @return the returnType
      */
     public ExtractedDataType getReturnType() {
@@ -78,7 +78,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * getter for the throws declarations.
+     * accessor for the throws declarations.
      * @return the throws declarations
      */
     public List<ExtractedDataType> getThrowsDeclarations() {
