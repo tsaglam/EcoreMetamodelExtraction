@@ -5,7 +5,9 @@ import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
 import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
@@ -14,6 +16,7 @@ import org.apache.log4j.Logger;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
+import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.properties.ExtractionProperties;
@@ -50,7 +53,7 @@ public class SelectionHelper {
                 && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) { // extract private attributes
             return true;
         }
-        report("Attribute");
+        report("attribute");
         return false;
     }
 
@@ -61,19 +64,18 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedMethod method) {
         AccessLevelModifier modifier = method.getModifier();
-        if (method.isSelected() && (!method.isConstructor() || properties.getExtractConstructors())
+        MethodType type = method.getMethodType();
+        if (method.isSelected() && (type != MethodType.CONSTRUCTOR || properties.getExtractConstructors())
                 && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
                 && (!method.isStatic() || properties.getExtractStaticMethods()) // extract static methods
                 && (modifier != NO_MODIFIER || properties.getExtractDefaultMethods()) // extract default methods
                 && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
                 && (modifier != PRIVATE || properties.getExtractPrivateMethods()) // extract private methods
-                && (!method.isAccessor() || properties.getExtractAccessMethods())  // extract accessors
-                && (!method.isMutator() || properties.getExtractAccessMethods())) { // extract mutators
+                && (type != MethodType.ACCESSOR || properties.getExtractAccessMethods())  // extract accessors
+                && (type != MethodType.MUTATOR || properties.getExtractAccessMethods())) { // extract mutators
             return true;
-        } else if (method.isConstructor()) {
-            report("Constructor"); // TODO (MEDIUM) Method type enum and switch case
         } else {
-            report("Method");
+            report(type.toString().toLowerCase());
         }
         return false;
     }
@@ -87,7 +89,7 @@ public class SelectionHelper {
         if (subpackage.isSelected() && (!subpackage.isEmpty() || properties.getExtractEmptyPackages())) {
             return true;
         }
-        report("Package");
+        report("package");
         return false;
     }
 
@@ -100,7 +102,7 @@ public class SelectionHelper {
         if (type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes())) {
             return true;
         }
-        report(type.getClass().getSimpleName().substring(9)); // Class, Interface, Enumeration
+        report(type.getClass().getSimpleName().substring(9).toLowerCase()); // Class, Interface, Enumeration
         return false;
     }
 
@@ -113,7 +115,9 @@ public class SelectionHelper {
             logger.info("There were no ungenerated elements.");
         } else {
             logger.info("There were ungenerated elements because of selection and/or properties:");
-            for (String className : reportMap.keySet()) {
+            LinkedList<String> list = new LinkedList<String>(reportMap.keySet());
+            Collections.sort(list); // sort keys
+            for (String className : list) {
                 logger.info("   " + className + ": " + reportMap.get(className));
             }
         }

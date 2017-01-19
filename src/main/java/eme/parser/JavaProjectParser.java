@@ -27,6 +27,7 @@ import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
+import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 
@@ -105,8 +106,6 @@ public class JavaProjectParser {
 
     /**
      * Parses Attributes from an IType and adds them to an ExtractedType.
-     * @param iType is the IType.
-     * @param extractedType is the ExtractedType.
      */
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
@@ -122,7 +121,6 @@ public class JavaProjectParser {
 
     /**
      * Parses an IType that has been identified as class.
-     * @param type is the IType.
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
@@ -140,7 +138,6 @@ public class JavaProjectParser {
     /**
      * Extracts all compilation units from a list of package fragments. It then parses all ICompilationUnits while
      * updating the current package.
-     * @param fragments is the list of compilation units.
      */
     private void parseCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {
         for (IPackageFragment fragment : fragments) { // for every package fragment
@@ -156,7 +153,6 @@ public class JavaProjectParser {
 
     /**
      * Parse an IType that has been identified as enumeration.
-     * @param type is the IType.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
         ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName());
@@ -187,8 +183,6 @@ public class JavaProjectParser {
 
     /**
      * Parses the methods from an IType and adds them to an ExtractedType.
-     * @param iType is the IType where the methods are from.
-     * @param extractedType is the ExtractedType where the methods are getting added.
      */
     private void parseMethods(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedMethod extractedMethod;
@@ -196,9 +190,8 @@ public class JavaProjectParser {
         for (IMethod method : iType.getMethods()) { // for every method
             methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
             int flags = method.getFlags();
-            extractedMethod = new ExtractedMethod(methodName, typeParser.parseReturnType(method), method.isConstructor());
-            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags), isAccessor(method),
-                    isMutator(method));
+            extractedMethod = new ExtractedMethod(methodName, typeParser.parseReturnType(method));
+            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), parseMethodType(method), Flags.isStatic(flags), Flags.isAbstract(flags));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(typeParser.parseParameter(parameter, method));
             }
@@ -210,10 +203,23 @@ public class JavaProjectParser {
     }
 
     /**
+     * Parses the MethodType of an IMethod.
+     */
+    private MethodType parseMethodType(IMethod method) throws JavaModelException {
+        if (method.isConstructor()) {
+            return MethodType.CONSTRUCTOR;
+        } else if (isAccessor(method)) {
+            return MethodType.ACCESSOR;
+        } else if (isMutator(method)) {
+            return MethodType.MUTATOR;
+        }
+        return MethodType.METHOD;
+    }
+
+    /**
      * The method takes an IJavaProject and extracts the package structure of the project. It continues by parsing the
      * IPackageFragments. The method creates the packages from a set of package names to avoid the problem of duplicate
      * default packages. But all other parsing calls are done with a list of fragments.
-     * @param project is the IJavaProject that gets parsed.
      */
     private void parsePackages(IJavaProject project) throws JavaModelException {
         SortedSet<String> packageNames = new TreeSet<String>(); // set to avoid duplicates
@@ -232,8 +238,6 @@ public class JavaProjectParser {
 
     /**
      * Parses IType. Detects whether the type is a (abstract) class, an interface or an enumeration.
-     * @param iType is the IType to parse.
-     * @param addToModel determines whether the new ExtractedType should be added to the model.
      */
     private ExtractedType parseType(IType iType) throws JavaModelException {
         ExtractedType extractedType = null;
@@ -255,7 +259,6 @@ public class JavaProjectParser {
 
     /**
      * Reports on the parsing progress by logging the current package.
-     * @param packages is the total amount of packages in the project.
      */
     private void reportProgress(int packages) {
         packageCounter++; // increase package count

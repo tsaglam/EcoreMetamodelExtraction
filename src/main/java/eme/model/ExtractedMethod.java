@@ -12,13 +12,11 @@ import eme.model.datatypes.ExtractedParameter;
  * @author Timur Saglam
  */
 public class ExtractedMethod extends ExtractedElement {
-    private boolean accessor;
-    private final boolean constructor;
     private final List<ExtractedDataType> exceptions;
     private boolean isAbstract;
     private boolean isStatic;
+    private MethodType methodType;
     private AccessLevelModifier modifier;
-    private boolean mutator;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
 
@@ -28,13 +26,13 @@ public class ExtractedMethod extends ExtractedElement {
      * @param returnType is the data type for the return type of the method. null if it is void.
      * @param constructor determines whether this method is an constructor.
      */
-    public ExtractedMethod(String fullName, ExtractedDataType returnType, boolean constructor) {
+    public ExtractedMethod(String fullName, ExtractedDataType returnType) {
         super(fullName);
+        this.returnType = returnType;
         parameters = new LinkedList<ExtractedParameter>();
         exceptions = new LinkedList<ExtractedDataType>();
-        this.returnType = returnType;
-        this.constructor = constructor;
         modifier = AccessLevelModifier.NO_MODIFIER;
+        methodType = MethodType.METHOD;
     }
 
     /**
@@ -51,6 +49,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public void addThrowsDeclaration(ExtractedDataType exception) {
         exceptions.add(exception);
+    }
+
+    /**
+     * Accessor for the method type.
+     * @return the method type.
+     */
+    public MethodType getMethodType() {
+        return methodType;
     }
 
     /**
@@ -94,30 +100,6 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * Checks whether the method is a accessor method.
-     * @return true if it is a accessor method.
-     */
-    public boolean isAccessor() {
-        return accessor;
-    }
-
-    /**
-     * Checks whether the method is a constructor.
-     * @return true if it is a constructor.
-     */
-    public boolean isConstructor() {
-        return constructor;
-    }
-
-    /**
-     * Checks whether the method is a mutator method.
-     * @return true if it is a mutator method.
-     */
-    public boolean isMutator() {
-        return mutator;
-    }
-
-    /**
      * Checks whether the method is static.
      * @return true if it is static.
      */
@@ -132,12 +114,19 @@ public class ExtractedMethod extends ExtractedElement {
      * @param isStatic determines whether the method is static or not.
      * @param isAbstract determines whether the method is abstract or not.
      */
-    public void setFlags(AccessLevelModifier modifier, boolean isStatic, boolean isAbstract, boolean accessor, boolean mutator) {
+    public void setFlags(AccessLevelModifier modifier, MethodType methodType, boolean isStatic, boolean isAbstract) {
         this.modifier = modifier;
+        this.methodType = methodType;
         this.isStatic = isStatic;
         this.isAbstract = isAbstract;
-        this.accessor = accessor;
-        this.mutator = mutator;
+    }
+
+    /**
+     * Mutator for the method type.
+     * @param methodType is the method type to set.
+     */
+    public void setMethodType(MethodType methodType) { // TODO is this needed?
+        this.methodType = methodType;
     }
 
     @Override
