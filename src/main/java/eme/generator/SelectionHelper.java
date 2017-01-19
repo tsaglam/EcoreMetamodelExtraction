@@ -66,10 +66,12 @@ public class SelectionHelper {
                 && (!method.isStatic() || properties.getExtractStaticMethods()) // extract static methods
                 && (modifier != NO_MODIFIER || properties.getExtractDefaultMethods()) // extract default methods
                 && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
-                && (modifier != PRIVATE || properties.getExtractPrivateMethods())) { // extract private methods
+                && (modifier != PRIVATE || properties.getExtractPrivateMethods()) // extract private methods
+                && (!method.isAccessor() || properties.getExtractAccessMethods())  // extract accessors
+                && (!method.isMutator() || properties.getExtractAccessMethods())) { // extract mutators
             return true;
         } else if (method.isConstructor()) {
-            report("Constructor");
+            report("Constructor"); // TODO (MEDIUM) Method type enum and switch case
         } else {
             report("Method");
         }

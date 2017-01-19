@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import eme.model.ExtractedClass;
 import eme.model.ExtractedEnumeration;
@@ -60,6 +61,39 @@ public class JavaProjectParser {
         currentModel.sort(); // sort model content
         currentModel.print(); // print intermediate model.
         return currentModel;
+    }
+
+    /**
+     * Checks whether a IMethod is an access method (either an accessor or an mutator, depending on the prefix).
+     */
+    private boolean isAccessMethod(String prefix, IMethod method) throws JavaModelException {
+        IType type = method.getDeclaringType();
+        for (IField field : type.getFields()) { // for ever field of IType:
+            if (method.getElementName().equalsIgnoreCase(prefix + field.getElementName())) {
+                return true; // is access method if name scheme fits for one field
+            }
+        }
+        return false; // is not an access method if no field fits
+    }
+
+    /**
+     * Checks whether a IMethod is an accessor method.
+     */
+    private boolean isAccessor(IMethod method) throws JavaModelException {
+        if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
+            return method.getNumberOfParameters() == 0 && !Signature.SIG_VOID.equals(method.getReturnType());
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a IMethod is a mutator method.
+     */
+    private boolean isMutator(IMethod method) throws JavaModelException {
+        if (isAccessMethod("set", method)) { // if name fits
+            return method.getNumberOfParameters() == 1 && Signature.SIG_VOID.equals(method.getReturnType());
+        }
+        return false;
     }
 
     /**
@@ -163,7 +197,8 @@ public class JavaProjectParser {
             methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
             int flags = method.getFlags();
             extractedMethod = new ExtractedMethod(methodName, typeParser.parseReturnType(method), method.isConstructor());
-            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags));
+            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isAbstract(flags), isAccessor(method),
+                    isMutator(method));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(typeParser.parseParameter(parameter, method));
             }

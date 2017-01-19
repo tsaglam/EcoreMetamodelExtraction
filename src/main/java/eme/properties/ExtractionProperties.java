@@ -40,6 +40,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Returns the value of the property ExtractAccessMethods.
+     * @return the value.
+     */
+    public boolean getExtractAccessMethods() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractAccessMethods", "false"));
+    }
+
+    /**
      * Returns the value of the property ExtractConstructors.
      * @return the value.
      */
@@ -176,6 +184,7 @@ public class ExtractionProperties extends AbstractProperties {
         properties.setProperty("ExtractDefaultMethods", "true");
         properties.setProperty("ExtractProtectedMethods", "true");
         properties.setProperty("ExtractPrivateMethods", "false");
+        properties.setProperty("ExtractAccessorMethods", "false");
         properties.setProperty("ExtractConstructors", "false");
     }
 
@@ -185,6 +194,14 @@ public class ExtractionProperties extends AbstractProperties {
      */
     public void setExtractAbstractMethods(boolean value) {
         properties.setProperty("ExtractAbstractMethods", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractAccessorMethods.
+     * @param value is the new value.
+     */
+    public void setExtractAccessorMethods(boolean value) {
+        properties.setProperty("ExtractAccessorMethods", Boolean.toString(value));
     }
 
     /**

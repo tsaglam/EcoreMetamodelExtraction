@@ -38,9 +38,9 @@ import eme.properties.ExtractionProperties;
 public class EObjectGenerator {
     private static final Logger logger = LogManager.getLogger(EObjectGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
-    private ExternalTypeHierarchy externalTypeHierarchy;
     private EPackage dataTypePackage;
     private final EcoreFactory ecoreFactory;
+    private ExternalTypeHierarchy externalTypeHierarchy;
     private final Map<EClass, ExtractedType> incompleteEClasses;
     private IntermediateModel model;
     private final ExtractionProperties properties;
@@ -150,7 +150,7 @@ public class EObjectGenerator {
      * Adds the operations of an extracted type to a specific List of EOperations.
      */
     private void addOperations(ExtractedType type, EClass eClass) {
-        EOperation operation; // TODO (HIGH) detect getter and setter
+        EOperation operation;
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
                 operation = ecoreFactory.createEOperation(); // create object

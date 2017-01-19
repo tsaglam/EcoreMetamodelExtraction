@@ -12,13 +12,15 @@ import eme.model.datatypes.ExtractedParameter;
  * @author Timur Saglam
  */
 public class ExtractedMethod extends ExtractedElement {
-    private boolean abstractMethod;
+    private boolean accessor;
     private final boolean constructor;
     private final List<ExtractedDataType> exceptions;
+    private boolean isAbstract;
+    private boolean isStatic;
     private AccessLevelModifier modifier;
+    private boolean mutator;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
-    private boolean staticMethod;
 
     /**
      * Basic constructor. Sets access level modifier to NO_MODIFIER, static and abstract to false;
@@ -33,8 +35,6 @@ public class ExtractedMethod extends ExtractedElement {
         this.returnType = returnType;
         this.constructor = constructor;
         modifier = AccessLevelModifier.NO_MODIFIER;
-        staticMethod = false;
-        abstractMethod = false;
     }
 
     /**
@@ -90,7 +90,15 @@ public class ExtractedMethod extends ExtractedElement {
      * @return true if it is abstract.
      */
     public boolean isAbstract() {
-        return abstractMethod;
+        return isAbstract;
+    }
+
+    /**
+     * Checks whether the method is a accessor method.
+     * @return true if it is a accessor method.
+     */
+    public boolean isAccessor() {
+        return accessor;
     }
 
     /**
@@ -102,24 +110,34 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
+     * Checks whether the method is a mutator method.
+     * @return true if it is a mutator method.
+     */
+    public boolean isMutator() {
+        return mutator;
+    }
+
+    /**
      * Checks whether the method is static.
      * @return true if it is static.
      */
     public boolean isStatic() {
-        return staticMethod;
+        return isStatic;
     }
 
     /**
      * Sets the flags of the method. That means whether the method is static, whether the method is abstract and what
      * access level modifier it has.
      * @param modifier is the access level modifier.
-     * @param staticMethod determines whether the method is static or not.
-     * @param abstractMethod determines whether the method is abstract or not.
+     * @param isStatic determines whether the method is static or not.
+     * @param isAbstract determines whether the method is abstract or not.
      */
-    public void setFlags(AccessLevelModifier modifier, boolean staticMethod, boolean abstractMethod) {
+    public void setFlags(AccessLevelModifier modifier, boolean isStatic, boolean isAbstract, boolean accessor, boolean mutator) {
         this.modifier = modifier;
-        this.staticMethod = staticMethod;
-        this.abstractMethod = abstractMethod;
+        this.isStatic = isStatic;
+        this.isAbstract = isAbstract;
+        this.accessor = accessor;
+        this.mutator = mutator;
     }
 
     @Override
