@@ -33,7 +33,9 @@ public class EDataTypeGenerator {
 
     /**
      * Basic constructor, builds the type maps.
+     * @param model is the intermediate model.
      * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
+     * @param externalTypeHierarchy is the external type package hierarchy.
      */
     public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, ExternalTypeHierarchy externalTypeHierarchy) {
         this.model = model;

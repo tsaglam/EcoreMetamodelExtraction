@@ -26,6 +26,7 @@ public class ExternalTypeHierarchy {
      * Simple constructor, builds the base for the hierarchy.
      * @param eObjectGenerator is the eObjectGenerator that uses this hierarchy.
      * @param basePackage is the base package for the hierarchy.
+     * @param basePath is the base path of the base package.
      */
     public ExternalTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage, String basePath) {
         this.eObjectGenerator = eObjectGenerator;

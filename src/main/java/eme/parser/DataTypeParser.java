@@ -28,7 +28,6 @@ public class DataTypeParser {
 
     /**
      * Basic constructor, sets the set for the potential external types.
-     * @param dataTypes is the set for the potential external types.
      */
     public DataTypeParser() {
         this.dataTypes = new HashSet<String>();

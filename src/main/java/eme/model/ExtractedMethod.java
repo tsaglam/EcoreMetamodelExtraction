@@ -24,7 +24,6 @@ public class ExtractedMethod extends ExtractedElement {
      * Basic constructor. Sets access level modifier to NO_MODIFIER, static and abstract to false;
      * @param fullName is the full name of the method, consisting out of the full class name and the method name.
      * @param returnType is the data type for the return type of the method. null if it is void.
-     * @param constructor determines whether this method is an constructor.
      */
     public ExtractedMethod(String fullName, ExtractedDataType returnType) {
         super(fullName);
@@ -111,6 +110,7 @@ public class ExtractedMethod extends ExtractedElement {
      * Sets the flags of the method. That means whether the method is static, whether the method is abstract and what
      * access level modifier it has.
      * @param modifier is the access level modifier.
+     * @param methodType specifies the type of the method.
      * @param isStatic determines whether the method is static or not.
      * @param isAbstract determines whether the method is abstract or not.
      */
