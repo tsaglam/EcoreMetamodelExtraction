@@ -26,7 +26,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     @Override
     public int compareTo(ExtractedElement o) {
         if (o == null) {
-            throw new NullPointerException("Cannot compare " + toString() + " with null!");
+            throw new IllegalArgumentException("Cannot compare " + toString() + " with null!");
         }
         return name.compareTo(o.getName());
     }

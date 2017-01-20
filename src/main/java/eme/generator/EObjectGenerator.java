@@ -110,9 +110,8 @@ public class EObjectGenerator {
         this.model = model; // set model
         createdEClassifiers.clear(); // clear created classifiers
         incompleteEClasses.clear(); // clear unfinished classes.
-        String basePath = properties.getDefaultPackageName() + "." + properties.getDataTypePackageName();
-        dataTypePackage = generateEPackage(new ExtractedPackage(basePath));
-        externalTypeHierarchy = new ExternalTypeHierarchy(this, dataTypePackage, basePath);
+        dataTypePackage = generateEPackage(new ExtractedPackage(properties.getDefaultPackageName() + "." + properties.getDataTypePackageName()));
+        externalTypeHierarchy = new ExternalTypeHierarchy(this, dataTypePackage); // external type package hierarchy
         typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypeHierarchy);
     }
 

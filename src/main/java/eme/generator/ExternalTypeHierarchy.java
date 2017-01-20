@@ -19,7 +19,6 @@ import eme.model.ExtractedPackage;
  */
 public class ExternalTypeHierarchy {
     private final EPackage basePackage;
-    private final String basePath;
     private final EObjectGenerator eObjectGenerator;
 
     /**
@@ -28,10 +27,9 @@ public class ExternalTypeHierarchy {
      * @param basePackage is the base package for the hierarchy.
      * @param basePath is the base path of the base package.
      */
-    public ExternalTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage, String basePath) {
+    public ExternalTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage) {
         this.eObjectGenerator = eObjectGenerator;
         this.basePackage = basePackage;
-        this.basePath = basePath;
     }
 
     /**
@@ -66,6 +64,7 @@ public class ExternalTypeHierarchy {
                 return subpackage;
             }
         } // if wanted package does not exist, create it:
+        String basePath = basePackage.getESuperPackage().getName() + "." + basePackage.getName(); // base path
         EPackage ePackage = eObjectGenerator.generateEPackage(new ExtractedPackage(basePath + "." + fullName));
         superPackage.getESubpackages().add(ePackage); // add to the super package
         return ePackage;

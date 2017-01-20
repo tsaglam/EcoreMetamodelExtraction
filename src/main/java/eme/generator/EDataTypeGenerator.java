@@ -167,7 +167,7 @@ public class EDataTypeGenerator {
     private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier classifier) {
         EGenericType eBound; // ecore type parameter bound
         for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds+
-            if (!"java.lang.Object".equals(bound.getFullType())) { // ignore object bound
+            if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
                 if (isTypeParameter(bound, classifier)) {
                     eBound.setETypeParameter(findTypeParameter(bound, classifier));

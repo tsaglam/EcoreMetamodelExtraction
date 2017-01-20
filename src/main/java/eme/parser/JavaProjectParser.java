@@ -223,17 +223,17 @@ public class JavaProjectParser {
      */
     private void parsePackages(IJavaProject project) throws JavaModelException {
         SortedSet<String> packageNames = new TreeSet<String>(); // set to avoid duplicates
-        List<IPackageFragment> extractedFragments = new LinkedList<IPackageFragment>();
+        List<IPackageFragment> fragments = new LinkedList<IPackageFragment>();
         for (IPackageFragment fragment : project.getPackageFragments()) {
             if (isSourcePackage(fragment)) { // only source packages, no binary packages.
-                extractedFragments.add(fragment); // reuse fragments for class extraction
+                fragments.add(fragment); // reuse fragments for class extraction
                 packageNames.add(fragment.getElementName()); // add name to set.
             }
         }
         for (String name : packageNames) {
             currentModel.add(new ExtractedPackage(name)); // build model packages first
         }
-        parseCompilationUnits(extractedFragments); // then continue parsing
+        parseCompilationUnits(fragments); // then continue parsing
     }
 
     /**

@@ -103,7 +103,7 @@ public class ExtractedPackage extends ExtractedElement {
                 return false;
             }
         }
-        return types.size() == 0;
+        return types.isEmpty();
     }
 
     /**
