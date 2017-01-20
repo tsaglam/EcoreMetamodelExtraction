@@ -121,14 +121,6 @@ public class ExtractedMethod extends ExtractedElement {
         this.isAbstract = isAbstract;
     }
 
-    /**
-     * Mutator for the method type.
-     * @param methodType is the method type to set.
-     */
-    public void setMethodType(MethodType methodType) { // TODO is this needed?
-        this.methodType = methodType;
-    }
-
     @Override
     public String toString() {
         String result = modifier + " " + parent.toString() + "." + name + parameters.toString();
