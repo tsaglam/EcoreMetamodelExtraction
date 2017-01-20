@@ -136,15 +136,6 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Resets the class. Removes custom generated data types from the type maps, so that only the basic types are
-     * available.
-     */
-    public void reset() {
-        typeMap.clear(); // clear map from all types.
-        fillMap(); // add basic types.
-    }
-
-    /**
      * Adds a bound to an wild card argument if it has one.
      */
     private void addBound(EGenericType eArgument, ExtractedDataType genericArgument) {

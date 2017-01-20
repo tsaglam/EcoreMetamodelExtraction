@@ -117,8 +117,10 @@ public class SelectionHelper {
             logger.info("There were ungenerated elements because of selection and/or properties:");
             LinkedList<String> list = new LinkedList<String>(reportMap.keySet());
             Collections.sort(list); // sort keys
+            String pluralSuffix;
             for (String className : list) {
-                logger.info("   " + className + ": " + reportMap.get(className));
+                pluralSuffix = className.endsWith("s") ? "es" : "s";
+                logger.info("   " + className + pluralSuffix + ": " + reportMap.get(className));
             }
         }
     }

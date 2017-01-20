@@ -10,8 +10,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcoreFactory;
 
-import eme.model.ExtractedPackage;
+import eme.properties.ExtractionProperties;
 
 /**
  * This class allows to build a package structure, a external type package hierarchy from a list of EDataTypes.
@@ -19,17 +20,14 @@ import eme.model.ExtractedPackage;
  */
 public class ExternalTypeHierarchy {
     private final EPackage basePackage;
-    private final EObjectGenerator eObjectGenerator;
 
     /**
      * Simple constructor, builds the base for the hierarchy.
-     * @param eObjectGenerator is the eObjectGenerator that uses this hierarchy.
-     * @param basePackage is the base package for the hierarchy.
-     * @param basePath is the base path of the base package.
+     * @param root is the root package of the metamodel.
+     * @param properties is the properties class.
      */
-    public ExternalTypeHierarchy(EObjectGenerator eObjectGenerator, EPackage basePackage) {
-        this.eObjectGenerator = eObjectGenerator;
-        this.basePackage = basePackage;
+    public ExternalTypeHierarchy(EPackage root, ExtractionProperties properties) {
+        basePackage = generatePackage(properties.getDataTypePackageName(), root);
     }
 
     /**
@@ -39,11 +37,8 @@ public class ExternalTypeHierarchy {
     public void add(EDataType dataType) {
         String[] path = packagePath(dataType.getInstanceTypeName()); // get packages from name
         EPackage currentPackage = basePackage; // package pointer for traversing packages
-        String fullName = "";
         for (int i = 0; i < path.length; i++) {  // for every package in path
-            fullName += path[i]; // add next package to full name
-            currentPackage = getSubpackage(path[i], fullName, currentPackage); // traverse through hierarchy
-            fullName += "."; // add separator to full name
+            currentPackage = getSubpackage(path[i], currentPackage); // traverse through hierarchy
         }
         currentPackage.getEClassifiers().add(dataType); // add data type
     }
@@ -56,18 +51,27 @@ public class ExternalTypeHierarchy {
     }
 
     /**
+     * Creates new empty EPackage from name and super package only.
+     */
+    private EPackage generatePackage(String name, EPackage superPackage) {
+        EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
+        ePackage.setName(name);
+        ePackage.setNsPrefix(name);
+        ePackage.setNsURI(superPackage.getNsURI() + "." + name); // Set URI
+        superPackage.getESubpackages().add(ePackage); // add to the super package
+        return ePackage;
+    }
+
+    /**
      * Returns a specific sub package of an EPackage. Creates a new one from the package path if it does not exist.
      */
-    private EPackage getSubpackage(String name, String fullName, EPackage superPackage) {
+    private EPackage getSubpackage(String name, EPackage superPackage) {
         for (EPackage subpackage : superPackage.getESubpackages()) { // for all subpackages
             if (name.equals(subpackage.getName())) { // check if it is the wanted package
                 return subpackage;
             }
-        } // if wanted package does not exist, create it:
-        String basePath = basePackage.getESuperPackage().getName() + "." + basePackage.getName(); // base path
-        EPackage ePackage = eObjectGenerator.generateEPackage(new ExtractedPackage(basePath + "." + fullName));
-        superPackage.getESubpackages().add(ePackage); // add to the super package
-        return ePackage;
+        } // if wanted package does not exist:
+        return generatePackage(name, superPackage); // create new
     }
 
     /**

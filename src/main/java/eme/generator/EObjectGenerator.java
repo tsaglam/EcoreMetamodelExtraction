@@ -38,7 +38,6 @@ import eme.properties.ExtractionProperties;
 public class EObjectGenerator {
     private static final Logger logger = LogManager.getLogger(EObjectGenerator.class.getName());
     private final Map<String, EClassifier> createdEClassifiers;
-    private EPackage dataTypePackage;
     private final EcoreFactory ecoreFactory;
     private ExternalTypeHierarchy externalTypeHierarchy;
     private final Map<EClass, ExtractedType> incompleteEClasses;
@@ -50,69 +49,30 @@ public class EObjectGenerator {
     /**
      * Basic constructor.
      * @param properties is the properties class for the extraction.
+     * @param model is the intermediate model.
      */
-    public EObjectGenerator(ExtractionProperties properties) {
+    public EObjectGenerator(ExtractionProperties properties, IntermediateModel model) {
         this.properties = properties;
+        this.model = model; // set model
         ecoreFactory = EcoreFactory.eINSTANCE;
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
-        selector = new SelectionHelper(properties);
+        selector = new SelectionHelper(properties); // build selection helper
     }
 
     /**
-     * This method finishes the generation of the EObjects by adding methods and Attributes after the classes were
-     * build. This separate part of the generation is necessary to avoid cyclic data type dependencies on ungenerated
-     * classes. It also loggs some reports.
+     * Generates an Ecore metamodel from the intermediate model of the EObjectGenerator.
+     * @return the root EPackage of the Ecore metamodel.
      */
-    public void completeGeneration() {
+    public EPackage generate() {
+        EPackage eRoot = generateEPackage(model.getRoot()); // generate base model:
         for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
             addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
             addOperations(incompleteEClasses.get(eClass), eClass); // add methods
         }
-        externalTypeHierarchy.sort();
+        externalTypeHierarchy.sort(); // sort external data types
         selector.generateReport(); // print reports
-    }
-
-    /**
-     * Generates an EPackage from an extractedPackage. Recursively calls this method to all contained elements.
-     * @param extractedPackage is the package the EPackage gets generated from.
-     * @return the generated EPackage.
-     */
-    public EPackage generateEPackage(ExtractedPackage extractedPackage) {
-        EPackage ePackage = ecoreFactory.createEPackage();
-        if (extractedPackage.isRoot()) { // set root name & prefix:
-            ePackage.setName(properties.getDefaultPackageName());
-            ePackage.setNsPrefix(properties.getDefaultPackageName());
-            ePackage.getESubpackages().add(dataTypePackage); // add data type package
-        } else { // set name & prefix for non root packages:
-            ePackage.setName(extractedPackage.getName());
-            ePackage.setNsPrefix(extractedPackage.getName());
-        }
-        ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
-        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
-            if (selector.allowsGenerating(subpackage)) { // if is allowed to
-                ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
-            }
-        }
-        for (ExtractedType type : extractedPackage.getTypes()) { // for all types
-            if (selector.allowsGenerating(type)) { // if is allowed to
-                ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
-            }
-        }
-        return ePackage;
-    }
-
-    /**
-     * Clears the caches of the class and sets the intermediate model.
-     * @param model is the new model.
-     */
-    public void prepareFor(IntermediateModel model) {
-        this.model = model; // set model
-        createdEClassifiers.clear(); // clear created classifiers
-        incompleteEClasses.clear(); // clear unfinished classes.
-        dataTypePackage = generateEPackage(new ExtractedPackage(properties.getDefaultPackageName() + "." + properties.getDataTypePackageName()));
-        externalTypeHierarchy = new ExternalTypeHierarchy(this, dataTypePackage); // external type package hierarchy
-        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypeHierarchy);
+        return eRoot; // return Ecore metamodel root package
     }
 
     /**
@@ -294,6 +254,45 @@ public class EObjectGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
+    }
+
+    /**
+     * Generates an EPackage from an extractedPackage. Recursively calls this method to all contained elements.
+     */
+    private EPackage generateEPackage(ExtractedPackage extractedPackage) {
+        EPackage ePackage;
+        if (extractedPackage.isRoot()) { // set root name & prefix:
+            ePackage = generateRoot();
+        } else { // set name & prefix for non root packages:
+            ePackage = ecoreFactory.createEPackage();
+            ePackage.setName(extractedPackage.getName());
+            ePackage.setNsPrefix(extractedPackage.getName());
+        }
+        ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
+        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
+            if (selector.allowsGenerating(subpackage)) { // if is allowed to
+                ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
+            }
+        }
+        for (ExtractedType type : extractedPackage.getTypes()) { // for all types
+            if (selector.allowsGenerating(type)) { // if is allowed to
+                ePackage.getEClassifiers().add(generateEClassifier(type)); // extract
+            }
+        }
+        return ePackage;
+    }
+
+    /**
+     * Generates empty root package from the intermediate model. URI is not set.
+     */
+    private EPackage generateRoot() {
+        EPackage root = ecoreFactory.createEPackage(); // create object
+        root.setName(properties.getDefaultPackageName()); // set default name
+        root.setNsPrefix(properties.getDefaultPackageName()); // set default prefix
+        externalTypeHierarchy = new ExternalTypeHierarchy(root, properties); // build external type hierarchy
+        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypeHierarchy); // build type
+                                                                                                   // generator
+        return root;
     }
 
     /**

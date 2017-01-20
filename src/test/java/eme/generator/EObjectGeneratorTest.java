@@ -22,9 +22,8 @@ public class EObjectGeneratorTest {
     @Before
     public void setUp() throws Exception {
         properties = new ExtractionProperties();
-        generator = new EObjectGenerator(properties);
         model = new IntermediateModel("TestProject");
-        generator.prepareFor(model);
+        generator = new EObjectGenerator(properties, model);
     }
 
 //    @Test // TODO (LOW) Update the tests.
@@ -154,8 +153,7 @@ public class EObjectGeneratorTest {
         root.add(new ExtractedPackage("view"));
         root.add(new ExtractedPackage("controller"));
         root.add(new ExtractedEnumeration("someEnum"));
-        EPackage result = generator.generateEPackage(root);
-        generator.completeGeneration();
+        EPackage result = generator.generate();
         assertNotNull(result);
         assertEquals("DEFAULT", result.getName());
         List<EPackage> subpackages = result.getESubpackages();

@@ -21,17 +21,18 @@ import eme.properties.ExtractionProperties;
 public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
-    private EPackage ecoreMetamodel;
-    private final EObjectGenerator eObjectGenerator;
+    private EPackage metamodel;
+    private EObjectGenerator eObjectGenerator;
     private String projectName;
     private AbstractSavingStrategy savingStrategy;
+    private final ExtractionProperties properties;
 
     /**
      * Basic constructor.
      * @param properties is the ExtractionProperties class for the exraction.
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
-        eObjectGenerator = new EObjectGenerator(properties);
+        this.properties = properties;
         String strategy = properties.getSavingStrategy();
         if ("OutputProject".equals(strategy)) {
             savingStrategy = new OutputProjectSavingStrategy(OUTPUT_PROJECT);
@@ -66,11 +67,10 @@ public class EcoreMetamodelGenerator {
         if (root == null || !root.isSelected()) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null or deselected: " + model.toString());
         }
-        projectName = model.getProjectName(); // get project name.
-        eObjectGenerator.prepareFor(model); // prepare generators
-        ecoreMetamodel = eObjectGenerator.generateEPackage(root); // generate base model.
-        eObjectGenerator.completeGeneration(); // finish generation
-        return ecoreMetamodel;
+        eObjectGenerator = new EObjectGenerator(properties, model); // build generators
+        projectName = model.getProjectName(); // store project name.
+        metamodel = eObjectGenerator.generate(); // generate model model.
+        return metamodel;
     }
 
     /**
@@ -78,9 +78,9 @@ public class EcoreMetamodelGenerator {
      */
     public void saveMetamodel() {
         logger.info("Started saving the metamodel");
-        if (ecoreMetamodel == null) {
+        if (metamodel == null) {
             throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
         }
-        savingStrategy.save(ecoreMetamodel, projectName);
+        savingStrategy.save(metamodel, projectName);
     }
 }
