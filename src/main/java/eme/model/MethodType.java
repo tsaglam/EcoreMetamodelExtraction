@@ -21,12 +21,17 @@ public enum MethodType {
     MAIN,
 
     /**
-     * For normal methods.
-     */
-    METHOD,
-
-    /**
      * For mutator methods.
      */
-    MUTATOR;
+    MUTATOR,
+
+    /**
+     * For normal methods.
+     */
+    NORMAL;
+
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase() + " method";
+    }
 }

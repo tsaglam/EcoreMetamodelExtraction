@@ -31,7 +31,7 @@ public class ExtractedMethod extends ExtractedElement {
         parameters = new LinkedList<ExtractedParameter>();
         exceptions = new LinkedList<ExtractedDataType>();
         modifier = AccessLevelModifier.NO_MODIFIER;
-        methodType = MethodType.METHOD;
+        methodType = MethodType.NORMAL;
     }
 
     /**

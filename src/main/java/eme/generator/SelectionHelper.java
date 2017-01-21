@@ -75,7 +75,7 @@ public class SelectionHelper {
                 && (type != MethodType.MUTATOR || properties.getExtractAccessMethods())) { // extract mutators
             return true;
         } else {
-            report(type.toString().toLowerCase());
+            report(type.toString());
         }
         return false;
     }
@@ -118,9 +118,9 @@ public class SelectionHelper {
             LinkedList<String> list = new LinkedList<String>(reportMap.keySet());
             Collections.sort(list); // sort keys
             String pluralSuffix;
-            for (String className : list) {
-                pluralSuffix = className.endsWith("s") ? "es" : "s";
-                logger.info("   " + className + pluralSuffix + ": " + reportMap.get(className));
+            for (String element : list) { // for every reported element
+                pluralSuffix = element.endsWith("s") ? "es" : "s"; // add plural suffix
+                logger.info("   " + element + pluralSuffix + ": " + reportMap.get(element)); // print
             }
         }
     }

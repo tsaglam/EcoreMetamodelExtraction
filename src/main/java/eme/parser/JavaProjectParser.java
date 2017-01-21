@@ -212,8 +212,10 @@ public class JavaProjectParser {
             return MethodType.ACCESSOR;
         } else if (isMutator(method)) {
             return MethodType.MUTATOR;
+        } else if (method.isMainMethod()) {
+            return MethodType.MAIN;
         }
-        return MethodType.METHOD;
+        return MethodType.NORMAL;
     }
 
     /**
