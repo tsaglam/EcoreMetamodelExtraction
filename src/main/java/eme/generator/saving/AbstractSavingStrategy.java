@@ -43,10 +43,9 @@ public abstract class AbstractSavingStrategy {
      * the strategy class that overrides this class.
      * @param ePackage is the EPackage to save.
      * @param projectName is the name of the project the EPAckage was generated from.
-     * @return a String array of length two containing the saving information. The first element is the file path, the
-     * second element is the file name.
+     * @return the saving information.
      */
-    public String[] save(EPackage ePackage, String projectName) {
+    public SavingInformation save(EPackage ePackage, String projectName) {
         beforeSaving(projectName);
         ePackage.eClass(); // Initialize the EPackage:
         Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
@@ -71,7 +70,7 @@ public abstract class AbstractSavingStrategy {
             refreshFolder(getFilePath());
         }
         logger.info("The extracted metamodel was saved under: " + getFilePath());
-        return new String[] { filePath, fileName };
+        return new SavingInformation(filePath, fileName, projectName);
     }
 
     /**

@@ -9,6 +9,7 @@ import eme.generator.saving.CustomPathSavingStrategy;
 import eme.generator.saving.NewProjectSavingStrategy;
 import eme.generator.saving.OutputProjectSavingStrategy;
 import eme.generator.saving.SameProjectSavingStrategy;
+import eme.generator.saving.SavingInformation;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
@@ -75,12 +76,13 @@ public class EcoreMetamodelGenerator {
 
     /**
      * Saves the metamodel as an Ecore file.
+     * @return the saving information.
      */
-    public void saveMetamodel() {
+    public SavingInformation saveMetamodel() {
         logger.info("Started saving the metamodel");
         if (metamodel == null) {
             throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
         }
-        savingStrategy.save(metamodel, projectName);
+        return savingStrategy.save(metamodel, projectName);
     }
 }
