@@ -7,7 +7,9 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
+import eme.generator.EcoreGenmodelGenerator;
 import eme.generator.EcoreMetamodelGenerator;
+import eme.generator.saving.SavingInformation;
 import eme.model.IntermediateModel;
 import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
@@ -34,12 +36,25 @@ public class EcoreMetamodelExtraction {
 
     /**
      * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
-     * will be build and saved as an Ecore file
+     * will be build and saved as an Ecore file. A generator model will be build from the metamodel which is then used
+     * to generate Ecore model code.
+     * @param project is the specific project for the extraction.
+     */
+    public void extractAndGenerateFrom(IProject project) {
+        EPackage metamodel = extractFrom(project); // extract metamodel from project
+        SavingInformation information = generator.saveMetamodel(); // save model and store saving information
+        EcoreGenmodelGenerator.generate(metamodel, information); // generate generator model
+        // TODO (HIGH) Generate model code.
+    }
+
+    /**
+     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
+     * will be build and saved as an Ecore file.
      * @param project is the specific project for the extraction.
      */
     public void extractAndSaveFrom(IProject project) {
-        extractFrom(project);
-        generator.saveMetamodel();
+        extractFrom(project); // extract metamodel from project
+        generator.saveMetamodel(); // save metamodel
     }
 
     /**

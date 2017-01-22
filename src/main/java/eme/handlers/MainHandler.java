@@ -56,7 +56,7 @@ public class MainHandler extends AbstractHandler {
         window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
         IProject project = chooseProject();
         if (project != null) {
-            new EcoreMetamodelExtraction().extractAndSaveFrom(project);
+            new EcoreMetamodelExtraction().extractAndGenerateFrom(project);
         }
         return null;
     }
