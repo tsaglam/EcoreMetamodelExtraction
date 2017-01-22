@@ -43,8 +43,10 @@ public abstract class AbstractSavingStrategy {
      * the strategy class that overrides this class.
      * @param ePackage is the EPackage to save.
      * @param projectName is the name of the project the EPAckage was generated from.
+     * @return a String array of length two containing the saving information. The first element is the file path, the
+     * second element is the file name.
      */
-    public void save(EPackage ePackage, String projectName) {
+    public String[] save(EPackage ePackage, String projectName) {
         beforeSaving(projectName);
         ePackage.eClass(); // Initialize the EPackage:
         Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
@@ -52,8 +54,10 @@ public abstract class AbstractSavingStrategy {
         map.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());  // add default extension
         ResourceSet resourceSet = new ResourceSetImpl(); // get new resource set
         Resource resource = null; // create a resource:
+        String fileName = getFileName(); // get name
+        String filePath = getFilePath(); // get path
         try {
-            resource = resourceSet.createResource(URI.createFileURI(filePath() + fileName() + ".ecore"));
+            resource = resourceSet.createResource(URI.createFileURI(filePath + fileName + ".ecore"));
         } catch (IllegalArgumentException exception) {
             logger.error("Error while saving the metamodel.", exception);
         }
@@ -64,9 +68,10 @@ public abstract class AbstractSavingStrategy {
             logger.error("Error while saving the metamodel.", exception);
         }
         if (saveInProject) {
-            refreshFolder(filePath());
+            refreshFolder(getFilePath());
         }
-        logger.info("The extracted metamodel was saved under: " + filePath());
+        logger.info("The extracted metamodel was saved under: " + getFilePath());
+        return new String[] { filePath, fileName };
     }
 
     /**
@@ -93,11 +98,11 @@ public abstract class AbstractSavingStrategy {
      * Determines the name of the ecore file.
      * @return the file name.
      */
-    protected abstract String fileName();
+    protected abstract String getFileName();
 
     /**
      * Determines the path where the ecore file is saved.
      * @return the file path.
      */
-    protected abstract String filePath();
+    protected abstract String getFilePath();
 }

@@ -56,7 +56,7 @@ public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#fileName()
      */
     @Override
-    protected String fileName() {
+    protected String getFileName() {
         return projectName + LocalDateTime.now().format(formatter);
     }
 
@@ -64,7 +64,7 @@ public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
     @Override
-    protected String filePath() {
+    protected String getFilePath() {
         return workspace.getRoot().getLocation().toFile().getPath() + "/" + outputProjectName + "/model/";
     }
 }

@@ -65,7 +65,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#fileName()
      */
     @Override
-    protected String fileName() {
+    protected String getFileName() {
         return fileName;
     }
 
@@ -73,7 +73,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
     @Override
-    protected String filePath() {
+    protected String getFilePath() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         return workspace.getRoot().getLocation().toFile().getPath() + "/" + generatedProjectName + "/model/";
     }

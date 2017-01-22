@@ -46,7 +46,7 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#fileName()
      */
     @Override
-    protected String fileName() {
+    protected String getFileName() {
         return name;
     }
 
@@ -54,7 +54,7 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
     @Override
-    protected String filePath() {
+    protected String getFilePath() {
         return path;
     }
 }
