@@ -81,7 +81,7 @@ public class MainHandler extends AbstractHandler {
         try {
             return project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature");
         } catch (CoreException exception) {
-            logger.error(exception.getMessage());
+            logger.error(exception);
         }
         return false;
     }
