@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
-import eme.generator.EcoreGenmodelGenerator;
+import eme.generator.GenModelGenerator;
 import eme.generator.EcoreMetamodelGenerator;
 import eme.generator.saving.SavingInformation;
 import eme.model.IntermediateModel;
@@ -43,7 +43,7 @@ public class EcoreMetamodelExtraction {
     public void extractAndGenerateFrom(IProject project) {
         EPackage metamodel = extractFrom(project); // extract metamodel from project
         SavingInformation information = generator.saveMetamodel(); // save model and store saving information
-        EcoreGenmodelGenerator.generate(metamodel, information); // generate generator model
+        GenModelGenerator.generate(metamodel, information); // generate generator model
         // TODO (HIGH) Generate model code.
     }
 

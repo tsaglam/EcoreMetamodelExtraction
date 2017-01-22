@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,10 +24,10 @@ import eme.generator.saving.SavingInformation;
  * Creates generation models from Ecore metamodels.
  * @author Timur Saglam
  */
-public abstract class EcoreGenmodelGenerator {
+public abstract class GenModelGenerator {
     private static final GenJDKLevel COMPLIANCE_LEVEL = GenJDKLevel.JDK80_LITERAL;
     private static final String IMPORTER_ID = "org.eclipse.emf.importer.ecore";
-    private static final Logger logger = LogManager.getLogger(EcoreGenmodelGenerator.class.getName());
+    private static final Logger logger = LogManager.getLogger(GenModelGenerator.class.getName());
     private static final String ROOT_EXTENDS_CLASS = "org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container";
     private static final String XML_ENCODING = "UTF-8";
 
@@ -39,46 +38,42 @@ public abstract class EcoreGenmodelGenerator {
      * @return the generator model, a GenModel object.
      */
     public static GenModel generate(EPackage ecoreMetamodel, SavingInformation information) {
-        String path = information.getFilePath();
-        String projectPath = path.substring(0, path.lastIndexOf('/', path.lastIndexOf('/') - 1));
+        String modelName = information.getFileName();
+        String modelPath = information.getFilePath();
+        String projectPath = modelPath.substring(0, modelPath.lastIndexOf('/', modelPath.lastIndexOf('/') - 1));
         String projectName = projectPath.substring(projectPath.lastIndexOf('/'));
-        String name = information.getFileName();
         GenModel genModel = GenModelFactory.eINSTANCE.createGenModel();
         genModel.setModelDirectory(projectName + "/src");
         genModel.setModelPluginID(projectName.substring(1));
-        genModel.setModelName(name);
+        genModel.setModelName(modelName);
         genModel.setRootExtendsClass(ROOT_EXTENDS_CLASS);
         genModel.setImporterID(IMPORTER_ID);
         genModel.setComplianceLevel(COMPLIANCE_LEVEL);
         genModel.setOperationReflection(true);
         genModel.setImportOrganizing(true);
-        genModel.getForeignModel().add(name + ".ecore");
+        genModel.getForeignModel().add(modelName + ".ecore");
         genModel.initialize(Collections.singleton(ecoreMetamodel));
-        try {
-            URI genModelURI = URI.createFileURI(path + name + ".genmodel");
-            final XMIResourceImpl genModelResource = new XMIResourceImpl(genModelURI);
-            genModelResource.getDefaultSaveOptions().put(XMLResource.OPTION_ENCODING, XML_ENCODING);
-            genModelResource.getContents().add(genModel);
-            genModelResource.save(Collections.EMPTY_MAP);
-        } catch (IOException exception) {
-            logger.error(exception);
-        }
-        refreshFolder(path);
-        logger.info("The genmodel was saved under: " + path);
+        saveGenModel(genModel, modelPath, modelName);
         return genModel;
     }
 
     /**
-     * Refreshes a specific folder in the Eclipse IDE
-     * @param folderPath is the path of the folder.
-     */ // TODO (MEDIUM) duplicate in saving strategy
-    private static void refreshFolder(String folderPath) {
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IContainer folder = root.getContainerForLocation(new Path(folderPath));
+     * Saves a GenModel as a file and refreshes the output folder.
+     */
+    private static void saveGenModel(GenModel genModel, String modelPath, String modelName) {
         try {
-            folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+            URI genModelURI = URI.createFileURI(modelPath + modelName + ".genmodel");
+            final XMIResourceImpl genModelResource = new XMIResourceImpl(genModelURI);
+            genModelResource.getDefaultSaveOptions().put(XMLResource.OPTION_ENCODING, XML_ENCODING);
+            genModelResource.getContents().add(genModel);
+            genModelResource.save(Collections.EMPTY_MAP);
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot(); // refresh workspace folder:
+            root.getContainerForLocation(new Path(modelPath)).refreshLocal(IResource.DEPTH_INFINITE, null);
+        } catch (IOException exception) {
+            logger.error("Error while saving the generator model: ", exception);
         } catch (CoreException exception) {
             logger.warn("Could not refresh output folder. Try that manually.", exception);
         }
+        logger.info("The genmodel was saved under: " + modelPath);
     }
 }
