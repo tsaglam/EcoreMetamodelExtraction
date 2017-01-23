@@ -3,11 +3,8 @@ package eme.codegen;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.codegen.ecore.generator.Generator;
-import org.eclipse.emf.codegen.ecore.generator.GeneratorAdapterFactory;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
 import org.eclipse.emf.codegen.ecore.genmodel.generator.GenBaseGeneratorAdapter;
-import org.eclipse.emf.codegen.ecore.genmodel.generator.GenModelGeneratorAdapterFactory;
 import org.eclipse.emf.common.util.BasicMonitor;
 
 /**
@@ -21,13 +18,14 @@ public abstract class CodeGenerator {
      * @param genModel is the specific GenModel.
      */
     public static void generate(GenModel genModel) {
-        // Globally register the default generator adapter factory for GenModel elements (only needed in stand-alone):
-        GeneratorAdapterFactory.Descriptor.Registry.INSTANCE.addDescriptor(GenModelPackage.eNS_URI, GenModelGeneratorAdapterFactory.DESCRIPTOR);
-        // Create the generator and set the model-level input object:
-        Generator generator = new Generator();
-        generator.setInput(genModel);
+        if (genModel == null) {
+            throw new IllegalArgumentException("GenModel cannot be null to generate code from it");
+        }
+        genModel.setCanGenerate(true); // allow generation
+        Generator generator = new Generator(); // create generator
+        generator.setInput(genModel); // set the model-level input object
         // Generator model code: // TODO (MEDIUM) output in log4j
         generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE, new BasicMonitor.Printing(System.out));
-        logger.info("Generated Java code from GenModel in: "+generator.getGeneratedOutputs().toString());
+        logger.info("Generated Java code from GenModel in: " + generator.getGeneratedOutputs().toString());
     }
 }
