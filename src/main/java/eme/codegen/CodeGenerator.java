@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.codegen.ecore.generator.Generator;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.generator.GenBaseGeneratorAdapter;
-import org.eclipse.emf.common.util.BasicMonitor;
 
 /**
  * Class for code generation (e.g generating Java code from Ecore GenModels).
@@ -25,7 +24,7 @@ public abstract class CodeGenerator {
         Generator generator = new Generator(); // create generator
         generator.setInput(genModel); // set the model-level input object
         // Generator model code: // TODO (MEDIUM) output in log4j
-        generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE, new BasicMonitor.Printing(System.out));
+        generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE, new MonitorToLoggerAdapter(logger));
         logger.info("Generated Java code from GenModel in: " + generator.getGeneratedOutputs().toString());
     }
 }
