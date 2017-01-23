@@ -23,7 +23,6 @@ public abstract class CodeGenerator {
         genModel.setCanGenerate(true); // allow generation
         Generator generator = new Generator(); // create generator
         generator.setInput(genModel); // set the model-level input object
-        // Generator model code: // TODO (MEDIUM) output in log4j
         generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE, new MonitorToLoggerAdapter(logger));
         logger.info("Generated Java code from GenModel in: " + generator.getGeneratedOutputs().toString());
     }
