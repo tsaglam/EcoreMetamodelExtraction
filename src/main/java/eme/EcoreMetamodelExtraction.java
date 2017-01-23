@@ -3,10 +3,12 @@ package eme;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
+import eme.codegen.CodeGenerator;
 import eme.codegen.GenModelGenerator;
 import eme.generator.EcoreMetamodelGenerator;
 import eme.generator.saving.SavingInformation;
@@ -21,6 +23,7 @@ import eme.properties.ExtractionProperties;
 public class EcoreMetamodelExtraction {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelExtraction.class.getName());
     private final EcoreMetamodelGenerator generator;
+    private final GenModelGenerator genModelGenerator;
     private final JavaProjectParser parser;
     private final ExtractionProperties properties;
 
@@ -32,6 +35,7 @@ public class EcoreMetamodelExtraction {
         properties = new ExtractionProperties();
         parser = new JavaProjectParser();
         generator = new EcoreMetamodelGenerator(properties);
+        genModelGenerator = new GenModelGenerator();
     }
 
     /**
@@ -43,8 +47,8 @@ public class EcoreMetamodelExtraction {
     public void extractAndGenerateFrom(IProject project) {
         EPackage metamodel = extractFrom(project); // extract metamodel from project
         SavingInformation information = generator.saveMetamodel(); // save model and store saving information
-        GenModelGenerator.generate(metamodel, information); // generate generator model
-        // TODO (HIGH) Generate model code.
+        GenModel genModel = genModelGenerator.generate(metamodel, information); // generate generator model
+        CodeGenerator.generate(genModel);
     }
 
     /**
