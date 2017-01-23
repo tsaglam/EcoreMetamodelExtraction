@@ -1,4 +1,4 @@
-package eme.generator;
+package eme.codegen;
 
 import java.io.IOException;
 import java.util.Collections;

@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
-import eme.generator.GenModelGenerator;
+import eme.codegen.GenModelGenerator;
 import eme.generator.EcoreMetamodelGenerator;
 import eme.generator.saving.SavingInformation;
 import eme.model.IntermediateModel;
