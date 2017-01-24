@@ -99,6 +99,14 @@ public class IntermediateModel {
     }
 
     /**
+     * Returns all the external types of the intermediate model.
+     * @return the set of external types.
+     */
+    public Set<ExtractedType> getExternalTypes() {
+        return externalTypes;
+    }
+
+    /**
      * Returns the package of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
      * @return the package with the matching name.
