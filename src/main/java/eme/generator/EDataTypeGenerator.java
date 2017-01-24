@@ -105,7 +105,7 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Returns an EGenericType for an ExtractedDataType that can be used as generic type for Methods and Attributes.
+     * Returns an generic type parameter, which is an EGenericType, for an ExtractedDataType that can be used as generic argument for Methods and Attributes.
      * @param dataType is the ExtractedDataType.
      * @param eClass is the EClass that owns the the EGenericType
      * @return the EGenericType.
