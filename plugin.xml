@@ -5,29 +5,59 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="EME Category"
+            name="EcoreMetamodelExtraction"
             id="EcoreMetamodelExtraction.commands.category">
       </category>
       <command
-            name="Choose project..."
+            name="Extract From..."
             categoryId="EcoreMetamodelExtraction.commands.category"
-            id="EcoreMetamodelExtraction.commands.chooseProjectCommand">
+            id="EcoreMetamodelExtraction.commands.extractCommand">
+      </command>
+      <command
+            categoryId="EcoreMetamodelExtraction.commands.category"
+            id="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
+            name="Extract And Save from">
+      </command>
+      <command
+            categoryId="EcoreMetamodelExtraction.commands.category"
+            id="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
+            name="Extract, Save And Generate From...">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
-            class="eme.handlers.MainHandler">
+            commandId="EcoreMetamodelExtraction.commands.extractCommand"
+            class="eme.handlers.ExtractHandler">
+      </handler>
+      <handler
+            class="eme.handlers.ExtractAndSaveHandler"
+            commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand">
+      </handler>
+      <handler
+            class="eme.handlers.ExtractAndGenerateHandler"
+            commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
+            commandId="EcoreMetamodelExtraction.commands.extractCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+1"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+2">
+      </key>
+      <key
+            commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+3">
       </key>
    </extension>
    <extension
@@ -39,20 +69,30 @@
                mnemonic="M"
                id="EcoreMetamodelExtraction.menus.sampleMenu">
             <command
-                  commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
+                  commandId="EcoreMetamodelExtraction.commands.extractCommand"
                   mnemonic="S"
-                  id="EcoreMetamodelExtraction.menus.chooseProjectCommand">
+                  id="EcoreMetamodelExtraction.menus.extractCommand">
+            </command>
+            <command
+                  commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
+                  id="EcoreMetamodelExtraction.menus.extractAndSaveCommand"
+                  mnemonic="R">
+            </command>
+            <command
+                  commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
+                  id="EcoreMetamodelExtraction.menus.extractAndGenerateCommand"
+                  mnemonic="T">
             </command>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="EcoreMetamodelExtraction.toolbars.sampleToolbar">
+               id="EcoreMetamodelExtraction.toolbars.emeToolbar">
             <command
-                  commandId="EcoreMetamodelExtraction.commands.chooseProjectCommand"
+                  commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
                   icon="src/main/resources/eme.gif"
-                  tooltip="EcoreMetamodelExtraction (choose Project)"
+                  tooltip="EcoreMetamodelExtraction (Choose And Save From...)"
                   id="EcoreMetamodelExtraction.toolbars.chooseProjectCommand">
             </command>
          </toolbar>
