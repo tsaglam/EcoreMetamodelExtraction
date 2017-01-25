@@ -23,7 +23,7 @@ import eme.EcoreMetamodelExtraction;
  * @see org.eclipse.core.commands.AbstractHandler
  * @author Timur Saglam
  */
-public class MainHandler extends AbstractHandler {
+public abstract class MainHandler extends AbstractHandler {
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
 
@@ -56,7 +56,7 @@ public class MainHandler extends AbstractHandler {
         window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
         IProject project = chooseProject();
         if (project != null) {
-            new EcoreMetamodelExtraction().extractAndSaveFrom(project);
+            startExtraction(project);
         }
         return null;
     }
@@ -85,4 +85,10 @@ public class MainHandler extends AbstractHandler {
         }
         return false;
     }
+
+    /**
+     * Starts the extraction by calling an extraction method from the class {@link EcoreMetamodelExtraction}.
+     * @param project is the parameter for the methods that is called.
+     */
+    protected abstract void startExtraction(IProject project);
 }
