@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -24,6 +29,7 @@ import eme.model.datatypes.WildcardStatus;
  * @author Timur Saglam
  */
 public class DataTypeParser {
+    private static final Logger logger = LogManager.getLogger(DataTypeParser.class.getName());
     private final Set<String> dataTypes;
 
     /**
@@ -134,6 +140,9 @@ public class DataTypeParser {
             name = Signature.toQualifiedName(resolvedType[0]); // generate full qualified name
         } else if (signature.charAt(0) == Signature.C_UNRESOLVED) { // if not resolved
             name = signature.substring(1, signature.length() - 1); // cut signature symbols
+            if (Character.isUpperCase(name.charAt(0)) && name.length() > 1) { // if is inner type
+                name = resolveInnerType(name, declaringType); // try to resolve
+            }
         }
         dataTypes.add(name); // potential external type
         return name; // return type name
@@ -164,5 +173,48 @@ public class DataTypeParser {
             return WildcardStatus.WILDCARD_LOWER_BOUND;
         }
         return WildcardStatus.NO_WILDCARD;
+    }
+
+    /**
+     * Checks the compilation unit of the declaring type of the unresolved type for package declarations that help to
+     * find the IType.
+     */
+    private IType resolveFromImports(String typeName, IType declaringType) throws JavaModelException {
+        String outerType = typeName.split("\\.")[0]; // outer type name
+        IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // project
+        Matcher matcher = Pattern.compile("import\\s+([a-zA_Z_][\\.\\w]*);").matcher(declaringType.getCompilationUnit().getSource());
+        while (matcher.find()) {
+            String match = matcher.group();
+            if (match.contains(outerType)) {
+                IType resolvedType = project.findType(match.substring(7, match.lastIndexOf('.')), typeName);
+                if (resolvedType != null) {
+                    return resolvedType;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to resolve an unresolved inner type name (e.g. OuterType.InnerType)
+     */
+    private String resolveInnerType(String typeName, IType declaringType) throws JavaModelException {
+        if (typeName.split("\\.").length == 2) { // of name contains outer class
+            String declaringTypeName = declaringType.getFullyQualifiedName(); // get parent name
+            String packageName = declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')); // get package name
+            IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // get current project
+            IType resolvedType = project.findType(packageName, typeName); // try to resolve with package
+            if (resolvedType != null) { // if resolved successful
+                return resolvedType.getFullyQualifiedName('.'); // return full name with packages
+            } else {
+                resolvedType = resolveFromImports(typeName, declaringType); // TODO (HIGH) code quality
+                if (resolvedType != null) { // if resolved successful
+                    logger.warn("Resolved type " + resolvedType.getFullyQualifiedName('.') + " through deep find!");
+                    return resolvedType.getFullyQualifiedName('.'); // return full name with packages
+                }
+            }
+        }
+        logger.error("Could not resolve inner type " + typeName);
+        return typeName; // if not successful, return original name
     }
 }
