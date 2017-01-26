@@ -17,11 +17,11 @@ public class IntermediateModelTest {
     @Test
     public void testAutoAdd() {
         addMVCPackages();
-        model.add(new ExtractedClass("NormalClass", false));
-        model.add(new ExtractedClass("main.AbstractClass", true));
+        model.add(new ExtractedClass("NormalClass", false, false));
+        model.add(new ExtractedClass("main.AbstractClass", true, false));
         model.add(new ExtractedInterface("main.model.Interface"));
         model.add(new ExtractedEnumeration("main.view.Enumeration"));
-        model.add(new ExtractedClass("main.controller.OuterClass$InnerClass", false));
+        model.add(new ExtractedClass("main.controller.OuterClass$InnerClass", false, false));
         checkTypeAmount(model.getRoot(), 1);
     }
 
@@ -35,13 +35,13 @@ public class IntermediateModelTest {
     @Test
     public void testDuplicateTypes() {
         model.add(new ExtractedPackage(""));
-        model.add(new ExtractedClass("DuplicateClass", true));
-        model.add(new ExtractedClass("DuplicateClass", false));
+        model.add(new ExtractedClass("DuplicateClass", true, false));
+        model.add(new ExtractedClass("DuplicateClass", false, false));
         model.add(new ExtractedInterface("DuplicateInterface"));
         model.add(new ExtractedInterface("DuplicateInterface"));
         model.add(new ExtractedEnumeration("DuplicateEnum"));
         model.add(new ExtractedEnumeration("DuplicateEnum"));
-        model.add(new ExtractedClass("DuplicateType", true));
+        model.add(new ExtractedClass("DuplicateType", true, false));
         model.add(new ExtractedInterface("DuplicateType"));
         model.add(new ExtractedEnumeration("DuplicateType"));
         assertEquals(4, model.getRoot().getTypes().size());

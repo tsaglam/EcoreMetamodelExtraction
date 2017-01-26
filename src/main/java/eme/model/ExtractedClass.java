@@ -7,15 +7,17 @@ package eme.model;
 public class ExtractedClass extends ExtractedType {
 
     private final boolean abstractClass;
+    private final boolean throwable;
 
     /**
      * Basic constructor.
      * @param fullName is the full name, containing name and package name.
      * @param isAbstract determines whether the class is abstract or not.
      */
-    public ExtractedClass(String fullName, boolean isAbstract) {
+    public ExtractedClass(String fullName, boolean abstractClass, boolean throwable) {
         super(fullName);
-        abstractClass = isAbstract;
+        this.abstractClass = abstractClass;
+        this.throwable = throwable;
     }
 
     /**
@@ -32,6 +34,14 @@ public class ExtractedClass extends ExtractedType {
      */
     public boolean isAbstract() {
         return abstractClass;
+    }
+
+    /**
+     * Checks whether the class is throwable.
+     * @return true if class is throwable.
+     */
+    public boolean isThrowable() {
+        return throwable;
     }
 
     /**

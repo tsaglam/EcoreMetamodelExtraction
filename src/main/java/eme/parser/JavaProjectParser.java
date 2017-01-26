@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -17,6 +18,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
@@ -124,7 +126,14 @@ public class JavaProjectParser {
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
-        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract);
+        boolean throwable = false;
+        ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
+        for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
+            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName())) { // if is called throwable
+                throwable = true; // mark class as throwable
+            }
+        }
+        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract, throwable);
         newClass.setSuperClass(type.getSuperclassName());
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
