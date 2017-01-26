@@ -144,6 +144,14 @@ public class ExtractionProperties extends AbstractProperties {
     }
 
     /**
+     * Returns the value of the property ExtractThrowables.
+     * @return the value.
+     */
+    public boolean getExtractThrowables() {
+        return Boolean.parseBoolean(properties.getProperty("ExtractThrowables", "false"));
+    }
+
+    /**
      * Returns the value of the property SavingStrategy.
      * @return the value.
      */
@@ -186,6 +194,7 @@ public class ExtractionProperties extends AbstractProperties {
         properties.setProperty("ExtractPrivateMethods", "false");
         properties.setProperty("ExtractAccessorMethods", "false");
         properties.setProperty("ExtractConstructors", "false");
+        properties.setProperty("ExtractThrowables", "false");
     }
 
     /**
@@ -298,6 +307,14 @@ public class ExtractionProperties extends AbstractProperties {
      */
     public void setExtractStaticMethods(boolean value) {
         properties.setProperty("ExtractStaticMethods", Boolean.toString(value));
+    }
+
+    /**
+     * Sets the value of the property ExtractThrowables.
+     * @param value is the new value.
+     */
+    public void setExtractThrowables(boolean value) {
+        properties.setProperty("ExtractThrowables", Boolean.toString(value));
     }
 
     /**

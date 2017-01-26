@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import eme.model.ExtractedClass;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
@@ -100,7 +101,11 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedType type) {
         if (type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes())) {
-            return true;
+            if (type instanceof ExtractedClass) {
+                return !((ExtractedClass) type).isThrowable() || properties.getExtractThrowables();
+            } else {
+                return true;
+            }
         }
         report(type.getClass().getSimpleName().substring(9).toLowerCase()); // Class, Interface, Enumeration
         return false;
