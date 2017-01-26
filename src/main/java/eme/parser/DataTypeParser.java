@@ -139,10 +139,7 @@ public class DataTypeParser {
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             name = Signature.toQualifiedName(resolvedType[0]); // generate full qualified name
         } else if (signature.charAt(0) == Signature.C_UNRESOLVED) { // if not resolved
-            name = signature.substring(1, signature.length() - 1); // cut signature symbols
-            if (Character.isUpperCase(name.charAt(0)) && name.contains(".")) { // if is inner type
-                name = resolveInnerType(name, declaringType); // try to resolve
-            }
+            name = parseUnresolved(signature, declaringType); // try to resolve manually
         }
         dataTypes.add(name); // potential external type
         return name; // return type name
@@ -162,17 +159,28 @@ public class DataTypeParser {
     }
 
     /**
+     * Tries to resolve an unresolved type signature.
+     */
+    private String parseUnresolved(String signature, IType declaringType) throws JavaModelException {
+        String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
+        if (Character.isUpperCase(typeName.charAt(0)) && typeName.contains(".")) { // if is inner type
+            typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
+        }
+        return typeName; // return type name
+    }
+
+    /**
      * Parses signature and return wild card status.
      */
     private WildcardStatus parseWildcardStatus(String signature) {
         if (signature.contains(Character.toString(Signature.C_STAR))) {
-            return WildcardStatus.WILDCARD;
+            return WildcardStatus.WILDCARD; // is unbound wildcard
         } else if (signature.contains(Character.toString(Signature.C_EXTENDS))) {
-            return WildcardStatus.WILDCARD_UPPER_BOUND;
+            return WildcardStatus.WILDCARD_UPPER_BOUND; // is upper bound wildcard
         } else if (signature.contains(Character.toString(Signature.C_SUPER))) {
-            return WildcardStatus.WILDCARD_LOWER_BOUND;
-        }
-        return WildcardStatus.NO_WILDCARD;
+            return WildcardStatus.WILDCARD_LOWER_BOUND; // is lower bound wildcard
+        } // else:
+        return WildcardStatus.NO_WILDCARD; // is no wildcard
     }
 
     /**
@@ -182,34 +190,32 @@ public class DataTypeParser {
     private IType resolveFromImports(String typeName, IType declaringType) throws JavaModelException {
         IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // project
         Matcher matcher = Pattern.compile("import\\s+([a-zA_Z_][\\.\\w]*);").matcher(declaringType.getCompilationUnit().getSource());
+        IType resolvedType = null;
         while (matcher.find()) { // search for package declarations in the source code
             if (matcher.group().contains(typeName.split("\\.")[0])) { // if package declaration contains outer type
-                IType resolvedType = project.findType(matcher.group().substring(7, matcher.group().lastIndexOf('.')), typeName);
+                resolvedType = project.findType(matcher.group().substring(7, matcher.group().lastIndexOf('.')), typeName);
                 if (resolvedType != null) { // if resolved an existing IType
-                    return resolvedType; // was successful
+                    logger.warn("Resolved type " + resolvedType.getFullyQualifiedName('.') + " through import declarations!");
+                    break; // was successful
                 }
             }
         }
-        return null;
+        return resolvedType;
     }
 
     /**
-     * Tries to resolve an unresolved inner type name (e.g. OuterType.InnerType)
+     * Tries to resolve an unresolved inner type (e.g. "Outer.Inner") and return its full name.
      */
-    private String resolveInnerType(String typeName, IType declaringType) throws JavaModelException {
+    private String resolveInnerType(String innerType, IType declaringType) throws JavaModelException {
         String declaringTypeName = declaringType.getFullyQualifiedName(); // get parent name
-        String packageName = declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')); // get package name
-        IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // get current project
-        IType resolvedType = project.findType(packageName, typeName); // try to resolve with package
-        if (resolvedType != null) { // if resolved successful
-            return resolvedType.getFullyQualifiedName('.'); // return full name with packages
+        IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // try to resolve locally:
+        IType iType = project.findType(declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')), innerType);
+        if (iType == null) { // if still not resolved
+            iType = resolveFromImports(innerType, declaringType); // try resolving it from import
         }
-        resolvedType = resolveFromImports(typeName, declaringType); // deep resolve
-        if (resolvedType != null) { // if resolved successful
-            logger.warn("Resolved type " + resolvedType.getFullyQualifiedName('.') + " through import declarations!");
-            return resolvedType.getFullyQualifiedName('.'); // return full name with packages
-        }
-        logger.error("Could not resolve inner type " + typeName);
-        return typeName; // if not successful, return original name
+        if (iType != null) { // if is resolved (one way or another)
+            return iType.getFullyQualifiedName('.'); // return resolved name
+        } // else:
+        return innerType; // return unresolved name
     }
 }
