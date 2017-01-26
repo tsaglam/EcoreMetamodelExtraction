@@ -15,7 +15,7 @@ import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
 public class EObjectGeneratorTest {
-    EObjectGenerator generator;
+    EPackageGenerator generator;
     IntermediateModel model;
     ExtractionProperties properties;
 
@@ -23,7 +23,7 @@ public class EObjectGeneratorTest {
     public void setUp() throws Exception {
         properties = new ExtractionProperties();
         model = new IntermediateModel("TestProject");
-        generator = new EObjectGenerator(properties, model);
+        generator = new EPackageGenerator(properties, model);
     }
 
 //    @Test // TODO (LOW) Update the tests.

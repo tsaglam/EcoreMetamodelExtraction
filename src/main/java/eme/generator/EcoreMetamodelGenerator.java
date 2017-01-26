@@ -23,10 +23,9 @@ public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private EPackage metamodel;
-    private EObjectGenerator eObjectGenerator;
     private String projectName;
-    private AbstractSavingStrategy savingStrategy;
     private final ExtractionProperties properties;
+    private AbstractSavingStrategy savingStrategy;
 
     /**
      * Basic constructor.
@@ -68,9 +67,9 @@ public class EcoreMetamodelGenerator {
         if (root == null || !root.isSelected()) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null or deselected: " + model.toString());
         }
-        eObjectGenerator = new EObjectGenerator(properties, model); // build generators
+        EPackageGenerator ePackageGenerator = new EPackageGenerator(properties, model); // build generators
         projectName = model.getProjectName(); // store project name.
-        metamodel = eObjectGenerator.generate(); // generate model model.
+        metamodel = ePackageGenerator.generate(); // generate model model.
         return metamodel;
     }
 
