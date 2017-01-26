@@ -25,6 +25,7 @@ import eme.EcoreMetamodelExtraction;
  */
 public abstract class MainHandler extends AbstractHandler {
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
+    private static boolean configured;
     private IWorkbenchWindow window;
 
     /**
@@ -32,7 +33,10 @@ public abstract class MainHandler extends AbstractHandler {
      */
     public MainHandler() {
         super();
-        BasicConfigurator.configure();
+        if (!configured) {
+            BasicConfigurator.configure();
+            configured = true;
+        }
     }
 
     /**
