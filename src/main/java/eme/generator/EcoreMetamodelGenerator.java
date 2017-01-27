@@ -13,6 +13,7 @@ import eme.generator.saving.SavingInformation;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
+import eme.properties.ExtractionProperty;
 
 /**
  * This class generates an Ecore Metamodel from an {@link IntermediateModel}. It also allows to save a generated
@@ -33,7 +34,7 @@ public class EcoreMetamodelGenerator {
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
         ePackageGenerator = new EPackageGenerator(properties); // build generators
-        changeSavingStrategy(properties.getSavingStrategy()); // set saving strategy
+        changeSavingStrategy(properties.get(ExtractionProperty.SAVING_STRATEGY)); // set saving strategy
     }
 
     /**

@@ -1,327 +1,106 @@
 package eme.properties;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.Properties;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+
 /**
  * This class manages the extraction properties in the user.properties file.
  * @author Timur Saglam
  */
-public class ExtractionProperties extends AbstractProperties {
+public class ExtractionProperties {
     private static final String FILE_COMMENT = "Use this file to configure the Ecore metamodel extraction.";
     private static final String FILE_NAME = "user.properties";
+    private static final Logger logger = LogManager.getLogger(ExtractionProperties.class.getName());
+    private URL fileURL;
+    private Properties properties;
 
     /**
-     * Basic constructor. Calls the super class constructor which manages the file.
+     * Basic constructor. Loads the properties file, creates a new one if the file does not exist.
      */
     public ExtractionProperties() {
-        super(FILE_NAME, FILE_COMMENT);
+        Bundle bundle = Platform.getBundle("EcoreMetamodelExtraction");
+        Path path = new Path(FILE_NAME);
+        try {
+            fileURL = FileLocator.find(bundle, path, null);
+            load(); // load if file exists.
+        } catch (NoClassDefFoundError error) {
+            logger.warn("Could not reach properties file.", error);
+            properties = new Properties(); // create dummy properties.
+        } catch (ExceptionInInitializerError error) {
+            logger.warn("Could not reach properties file.", error);
+            properties = new Properties(); // create dummy properties.
+        }
     }
 
     /**
-     * Returns the value of the property DataTypePackageName.
-     * @return the value.
+     * TODO
+     * @param property
+     * @return
      */
-    public String getDataTypePackageName() {
-        return properties.getProperty("DataTypePackageName", "DATATYPES");
+    public boolean getBool(ExtractionProperty property) {
+        if (property.isBinary()) {
+            return Boolean.parseBoolean(properties.getProperty(property.getKey(), property.getDefaultValue()));
+        }
+        throw new IllegalArgumentException("Cannot interpret " + property + " as a boolean value.");
     }
 
     /**
-     * Returns the value of the property DefaultPackageName.
-     * @return the value.
+     * TODO
+     * @param property
+     * @return
      */
-    public String getDefaultPackageName() {
-        return properties.getProperty("DefaultPackageName", "DEFAULT");
+    public String get(ExtractionProperty property) {
+        return properties.getProperty(property.getKey(), property.getDefaultValue());
     }
 
     /**
-     * Returns the value of the property ExtractAbstractMethods.
-     * @return the value.
+     * Saves the settings to the properties file.
      */
-    public boolean getExtractAbstractMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractAbstractMethods", "false"));
+    public void save() {
+        try {
+            OutputStream out = fileURL.openConnection().getOutputStream(); // create output stream
+            properties.store(out, FILE_COMMENT); // store with stream
+            out.close(); // close stream
+        } catch (FileNotFoundException exception) {
+            logger.error(exception);
+        } catch (IOException exception) {
+            logger.error(exception);
+        }
     }
 
     /**
-     * Returns the value of the property ExtractAccessMethods.
-     * @return the value.
+     * TODO
+     * @param property
+     * @param value
      */
-    public boolean getExtractAccessMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractAccessMethods", "false"));
+    public void set(ExtractionProperty property, String value) {
+        properties.setProperty(property.getKey(), value);
     }
 
     /**
-     * Returns the value of the property ExtractConstructors.
-     * @return the value.
+     * Loads the settings from the properties file.
      */
-    public boolean getExtractConstructors() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractConstructors", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractDefaultAttributes.
-     * @return the value.
-     */
-    public boolean getExtractDefaultAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractDefaultAttributes", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractDefaultMethods.
-     * @return the value.
-     */
-    public boolean getExtractDefaultMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractDefaultMethods", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractEmptyPackages.
-     * @return the value.
-     */
-    public boolean getExtractEmptyPackages() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractEmptyPackages", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractNestedTypes.
-     * @return the value.
-     */
-    public boolean getExtractNestedTypes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractNestedTypes", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractPrivateAttributes.
-     * @return the value.
-     */
-    public boolean getExtractPrivateAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractPrivateAttributes", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractPrivateMethods.
-     * @return the value.
-     */
-    public boolean getExtractPrivateMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractPrivateMethods", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractProtectedAttributes.
-     * @return the value.
-     */
-    public boolean getExtractProtectedAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractProtectedAttributes", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractProtectedMethods.
-     * @return the value.
-     */
-    public boolean getExtractProtectedMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractProtectedMethods", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractPublicAttributes.
-     * @return the value.
-     */
-    public boolean getExtractPublicAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractPublicAttributes", "true"));
-    }
-
-    /**
-     * Returns the value of the property ExtractStaticAttributes.
-     * @return the value.
-     */
-    public boolean getExtractStaticAttributes() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractStaticAttributes", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractStaticMethods.
-     * @return the value.
-     */
-    public boolean getExtractStaticMethods() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractStaticMethods", "false"));
-    }
-
-    /**
-     * Returns the value of the property ExtractThrowables.
-     * @return the value.
-     */
-    public boolean getExtractThrowables() {
-        return Boolean.parseBoolean(properties.getProperty("ExtractThrowables", "false"));
-    }
-
-    /**
-     * Returns the value of the property SavingStrategy.
-     * @return the value.
-     */
-    public String getSavingStrategy() {
-        return properties.getProperty("SavingStrategy", "NewProject");
-    }
-
-    /**
-     * Sets the value of the property DataTypePackageName.
-     * @param value is the new value.
-     */
-    public void setDataTypePackageName(String value) {
-        properties.setProperty("DataTypePackageName", value);
-    }
-
-    /**
-     * Sets the value of the property DefaultPackageName.
-     * @param value is the new value.
-     */
-    public void setDefaultPackageName(String value) {
-        properties.setProperty("DefaultPackageName", value);
-    }
-
-    @Override
-    public void setDefaultValues() {
-        properties.setProperty("DefaultPackageName", "DEFAULT");
-        properties.setProperty("DataTypePackageName", "DATATYPES");
-        properties.setProperty("ExtractEmptyPackages", "true");
-        properties.setProperty("ExtractNestedTypes", "true");
-        properties.setProperty("ExtractAbstractMethods", "false");
-        properties.setProperty("ExtractStaticMethods", "false");
-        properties.setProperty("ExtractStaticAttributes", "false");
-        properties.setProperty("ExtractDefaultAttributes", "true");
-        properties.setProperty("ExtractPublicAttributes", "true");
-        properties.setProperty("ExtractProtectedAttributes", "false");
-        properties.setProperty("ExtractPrivateAttributes", "false");
-        properties.setProperty("SavingStrategy", "NewProject");
-        properties.setProperty("ExtractDefaultMethods", "true");
-        properties.setProperty("ExtractProtectedMethods", "true");
-        properties.setProperty("ExtractPrivateMethods", "false");
-        properties.setProperty("ExtractAccessorMethods", "false");
-        properties.setProperty("ExtractConstructors", "false");
-        properties.setProperty("ExtractThrowables", "false");
-    }
-
-    /**
-     * Sets the value of the property ExtractAbstractMethods.
-     * @param value is the new value.
-     */
-    public void setExtractAbstractMethods(boolean value) {
-        properties.setProperty("ExtractAbstractMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractAccessorMethods.
-     * @param value is the new value.
-     */
-    public void setExtractAccessorMethods(boolean value) {
-        properties.setProperty("ExtractAccessorMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractConstructors.
-     * @param value is the new value.
-     */
-    public void setExtractConstructors(boolean value) {
-        properties.setProperty("ExtractConstructors", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractDefaultAttributes.
-     * @param value is the new value.
-     */
-    public void setExtractDefaultAttributes(boolean value) {
-        properties.setProperty("ExtractDefaultAttributes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractDefaultMethods.
-     * @param value is the new value.
-     */
-    public void setExtractDefaultMethods(boolean value) {
-        properties.setProperty("ExtractDefaultMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractEmptyPackages.
-     * @param value is the new value.
-     */
-    public void setExtractEmptyPackages(boolean value) {
-        properties.setProperty("ExtractEmptyPackages", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractNestedTypes.
-     * @param value is the new value.
-     */
-    public void setExtractNestedTypes(boolean value) {
-        properties.setProperty("ExtractNestedTypes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractPrivateAttributes.
-     * @param value is the new value.
-     */
-    public void setExtractPrivateAttributes(boolean value) {
-        properties.setProperty("ExtractPrivateAttributes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractPrivateMethods.
-     * @param value is the new value.
-     */
-    public void setExtractPrivateMethods(boolean value) {
-        properties.setProperty("ExtractPrivateMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractProtectedAttributes.
-     * @param value is the new value.
-     */
-    public void setExtractProtectedAttributes(boolean value) {
-        properties.setProperty("ExtractProtectedttributes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractProtectedMethods.
-     * @param value is the new value.
-     */
-    public void setExtractProtectedMethods(boolean value) {
-        properties.setProperty("ExtractProtectedMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractPublicAttributes.
-     * @param value is the new value.
-     */
-    public void setExtractPublicAttributes(boolean value) {
-        properties.setProperty("ExtractPublicAttributes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractStaticAttributes.
-     * @param value is the new value.
-     */
-    public void setExtractStaticAttributes(boolean value) {
-        properties.setProperty("ExtractStaticAttributes", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractStaticMethods.
-     * @param value is the new value.
-     */
-    public void setExtractStaticMethods(boolean value) {
-        properties.setProperty("ExtractStaticMethods", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property ExtractThrowables.
-     * @param value is the new value.
-     */
-    public void setExtractThrowables(boolean value) {
-        properties.setProperty("ExtractThrowables", Boolean.toString(value));
-    }
-
-    /**
-     * Sets the value of the property SavingStrategy.
-     * @param value is the new value.
-     */
-    public void setSavingStrategy(String value) {
-        properties.setProperty("SavingStrategy", value);
+    private void load() {
+        try {
+            properties = new Properties(); // create properties object
+            InputStream in = fileURL.openStream(); // create input stream
+            properties.load(in); // load from stream
+            in.close(); // close stream
+        } catch (FileNotFoundException exception) {
+            logger.error(exception);
+        } catch (IOException exception) {
+            logger.error(exception);
+        }
     }
 }

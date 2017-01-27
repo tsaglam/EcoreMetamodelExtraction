@@ -4,6 +4,21 @@ import static eme.model.datatypes.AccessLevelModifier.NO_MODIFIER;
 import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
 import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
+import static eme.properties.ExtractionProperty.ABSTRACT_METHODS;
+import static eme.properties.ExtractionProperty.ACCESS_METHODS;
+import static eme.properties.ExtractionProperty.CONSTRUCTORS;
+import static eme.properties.ExtractionProperty.DEFAULT_ATTRIBUTES;
+import static eme.properties.ExtractionProperty.DEFAULT_METHODS;
+import static eme.properties.ExtractionProperty.EMPTY_PACKAGES;
+import static eme.properties.ExtractionProperty.NESTED_TYPES;
+import static eme.properties.ExtractionProperty.PRIVATE_ATTRIBUTES;
+import static eme.properties.ExtractionProperty.PRIVATE_METHODS;
+import static eme.properties.ExtractionProperty.PROTECTED_ATTRIBUTES;
+import static eme.properties.ExtractionProperty.PROTECTED_METHODS;
+import static eme.properties.ExtractionProperty.PUBLIC_ATTRIBUTES;
+import static eme.properties.ExtractionProperty.STATIC_ATTRIBUTES;
+import static eme.properties.ExtractionProperty.STATIC_METHODS;
+import static eme.properties.ExtractionProperty.THROWABLES;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,10 +63,16 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
-        if ((!attribute.isStatic() || properties.getExtractStaticMethods()) && (modifier != PUBLIC || properties.getExtractPublicAttributes())
-                && (modifier != NO_MODIFIER || properties.getExtractDefaultAttributes())  // extract default attributes
-                && (modifier != PROTECTED || properties.getExtractProtectedAttributes()) // extract protected attributes
-                && (modifier != PRIVATE || properties.getExtractPrivateAttributes())) { // extract private attributes
+        if ((!attribute.isStatic() || properties.getBool(STATIC_ATTRIBUTES)) // extract
+                                                                             // static
+                && (modifier != PUBLIC || properties.getBool(PUBLIC_ATTRIBUTES)) // extract
+                                                                                 // public
+                && (modifier != NO_MODIFIER || properties.getBool(DEFAULT_ATTRIBUTES))  // extract
+                                                                                        // default
+                && (modifier != PROTECTED || properties.getBool(PROTECTED_ATTRIBUTES)) // extract
+                                                                                       // protected
+                && (modifier != PRIVATE || properties.getBool(PRIVATE_ATTRIBUTES))) { // extract
+                                                                                      // private
             return true;
         }
         report("attribute");
@@ -66,14 +87,21 @@ public class SelectionHelper {
     public boolean allowsGenerating(ExtractedMethod method) {
         AccessLevelModifier modifier = method.getModifier();
         MethodType type = method.getMethodType();
-        if (method.isSelected() && (type != MethodType.CONSTRUCTOR || properties.getExtractConstructors())
-                && (!method.isAbstract() || properties.getExtractAbstractMethods()) // extract abstract methods
-                && (!method.isStatic() || properties.getExtractStaticMethods()) // extract static methods
-                && (modifier != NO_MODIFIER || properties.getExtractDefaultMethods()) // extract default methods
-                && (modifier != PROTECTED || properties.getExtractProtectedMethods()) // extract protected methods
-                && (modifier != PRIVATE || properties.getExtractPrivateMethods()) // extract private methods
-                && (type != MethodType.ACCESSOR || properties.getExtractAccessMethods())  // extract accessors
-                && (type != MethodType.MUTATOR || properties.getExtractAccessMethods())) { // extract mutators
+        if (method.isSelected() && (type != MethodType.CONSTRUCTOR || properties.getBool(CONSTRUCTORS))
+                && (!method.isAbstract() || properties.getBool(ABSTRACT_METHODS)) // extract
+                                                                                  // abstract
+                && (!method.isStatic() || properties.getBool(STATIC_METHODS)) // extract
+                                                                              // static
+                && (modifier != NO_MODIFIER || properties.getBool(DEFAULT_METHODS)) // extract
+                                                                                    // default
+                && (modifier != PROTECTED || properties.getBool(PROTECTED_METHODS)) // extract
+                                                                                    // protected
+                && (modifier != PRIVATE || properties.getBool(PRIVATE_METHODS)) // extract
+                                                                                // private
+                && (type != MethodType.ACCESSOR || properties.getBool(ACCESS_METHODS))  // extract
+                                                                                        // accessors
+                && (type != MethodType.MUTATOR || properties.getBool(ACCESS_METHODS))) { // extract
+                                                                                         // mutators
             return true;
         } else {
             report(type.toString());
@@ -87,7 +115,7 @@ public class SelectionHelper {
      * @return true if it may be generated.
      */
     public boolean allowsGenerating(ExtractedPackage subpackage) {
-        if (subpackage.isSelected() && (!subpackage.isEmpty() || properties.getExtractEmptyPackages())) {
+        if (subpackage.isSelected() && (!subpackage.isEmpty() || properties.getBool(EMPTY_PACKAGES))) {
             return true;
         }
         report("package");
@@ -100,14 +128,16 @@ public class SelectionHelper {
      * @return true if it may be generated.
      */
     public boolean allowsGenerating(ExtractedType type) {
-        if (type.isSelected() && (!type.isInnerType() || properties.getExtractNestedTypes())) {
+        if (type.isSelected() && (!type.isInnerType() || properties.getBool(NESTED_TYPES))) {
             if (type instanceof ExtractedClass) {
-                return !((ExtractedClass) type).isThrowable() || properties.getExtractThrowables();
+                return !((ExtractedClass) type).isThrowable() || properties.getBool(THROWABLES);
             } else {
                 return true;
             }
         }
-        report(type.getClass().getSimpleName().substring(9).toLowerCase()); // Class, Interface, Enumeration
+        report(type.getClass().getSimpleName().substring(9).toLowerCase()); // Class,
+                                                                            // Interface,
+                                                                            // Enumeration
         return false;
     }
 
@@ -124,7 +154,8 @@ public class SelectionHelper {
             Collections.sort(list); // sort keys
             String pluralSuffix;
             for (String element : list) { // for every reported element
-                pluralSuffix = element.endsWith("s") ? "es" : "s"; // add plural suffix
+                pluralSuffix = element.endsWith("s") ? "es" : "s"; // add plural
+                                                                   // suffix
                 logger.info("   " + element + pluralSuffix + ": " + reportMap.get(element)); // print
             }
         }

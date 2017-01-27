@@ -7,6 +7,7 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
+import eme.properties.ExtractionProperty;
 
 /**
  * Generator class for Ecore packages ({@link EPackage}s).
@@ -74,8 +75,8 @@ public class EPackageGenerator {
      */
     private EPackage generateRoot() {
         EPackage root = ecoreFactory.createEPackage(); // create object
-        root.setName(properties.getDefaultPackageName()); // set default name
-        root.setNsPrefix(properties.getDefaultPackageName()); // set default prefix
+        root.setName(properties.get(ExtractionProperty.DEFAULT_PACKAGE)); // set default name
+        root.setNsPrefix(properties.get(ExtractionProperty.DEFAULT_PACKAGE)); // set default prefix
         classifierGenerator = new EClassifierGenerator(model, root, selector);
         return root;
     }

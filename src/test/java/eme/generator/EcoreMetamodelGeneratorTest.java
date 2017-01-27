@@ -9,6 +9,7 @@ import org.junit.Test;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
+import eme.properties.ExtractionProperty;
 
 public class EcoreMetamodelGeneratorTest {
     ExtractionProperties properties;
@@ -26,8 +27,8 @@ public class EcoreMetamodelGeneratorTest {
     public void testPackageStructure() {
         buildMVCPackages();
         EPackage metamodel = generator.generateMetamodelFrom(model);
-        assertEquals(properties.getDefaultPackageName(), metamodel.getName());
-        assertEquals(properties.getDefaultPackageName(), metamodel.getNsPrefix());
+        assertEquals(properties.get(ExtractionProperty.DEFAULT_PACKAGE), metamodel.getName());
+        assertEquals(properties.get(ExtractionProperty.DEFAULT_PACKAGE), metamodel.getNsPrefix());
         assertEquals(model.getProjectName() + "/", metamodel.getNsURI());
         assertEquals(1, metamodel.getESubpackages().size());
         EPackage main = metamodel.getESubpackages().get(0);

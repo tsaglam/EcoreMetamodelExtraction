@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.properties.ExtractionProperties;
+import eme.properties.ExtractionProperty;
 
 /**
  * This class allows to build a package structure, a external type package hierarchy from a list of EDataTypes.
@@ -27,7 +28,7 @@ public class ExternalTypeHierarchy {
      * @param properties is the properties class.
      */
     public ExternalTypeHierarchy(EPackage root, ExtractionProperties properties) {
-        basePackage = generatePackage(properties.getDataTypePackageName(), root);
+        basePackage = generatePackage(properties.get(ExtractionProperty.DATATYPE_PACKAGE), root);
     }
 
     /**
