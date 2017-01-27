@@ -131,6 +131,15 @@ public class SelectionHelper {
     }
 
     /**
+     * Accessor method for the {@link ExtractionProperties} of the selection helper.
+     * @return the properties.
+     */
+    public ExtractionProperties getProperties() {
+        return properties;
+    }
+    
+
+    /**
      * Increases the number of ungenerated features for a specific type of features.
      * @param feature is the specific type of features.
      */

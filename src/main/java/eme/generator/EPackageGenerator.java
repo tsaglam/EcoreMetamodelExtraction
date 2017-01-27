@@ -76,7 +76,7 @@ public class EPackageGenerator {
         EPackage root = ecoreFactory.createEPackage(); // create object
         root.setName(properties.getDefaultPackageName()); // set default name
         root.setNsPrefix(properties.getDefaultPackageName()); // set default prefix
-        classifierGenerator = new EClassifierGenerator(model, root, selector, properties);
+        classifierGenerator = new EClassifierGenerator(model, root, selector);
         return root;
     }
 }

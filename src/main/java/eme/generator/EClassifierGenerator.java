@@ -21,7 +21,6 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
-import eme.properties.ExtractionProperties;
 
 /**
  * Generator class for Ecore classifiers.
@@ -43,15 +42,14 @@ public class EClassifierGenerator {
      * @param model is the {@link IntermediateModel} which is used to extract a metamodel.
      * @param root is the root {@link EPackage} of the metamodel.
      * @param selector is the {@link SelectionHelper} instance.
-     * @param properties is the {@link ExtractionProperties} object that is used for the extraction.
      */
-    public EClassifierGenerator(IntermediateModel model, EPackage root, SelectionHelper selector, ExtractionProperties properties) {
+    public EClassifierGenerator(IntermediateModel model, EPackage root, SelectionHelper selector) {
         this.model = model;
         this.selector = selector;
         ecoreFactory = EcoreFactory.eINSTANCE;
         createdEClassifiers = new HashMap<String, EClassifier>();
         incompleteEClasses = new HashMap<EClass, ExtractedType>();
-        externalTypes = new ExternalTypeHierarchy(root, properties);
+        externalTypes = new ExternalTypeHierarchy(root, selector.getProperties());
         typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypes);
         operationGenerator = new EOperationGenerator(typeGenerator, selector);
     }
