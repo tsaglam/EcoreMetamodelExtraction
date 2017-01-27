@@ -8,7 +8,7 @@ import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
- * Represents a method of a class in the model.
+ * Represents a method of a {@link ExtractedType} in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedMethod extends ExtractedElement {
@@ -21,7 +21,8 @@ public class ExtractedMethod extends ExtractedElement {
     private final ExtractedDataType returnType;
 
     /**
-     * Basic constructor. Sets access level modifier to NO_MODIFIER, static and abstract to false;
+     * Basic constructor. Sets access level modifier to {@link AccessLevelModifier}.NO_MODIFIER, static and abstract to
+     * false;
      * @param fullName is the full name of the method, consisting out of the full class name and the method name.
      * @param returnType is the data type for the return type of the method. null if it is void.
      */
@@ -35,7 +36,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * Adds a parameter to the method.
+     * Adds a {@link ExtractedParameter} to the method.
      * @param parameter is the new parameter.
      */
     public void addParameter(ExtractedParameter parameter) {
@@ -51,7 +52,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * Accessor for the method type.
+     * Accessor for the method type ({@link MethodType}).
      * @return the method type.
      */
     public MethodType getMethodType() {
@@ -59,7 +60,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * accessor for the access level modifier.
+     * accessor for the access level modifier ({@link AccessLevelModifier}).
      * @return the access level modifier of the method.
      */
     public AccessLevelModifier getModifier() {
@@ -67,7 +68,7 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * accessor for the parameters.
+     * accessor for the {@link ExtractedParameter}s.
      * @return the parameters
      */
     public List<ExtractedParameter> getParameters() {
@@ -109,8 +110,8 @@ public class ExtractedMethod extends ExtractedElement {
     /**
      * Sets the flags of the method. That means whether the method is static, whether the method is abstract and what
      * access level modifier it has.
-     * @param modifier is the access level modifier.
-     * @param methodType specifies the type of the method.
+     * @param modifier is the {@link AccessLevelModifier}.
+     * @param methodType is the {@link MethodType}.
      * @param isStatic determines whether the method is static or not.
      * @param isAbstract determines whether the method is abstract or not.
      */

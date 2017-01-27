@@ -1,7 +1,9 @@
 package eme.model.datatypes;
 
+import eme.model.IntermediateModel;
+
 /**
- * Represents an extracted parameter in the model. Can be a method parameter or an class parameter.
+ * Represents an extracted parameter in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedParameter extends ExtractedDataType {

@@ -1,7 +1,7 @@
 package eme.model.datatypes;
 
 /**
- * Represents the wild card status of an data type.
+ * Represents the wild card status of an {@link ExtractedDataType}.
  */
 public enum WildcardStatus {
     /**

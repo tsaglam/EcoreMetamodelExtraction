@@ -3,8 +3,10 @@ package eme.model.datatypes;
 import java.util.LinkedList;
 import java.util.List;
 
+import eme.model.IntermediateModel;
+
 /**
- * Represents a data type in the model.
+ * Represents a data type in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedDataType {

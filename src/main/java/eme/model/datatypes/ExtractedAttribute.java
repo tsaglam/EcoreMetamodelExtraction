@@ -1,17 +1,19 @@
 package eme.model.datatypes;
 
+import eme.model.IntermediateModel;
+
 /**
- * Represents an extracted Attribute in the model
+ * Represents an extracted Attribute in {@link IntermediateModel}
  * @author Timur Saglam
  */
 public class ExtractedAttribute extends ExtractedParameter {
-
     private boolean finalAttribute;
     private AccessLevelModifier modifier;
     private boolean staticAttribute;
 
     /**
-     * Basic constructor, creates the attribute. Sets access level modifier to NO_MODIFIER, final and static to false.
+     * Basic constructor, creates the attribute. Sets access level modifier to {@link AccessLevelModifier}.NO_MODIFIER,
+     * final and static to false.
      * @param identifier is the name of the attribute.
      * @param fullName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and "char".
      * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.

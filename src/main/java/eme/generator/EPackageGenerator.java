@@ -9,7 +9,7 @@ import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
 /**
- * Generator class for Ecore packages.
+ * Generator class for Ecore packages ({@link EPackage}s).
  * @author Timur Saglam
  */
 public class EPackageGenerator {
@@ -43,7 +43,8 @@ public class EPackageGenerator {
     }
 
     /**
-     * Generates an EPackage from an extractedPackage. Recursively calls this method to all contained elements.
+     * Generates an {@link EPackage} from an {@link ExtractedPackage}. Recursively calls this method to all contained
+     * elements.
      */
     private EPackage generateEPackage(ExtractedPackage extractedPackage) {
         EPackage ePackage;
@@ -69,7 +70,7 @@ public class EPackageGenerator {
     }
 
     /**
-     * Generates empty root package from the intermediate model. URI is not set.
+     * Generates empty root package from the {@link IntermediateModel}. URI is not set.
      */
     private EPackage generateRoot() {
         EPackage root = ecoreFactory.createEPackage(); // create object

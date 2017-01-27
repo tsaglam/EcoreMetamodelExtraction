@@ -13,7 +13,7 @@ import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
- * Generator class for Ecore operations.
+ * Generator class for Ecore operations ({@link EOperation}s).
  * @author Timur Saglam
  */
 public class EOperationGenerator {
@@ -52,7 +52,7 @@ public class EOperationGenerator {
     }
 
     /**
-     * Adds the declared exceptions of an extracted method to an EOperation.
+     * Adds the declared exceptions of an {@link ExtractedMethod} to an {@link EOperation}.
      */
     private void addExceptions(EOperation operation, ExtractedMethod method, EClass eClass) {
         for (ExtractedDataType exception : method.getThrowsDeclarations()) {
@@ -65,7 +65,7 @@ public class EOperationGenerator {
     }
 
     /**
-     * Adds the parameters of an extracted method to a specific List of EParameters.
+     * Adds the parameters of an {@link ExtractedMethod} to a specific List of {@link EParameter}s.
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list, EClass eClass) {
         EParameter eParameter;
@@ -83,7 +83,7 @@ public class EOperationGenerator {
     }
 
     /**
-     * Adds the return type of an extracted method to an EOperation.
+     * Adds the return type of an {@link ExtractedMethod} to an {@link EOperation}.
      */
     private void addReturnType(EOperation operation, ExtractedDataType returnType, EClass eClass) {
         if (returnType != null) { // if return type is not void

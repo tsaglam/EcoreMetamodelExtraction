@@ -17,7 +17,7 @@ import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
- * Base class of the prototype for Ecore metamodel extraction.
+ * Main class for Ecore metamodel extraction.
  * @author Timur Saglam
  */
 public class EcoreMetamodelExtraction {
@@ -28,7 +28,8 @@ public class EcoreMetamodelExtraction {
     private final ExtractionProperties properties;
 
     /**
-     * Basic constructor. Builds parser and generator.
+     * Basic constructor. Builds {@link JavaProjectParser}, {@link EcoreMetamodelGenerator} and
+     * {@link GenModelGenerator}.
      */
     public EcoreMetamodelExtraction() {
         logger.info("Started EME...");
@@ -39,10 +40,10 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
-     * will be build and saved as an Ecore file. A generator model will be build from the metamodel which is then used
-     * to generate Ecore model code.
-     * @param project is the specific project for the extraction.
+     * Starts the Ecore metamodel extraction for a specific {@link IProject}. The {@link IProject} will be parsed and an
+     * Ecore metamodel will be build and saved as an Ecore file. A {@link GenModel} will be build from the metamodel
+     * which is then used to generate Ecore model code.
+     * @param project is the specific {@link IProject} for the extraction.
      */
     public void extractAndGenerateFrom(IProject project) {
         EPackage metamodel = extractFrom(project); // extract metamodel from project
@@ -52,9 +53,9 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
-     * will be build and saved as an Ecore file.
-     * @param project is the specific project for the extraction.
+     * Starts the Ecore metamodel extraction for a specific {@link IProject}. The {@link IProject} will be parsed and an
+     * Ecore metamodel will be build and saved as an Ecore file.
+     * @param project is the specific {@link IProject} for the extraction.
      */
     public void extractAndSaveFrom(IProject project) {
         extractFrom(project); // extract metamodel from project
@@ -62,10 +63,10 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Starts the Ecore metamodel extraction for a specific project. The project will be parsed and an Ecore metamodel
-     * will be build.
-     * @param project is the specific project for the extraction.
-     * @return the Ecore metamodel with the default package as root.
+     * Starts the Ecore metamodel extraction for a specific {@link IProject}. The {@link IProject} will be parsed and an
+     * Ecore metamodel will be build.
+     * @param project is the specific {@link IProject} for the extraction.
+     * @return the Ecore metamodel with the default {@link EPackage} as root.
      */
     public EPackage extractFrom(IProject project) {
         logger.info("Started extraction of project " + project.getName());
@@ -76,16 +77,16 @@ public class EcoreMetamodelExtraction {
     }
 
     /**
-     * Grants access to the properties.
-     * @return the ExtractionProperties.
+     * Grants access to the {@link ExtractionProperties}.
+     * @return the {@link ExtractionProperties}.
      */
     public ExtractionProperties getProperties() {
         return properties;
     }
 
     /**
-     * Checks whether a specific project is valid (neither null nor nonexistent)
-     * @param project is the specific IJavaProject.
+     * Checks whether a specific {@link IProject} is valid (neither null nor nonexistent)
+     * @param project is the specific {@link IProject}.
      */
     private void check(IProject project) {
         if (project == null) {

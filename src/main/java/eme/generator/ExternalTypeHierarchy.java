@@ -23,7 +23,7 @@ public class ExternalTypeHierarchy {
 
     /**
      * Simple constructor, builds the base for the hierarchy.
-     * @param root is the root package of the metamodel.
+     * @param root is the root {@link EPackage} of the metamodel.
      * @param properties is the properties class.
      */
     public ExternalTypeHierarchy(EPackage root, ExtractionProperties properties) {
@@ -31,8 +31,9 @@ public class ExternalTypeHierarchy {
     }
 
     /**
-     * Adds an EDataType to the external type package hierarchy. Generates the missing packages for the hierarchy.
-     * @param dataType is the new EDataType.
+     * Adds an {@link EDataType} to the external type package hierarchy. Generates the missing packages for the
+     * hierarchy.
+     * @param dataType is the new {@link EDataType}.
      */
     public void add(EDataType dataType) {
         String[] path = packagePath(dataType.getInstanceTypeName()); // get packages from name
@@ -51,7 +52,7 @@ public class ExternalTypeHierarchy {
     }
 
     /**
-     * Creates new empty EPackage from name and super package only.
+     * Creates new empty {@link EPackage} from name and super package only.
      */
     private EPackage generatePackage(String name, EPackage superPackage) {
         EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
@@ -63,7 +64,8 @@ public class ExternalTypeHierarchy {
     }
 
     /**
-     * Returns a specific sub package of an EPackage. Creates a new one from the package path if it does not exist.
+     * Returns a specific sub package of an {@link EPackage}. Creates a new one from the package path if it does not
+     * exist.
      */
     private EPackage getSubpackage(String name, EPackage superPackage) {
         for (EPackage subpackage : superPackage.getESubpackages()) { // for all subpackages
@@ -86,7 +88,8 @@ public class ExternalTypeHierarchy {
     }
 
     /**
-     * Sorts a list of ENamedElements. {@link ENamedElement} does not implement the Interface {@link Comparable}.
+     * Sorts a list of {@link ENamedElement}s. The Interface {@link ENamedElement} does not implement the Interface
+     * {@link Comparable}.
      */
     private <T extends ENamedElement> void sort(EList<T> list) {
         Map<String, T> elementMap = new HashMap<String, T>();

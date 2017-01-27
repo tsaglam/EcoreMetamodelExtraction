@@ -1,8 +1,7 @@
 package eme.model;
 
 /**
- * Superclass of all extracted elements of the intermediate model. The intermediate model is the temporary model between
- * the implicit model of the code files and the Ecore metamodel.
+ * Superclass of all extracted elements of an {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public abstract class ExtractedElement implements Comparable<ExtractedElement> {
@@ -43,7 +42,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * accessor for the full element name.
+     * Asccessor for the full element name.
      * @return the full name of the element, consisting out of the package path and the element name separated by an
      * dot.
      */
@@ -51,7 +50,7 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
         if ("".equals(parent)) {
             return name;
         }
-        return parent + "." + name;
+        return parent + '.' + name;
     }
 
     /**

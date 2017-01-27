@@ -7,7 +7,7 @@ import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedTypeParameter;
 
 /**
- * Represents a type in the intermediate model.
+ * Represents a type in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public abstract class ExtractedType extends ExtractedElement {
@@ -36,15 +36,15 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Adds an attribute to the type.
-     * @param attribute is the new attribute.
+     * Adds an {@link ExtractedAttribute} to the type.
+     * @param attribute is the new {@link ExtractedAttribute}.
      */
     public void addAttribute(ExtractedAttribute attribute) {
         attributes.add(attribute);
     }
 
     /**
-     * Adds an interface as super interface.
+     * Adds an interface name as super interface.
      * @param superInterface is the new super interface.
      */
     public void addInterface(String superInterface) {
@@ -52,16 +52,16 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Adds a method to the type.
-     * @param method is the new method.
+     * Adds a {@link ExtractedMethod} to the type.
+     * @param method is the new {@link ExtractedMethod}.
      */
     public void addMethod(ExtractedMethod method) {
         methods.add(method);
     }
 
     /**
-     * Adds a generic type parameter to the type.
-     * @param typeParameter is the new generic type.
+     * Adds a generic type parameter ({@link ExtractedTypeParameter}) to the type.
+     * @param typeParameter is the new {@link ExtractedTypeParameter}.
      */
     public void addTypeParameter(ExtractedTypeParameter typeParameter) {
         typeParameters.add(typeParameter);
@@ -79,7 +79,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * accessor for the list of attributes.
+     * accessor for the list of {@link ExtractedAttribute}s.
      * @return the list of attributes.
      */
     public List<ExtractedAttribute> getAttributes() {
@@ -87,7 +87,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * accessor for the list of methods.
+     * accessor for the list of {@link ExtractedMethod}s.
      * @return the list of methods.
      */
     public List<ExtractedMethod> getMethods() {
@@ -111,7 +111,7 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * accessor for the list of generic type parameters.
+     * accessor for the list of generic type parameters ({@link ExtractedTypeParameter}).
      * @return the list of generic type parameters.
      */
     public List<ExtractedTypeParameter> getTypeParameters() {

@@ -1,7 +1,7 @@
 package eme.model;
 
 /**
- * Represents an interface in the intermediate model.
+ * Represents an interface in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedInterface extends ExtractedType {
@@ -13,5 +13,4 @@ public class ExtractedInterface extends ExtractedType {
     public ExtractedInterface(String fullName) {
         super(fullName);
     }
-
 }

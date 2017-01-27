@@ -18,7 +18,8 @@ import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
 /**
- * The class analyzes java projects and builds intermediate models.
+ * The class analyzes java projects and builds intermediate models with the help of the {@link JavaTypeParser},
+ * {@link JavaMethodParser} and {@link DataTypeParser}.
  * @author Timur Saglam
  */
 public class JavaProjectParser {
@@ -30,8 +31,8 @@ public class JavaProjectParser {
     private JavaTypeParser typeParser;
 
     /**
-     * Analyzes a java project and builds an intermediate model.
-     * @param project is the Java project to analyze.
+     * Analyzes a {@link IJavaProject} and builds an {@link IntermediateModel}.
+     * @param project is the {@link IJavaProject} to analyze.
      * @return an intermediate model that was extracted from the project.
      */
     public IntermediateModel buildIntermediateModel(IJavaProject project) {
@@ -48,7 +49,7 @@ public class JavaProjectParser {
     }
 
     /**
-     * Checks if a packet fragment is a source package.
+     * Checks if a {@link IPackageFragment} is a source package.
      */
     private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
         return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
@@ -71,9 +72,9 @@ public class JavaProjectParser {
     }
 
     /**
-     * The method takes an IJavaProject and extracts the package structure of the project. It continues by parsing the
-     * IPackageFragments. The method creates the packages from a set of package names to avoid the problem of duplicate
-     * default packages. But all other parsing calls are done with a list of fragments.
+     * The method takes an {@link IJavaProject} and extracts the package structure of the project. It continues by
+     * parsing the {@link IPackageFragment}s. The method creates the packages from a set of package names to avoid the
+     * problem of duplicate default packages. But all other parsing calls are done with a list of fragments.
      */
     private void parsePackages(IJavaProject project) throws JavaModelException {
         SortedSet<String> packageNames = new TreeSet<String>(); // set to avoid duplicates
@@ -100,7 +101,7 @@ public class JavaProjectParser {
     }
 
     /**
-     * Creates the intermediate model instance and the other parsers.
+     * Creates the {@link IntermediateModel} instance and the other parsers.
      */
     private void setup(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.

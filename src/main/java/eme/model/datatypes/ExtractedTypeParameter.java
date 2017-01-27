@@ -3,8 +3,10 @@ package eme.model.datatypes;
 import java.util.LinkedList;
 import java.util.List;
 
+import eme.model.ExtractedClass;
+
 /**
- * This class represents a generic type parameter of a Java class.
+ * This class represents a generic type parameter of a {@link ExtractedClass}.
  * @author Timur Saglam
  */
 public class ExtractedTypeParameter {

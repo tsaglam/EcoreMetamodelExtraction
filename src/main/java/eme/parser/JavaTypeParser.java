@@ -21,7 +21,8 @@ import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
- * Parser class for Java types (classes, interfaces, enumerations).
+ * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodParser} and the
+ * {@link DataTypeParser}.
  * @author Timur Saglam
  */
 public class JavaTypeParser {
@@ -64,8 +65,8 @@ public class JavaTypeParser {
     }
 
     /**
-     * Parses IType. Detects whether the type is a (abstract) class, an interface or an enumeration.
-     * @param iType is the IType to parse.
+     * Parses {@link IType}. Detects whether the type is a (abstract) class, an interface or an enumeration.
+     * @param iType is the {@link IType} to parse.
      * @return the extracted type.
      * @throws JavaModelException if there are problem with the JDT API.
      */
@@ -88,7 +89,7 @@ public class JavaTypeParser {
     }
 
     /**
-     * Checks whether an IType inherits from the class {@link java.lang.Throwable}
+     * Checks whether an {@link IType} inherits from the class {@link java.lang.Throwable}
      */
     private boolean inheritsFromThrowable(IType type) throws JavaModelException {
         ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
@@ -101,7 +102,7 @@ public class JavaTypeParser {
     }
 
     /**
-     * Parses Attributes from an IType and adds them to an ExtractedType.
+     * Parses Attributes from an {@link IType} and adds them to an {@link ExtractedType}.
      */
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
@@ -116,7 +117,7 @@ public class JavaTypeParser {
     }
 
     /**
-     * Parses an IType that has been identified as class.
+     * Parses an {@link IType} that has been identified as class.
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
@@ -133,7 +134,7 @@ public class JavaTypeParser {
     }
 
     /**
-     * Parse an IType that has been identified as enumeration.
+     * Parse an {@link IType} that has been identified as enumeration.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
         ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName());

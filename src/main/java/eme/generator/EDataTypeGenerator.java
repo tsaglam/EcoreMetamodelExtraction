@@ -20,7 +20,7 @@ import eme.model.datatypes.ExtractedTypeParameter;
 import eme.model.datatypes.WildcardStatus;
 
 /**
- * Generator class for the generation of Ecore data types: EDataTypes
+ * Generator class for the generation of Ecore data types ({@link EDataType})
  * @author Timur Saglam
  */
 public class EDataTypeGenerator {
@@ -33,8 +33,8 @@ public class EDataTypeGenerator {
 
     /**
      * Basic constructor, builds the type maps.
-     * @param model is the intermediate model.
-     * @param createdEClassifiers is the list of created classifiers. This is needed to get custom data types.
+     * @param model is the {@link IntermediateModel}.
+     * @param createdEClassifiers is the list of created {@link EClassifier}s. This is needed to get custom data types.
      * @param externalTypeHierarchy is the external type package hierarchy.
      */
     public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, ExternalTypeHierarchy externalTypeHierarchy) {
@@ -47,8 +47,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all generic arguments from an extracted data type to an generic type. For all generic arguments add their
-     * generic arguments recursively.
+     * Adds all generic arguments from an {@link ExtractedDataType} to an {@link EGenericType}. For all generic
+     * arguments add their generic arguments recursively.
      * @param genericType is the generic type of an attribute, a parameter or a method.
      * @param dataType is the extracted data type, an attribute, a parameter or a return type.
      * @param classifier is the EClassifier which owns the generic type.
@@ -69,7 +69,7 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all generic type parameters from an extracted type to a classifier.
+     * Adds all generic type parameters from an {@link ExtractedType} to a {@link EClassifier}.
      * @param classifier is the classifier.
      * @param type is the extracted type.
      */
@@ -84,10 +84,12 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Returns an EClassifier for an ExtractedDataType that can be used as DataType for Methods and Attributes.
+     * Returns an {@link EClassifier} for an {@link ExtractedDataType} that can be used as data type for methods and
+     * attributes.
      * @param extractedDataType is the extracted data type.
-     * @return the data type as EClassifier, which is either (1.) a custom class from the model, or (2.) or an external
-     * class that has to be created as data type, or (3.) an already known data type (Basic type or already created).
+     * @return the data type as {@link EClassifier}, which is either (1.) a custom class from the model, or (2.) or an
+     * external class that has to be created as data type, or (3.) an already known data type (Basic type or already
+     * created).
      */
     public EClassifier generate(ExtractedDataType extractedDataType) {
         EDataType eDataType;
@@ -105,7 +107,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Returns an generic type parameter, which is an EGenericType, for an ExtractedDataType that can be used as generic argument for Methods and Attributes.
+     * Returns an generic type parameter, which is an {@link EGenericType}, for an {@link ExtractedDataType} that can be
+     * used as generic argument for methods and attributes.
      * @param dataType is the ExtractedDataType.
      * @param eClass is the EClass that owns the the EGenericType
      * @return the EGenericType.
@@ -120,7 +123,7 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Checks whether an extracted data type is a type parameter in a specific EClassifier.
+     * Checks whether an {@link ExtractedDataType} is a type parameter in a specific {@link EClassifier}.
      * @param dataType is the extracted data type.
      * @param classifier is the specific EClassifier.
      * @return true if the extracted data type is a type parameter.
@@ -152,8 +155,7 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all bounds of an extracted type parameter to a ETypeParameter
-     * @param classifier
+     * Adds all bounds of an {@link ExtractedTypeParameter} to a {@link ETypeParameter}.
      */
     private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier classifier) {
         EGenericType eBound; // ecore type parameter bound

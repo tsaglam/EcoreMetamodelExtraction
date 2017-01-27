@@ -7,7 +7,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * Base class for an intermediate model.
+ * Base class for an intermediate model. The intermediate model is the temporary model between the implicit model of the
+ * code files and the Ecore metamodel.
  * @author Timur Saglam
  */
 public class IntermediateModel {
@@ -30,8 +31,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new package to the intermediate model if it is not already added.
-     * @param newPackage is the new package to add.
+     * Adds a new {@link ExtractedPackage} to the intermediate model if it is not already added.
+     * @param newPackage is the new {@link ExtractedPackage} to add.
      */
     public void add(ExtractedPackage newPackage) {
         if (packages.add(newPackage)) {
@@ -45,15 +46,16 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new type to the intermediate model if it is not already added. Finds parent package automatically.
-     * @param type is the new type to add.
+     * Adds a new {@link ExtractedType} to the intermediate model if it is not already added. Finds parent
+     * {@link ExtractedPackage} automatically.
+     * @param type is the new {@link ExtractedType} to add.
      */
     public void add(ExtractedType type) {
         addTo(type, getPackage(type.getParentName()));
     }
 
     /**
-     * Adds a new external type to the intermediate model.
+     * Adds a new external {@link ExtractedType} to the intermediate model.
      * @param type is the new external type to add.
      */
     public void addExternal(ExtractedType type) {
@@ -61,9 +63,10 @@ public class IntermediateModel {
     }
 
     /**
-     * Adds a new type to the intermediate model and to a specific parent package if it is not already added.
-     * @param type is the new type to add.
-     * @param parent is the parent package.
+     * Adds a new {@link ExtractedType} to the intermediate model and to a specific parent {@link ExtractedPackage} if
+     * it is not already added.
+     * @param type is the new {@link ExtractedType} to add.
+     * @param parent is the parent {@link ExtractedPackage}.
      */
     public void addTo(ExtractedType type, ExtractedPackage parent) {
         if (types.add(type)) { // add class to list of classes.
@@ -72,46 +75,46 @@ public class IntermediateModel {
     }
 
     /**
-     * Checks whether the model contains an extracted type whose full name matches a given full name.
+     * Checks whether the model contains an {@link ExtractedType} whose full name matches a given full name.
      * @param fullName is the given full name.
-     * @return true if it contains the extracted type, false if not.
+     * @return true if it contains the {@link ExtractedType}, false if not.
      */
     public boolean contains(String fullName) {
         return getType(fullName) != null;
     }
 
     /**
-     * Checks whether the model contains an external type whose full name matches a given full name.
+     * Checks whether the model contains an external {@link ExtractedType} whose full name matches a given full name.
      * @param fullName is the given full name.
-     * @return true if it contains the external type, false if not.
+     * @return true if it contains the external {@link ExtractedType}, false if not.
      */
     public boolean containsExternal(String fullName) {
         return getExternalType(fullName) != null;
     }
 
     /**
-     * Returns the external type of the intermediate model whose full name matches the given full name.
+     * Returns the external {@link ExtractedType} of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
-     * @return the external type with the matching name or null if the name is not found.
+     * @return the external {@link ExtractedType} with the matching name or null if the name is not found.
      */
     public ExtractedType getExternalType(String fullName) {
         return getTypeFrom(fullName, externalTypes);
     }
 
     /**
-     * Returns all the external types of the intermediate model.
-     * @return the set of external types.
+     * Returns all the external {@link ExtractedType}s of the intermediate model.
+     * @return the set of external {@link ExtractedType}s.
      */
     public Set<ExtractedType> getExternalTypes() {
         return externalTypes;
     }
 
     /**
-     * Returns the package of the intermediate model whose full name matches the given full name.
+     * Returns the {@link ExtractedPackage} of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
-     * @return the package with the matching name.
-     * @throws RuntimeException if the package is not found. This means this method cannot be used to check whether
-     * there is a certain package in the model. It is explicitly used to find an existing package.
+     * @return the {@link ExtractedPackage} with the matching name.
+     * @throws RuntimeException if the {@link ExtractedPackage} is not found. This means this method cannot be used to
+     * check whether there is a certain package in the model. It is explicitly used to find an existing package.
      */
     public ExtractedPackage getPackage(String fullName) {
         for (ExtractedPackage aPackage : packages) { // for all packages
@@ -131,7 +134,7 @@ public class IntermediateModel {
     }
 
     /**
-     * accessor for the root package of the model.
+     * accessor for the root {@link ExtractedPackage} of the model.
      * @return the root package.
      */
     public ExtractedPackage getRoot() {
@@ -139,9 +142,9 @@ public class IntermediateModel {
     }
 
     /**
-     * Returns the type of the intermediate model whose full name matches the given full name.
+     * Returns the {@link ExtractedType} of the intermediate model whose full name matches the given full name.
      * @param fullName is the given full name.
-     * @return the type with the matching name or null if the name is not found.
+     * @return the {@link ExtractedType} with the matching name or null if the name is not found.
      */
     public ExtractedType getType(String fullName) {
         return getTypeFrom(fullName, types);
@@ -159,7 +162,8 @@ public class IntermediateModel {
     }
 
     /**
-     * Sorts the content of the root package. Sorts its types, its subpackages and all the content of every subpackage.
+     * Sorts the content of the root {@link ExtractedPackage}. Sorts its types, its subpackages and all the content of
+     * every subpackage.
      */
     public void sort() {
         rootElement.sort();
@@ -173,10 +177,10 @@ public class IntermediateModel {
     }
 
     /**
-     * Finds extracted type from set of extracted type by its full name.
+     * Finds {@link ExtractedType} from set of {@link ExtractedType}s by its full name.
      * @param fullName is full name.
-     * @param typeSet is the set of extracted types.
-     * @return the extracted type with the matching name or null if the name is not found.
+     * @param typeSet is the set of {@link ExtractedType}s.
+     * @return the {@link ExtractedType} with the matching name or null if the name is not found.
      */
     private ExtractedType getTypeFrom(String fullName, Set<ExtractedType> typeSet) {
         for (ExtractedType type : typeSet) { // for all packages

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Is the representation of a package in the intermediate model.
+ * Is the representation of a package in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedPackage extends ExtractedElement {
@@ -39,8 +39,8 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Adds a new type to the package.
-     * @param type is the new type of the package.
+     * Adds a new {@link ExtractedType} to the package.
+     * @param type is the new {@link ExtractedType} of the package.
      */
     public void add(ExtractedType type) {
         if (type.getClass() == ExtractedClass.class) {
@@ -54,7 +54,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the classes.
+     * accessor for the {@link ExtractedClass}es.
      * @return the classes.
      */
     public List<ExtractedClass> getClasses() {
@@ -62,7 +62,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the enumerations.
+     * accessor for the {@link ExtractedEnumeration}s.
      * @return the enumerations.
      */
     public List<ExtractedEnumeration> getEnumerations() {
@@ -70,7 +70,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the interfaces.
+     * accessor for the {@link ExtractedInterface}s.
      * @return the interfaces.
      */
     public List<ExtractedInterface> getInterfaces() {
@@ -86,7 +86,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the types (interfaces, classes and enumerations).
+     * accessor for the {@link ExtractedType}s (interfaces, classes and enumerations).
      * @return the types.
      */
     public List<ExtractedType> getTypes() {

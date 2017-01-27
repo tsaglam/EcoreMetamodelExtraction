@@ -23,7 +23,7 @@ import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
- * Generator class for Ecore classifiers.
+ * Generator class for Ecore classifiers ({@link EClassifier}s).
  * @author Timur Saglam
  */
 public class EClassifierGenerator {
@@ -69,7 +69,8 @@ public class EClassifierGenerator {
     /**
      * Generates an {@link EClassifier} from an ExtractedType, if the type was not already generated.
      * @param type is the {@link ExtractedType}.
-     * @return the {@link EClassifier}, which is either an {@link EClass}, an {@link ExtractedInterface} or an {@link EEnum}.
+     * @return the {@link EClassifier}, which is either an {@link EClass}, an {@link ExtractedInterface} or an
+     * {@link EEnum}.
      */
     public EClassifier generateEClassifier(ExtractedType type) {
         String fullName = type.getFullName();

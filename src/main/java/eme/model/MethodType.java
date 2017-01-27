@@ -1,7 +1,7 @@
 package eme.model;
 
 /**
- * This enum helps to differ between the different method types.
+ * This enum helps to differ between the different method types of an {@link ExtractedMethod}.
  * @author Timur Saglam
  */
 public enum MethodType {

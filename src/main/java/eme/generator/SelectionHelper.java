@@ -33,7 +33,7 @@ public class SelectionHelper {
     private final Map<String, Integer> reportMap;
 
     /**
-     * Simple constructor, sets the properties object.
+     * Simple constructor, sets the {@link ExtractionProperties} object.
      * @param properties are the extraction properties.
      */
     public SelectionHelper(ExtractionProperties properties) {
@@ -42,7 +42,7 @@ public class SelectionHelper {
     }
 
     /**
-     * Checks whether a extracted attribute may be generated.
+     * Checks whether a {@link ExtractedAttribute} may be generated.
      * @param attribute is the extracted attribute.
      * @return true if it may be generated.
      */
@@ -59,7 +59,7 @@ public class SelectionHelper {
     }
 
     /**
-     * Checks whether a extracted method may be generated.
+     * Checks whether a {@link ExtractedMethod} may be generated.
      * @param method is the extracted method.
      * @return true if it may be generated.
      */
@@ -95,7 +95,7 @@ public class SelectionHelper {
     }
 
     /**
-     * Checks whether a extracted type may be generated.
+     * Checks whether a {@link ExtractedType} may be generated.
      * @param type is the extracted type.
      * @return true if it may be generated.
      */
@@ -137,7 +137,6 @@ public class SelectionHelper {
     public ExtractionProperties getProperties() {
         return properties;
     }
-    
 
     /**
      * Increases the number of ungenerated features for a specific type of features.

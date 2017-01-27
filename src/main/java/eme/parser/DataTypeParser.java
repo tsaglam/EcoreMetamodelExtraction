@@ -48,10 +48,10 @@ public class DataTypeParser {
     }
 
     /**
-     * Creates extracted data type from a signature and a declaring type. Use this method if the other methods of the
-     * class do not fit your needs (e.g. for throws declarations).
+     * Creates {@link ExtractedDataType} from a signature and a declaring {@link IType}. Use this method if the other
+     * methods of the class do not fit your needs (e.g. for throws declarations).
      * @param signature is the signature of the data type.
-     * @param declaringType is the declaring type of the signature.
+     * @param declaringType is the declaring {@link IType} of the signature.
      * @return the extracted data type.
      * @throws JavaModelException if there are problems with the JDT API.
      */
@@ -63,7 +63,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Creates extracted attribute from a field and its type.
+     * Creates {@link ExtractedAttribute} from a {@link IField} and its {@link IType}.
      * @param field is the field.
      * @param iType is the type of the field.
      * @return the extracted attribute of the field.
@@ -79,7 +79,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Creates extracted method parameter from a parameter and its method.
+     * Creates {@link ExtractedParameter} from a {@link ILocalVariable} and its {@link IMethod}.
      * @param variable is the parameter.
      * @param iMethod is the method of the parameter.
      * @return the extracted method parameter.
@@ -96,7 +96,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Creates extracted return type from a method.
+     * Creates extracted return type from a {@link IMethod}.
      * @param iMethod is the method.
      * @return the return type, or null if it is void.
      * @throws JavaModelException if there are problems with the JDT API.
@@ -110,7 +110,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Parses all type parameters of an IType and adds the to an ExtractedType.
+     * Parses all type parameters of an {@link IType} and adds the to an {@link ExtractedType}.
      * @param iType is the IType.
      * @param type is the ExtractedType.
      * @throws JavaModelException if there are problems with the JDT API.
@@ -127,7 +127,8 @@ public class DataTypeParser {
     }
 
     /**
-     * Returns the full name of a signature and the declaring type, e.g "java.lang.String", "java.util.List" or "char".
+     * Returns the full name of a signature and the declaring {@link IType}, e.g "java.lang.String", "java.util.List" or
+     * "char".
      */
     private String getFullName(String typeSignature, IType declaringType) throws JavaModelException {
         String signature = Signature.getElementType(typeSignature); // remove array information
@@ -146,7 +147,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Parses generic arguments from type signature and returns them in a list.
+     * Parses generic arguments from signature and returns them in a list.
      */
     private List<ExtractedDataType> parseGenericArguments(String signature, IType declaringType) throws JavaModelException {
         List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
@@ -170,7 +171,7 @@ public class DataTypeParser {
     }
 
     /**
-     * Parses signature and return wild card status.
+     * Parses signature and return {@link WildcardStatus}.
      */
     private WildcardStatus parseWildcardStatus(String signature) {
         if (signature.contains(Character.toString(Signature.C_STAR))) {

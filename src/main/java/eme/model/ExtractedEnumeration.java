@@ -4,11 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents an enumeration in the intermediate model.
+ * Represents an enumeration in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedEnumeration extends ExtractedType {
-
     private final List<String> enumerals;
 
     /**
@@ -35,5 +34,4 @@ public class ExtractedEnumeration extends ExtractedType {
     public List<String> getEnumerals() {
         return enumerals;
     }
-
 }

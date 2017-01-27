@@ -14,7 +14,8 @@ import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 
 /**
- * Parser class for Java Methods (Methods, parameters, return types, throws declarations).
+ * Parser class for Java Methods (Methods, parameters, return types, throws declarations). Uses the class
+ * {@link DataTypeParser}.
  * @author Timur Saglam
  */
 public class JavaMethodParser {
@@ -29,8 +30,8 @@ public class JavaMethodParser {
     }
 
     /**
-     * Parses the methods from an IType and adds them to an ExtractedType.
-     * @param iType is the IType whose methods get parsed.
+     * Parses the {@link IMethod}s from an {@link IType} and adds them to an ExtractedType.
+     * @param iType is the {@link IType} whose methods get parsed.
      * @param extractedType is the extracted type where the extracted methods should be added.
      * @throws JavaModelException if there are problem with the JDT API.
      */
@@ -53,7 +54,7 @@ public class JavaMethodParser {
     }
 
     /**
-     * Checks whether a IMethod is an access method (either an accessor or an mutator, depending on the prefix).
+     * Checks whether a {@link IMethod} is an access method (either an accessor or an mutator, depending on the prefix).
      */
     private boolean isAccessMethod(String prefix, IMethod method) throws JavaModelException {
         IType type = method.getDeclaringType();
@@ -66,7 +67,7 @@ public class JavaMethodParser {
     }
 
     /**
-     * Checks whether a IMethod is an accessor method.
+     * Checks whether a {@link IMethod} is an accessor method.
      */
     private boolean isAccessor(IMethod method) throws JavaModelException {
         if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
@@ -76,7 +77,7 @@ public class JavaMethodParser {
     }
 
     /**
-     * Checks whether a IMethod is a mutator method.
+     * Checks whether a {@link IMethod} is a mutator method.
      */
     private boolean isMutator(IMethod method) throws JavaModelException {
         if (isAccessMethod("set", method)) { // if name fits
@@ -86,7 +87,7 @@ public class JavaMethodParser {
     }
 
     /**
-     * Parses the MethodType of an IMethod.
+     * Parses the {@link MethodType} of an {@link IMethod}.
      */
     private MethodType parseMethodType(IMethod method) throws JavaModelException {
         if (method.isConstructor()) {

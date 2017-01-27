@@ -1,11 +1,10 @@
 package eme.model;
 
 /**
- * Represents a class in the intermediate model.
+ * Represents a class in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class ExtractedClass extends ExtractedType {
-
     private final boolean abstractClass;
     private final boolean throwable;
 
