@@ -4,21 +4,6 @@ import static eme.model.datatypes.AccessLevelModifier.NO_MODIFIER;
 import static eme.model.datatypes.AccessLevelModifier.PRIVATE;
 import static eme.model.datatypes.AccessLevelModifier.PROTECTED;
 import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
-import static eme.properties.ExtractionProperty.ABSTRACT_METHODS;
-import static eme.properties.ExtractionProperty.ACCESS_METHODS;
-import static eme.properties.ExtractionProperty.CONSTRUCTORS;
-import static eme.properties.ExtractionProperty.DEFAULT_ATTRIBUTES;
-import static eme.properties.ExtractionProperty.DEFAULT_METHODS;
-import static eme.properties.ExtractionProperty.EMPTY_PACKAGES;
-import static eme.properties.ExtractionProperty.NESTED_TYPES;
-import static eme.properties.ExtractionProperty.PRIVATE_ATTRIBUTES;
-import static eme.properties.ExtractionProperty.PRIVATE_METHODS;
-import static eme.properties.ExtractionProperty.PROTECTED_ATTRIBUTES;
-import static eme.properties.ExtractionProperty.PROTECTED_METHODS;
-import static eme.properties.ExtractionProperty.PUBLIC_ATTRIBUTES;
-import static eme.properties.ExtractionProperty.STATIC_ATTRIBUTES;
-import static eme.properties.ExtractionProperty.STATIC_METHODS;
-import static eme.properties.ExtractionProperty.THROWABLES;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +21,7 @@ import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 import eme.properties.ExtractionProperties;
+import eme.properties.ExtractionProperty;
 
 /**
  * This class helps to decide whether a extracted element may be generated or not. It combines rules from a properties
@@ -63,20 +49,12 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
-        if ((!attribute.isStatic() || properties.getBool(STATIC_ATTRIBUTES)) // extract
-                                                                             // static
-                && (modifier != PUBLIC || properties.getBool(PUBLIC_ATTRIBUTES)) // extract
-                                                                                 // public
-                && (modifier != NO_MODIFIER || properties.getBool(DEFAULT_ATTRIBUTES))  // extract
-                                                                                        // default
-                && (modifier != PROTECTED || properties.getBool(PROTECTED_ATTRIBUTES)) // extract
-                                                                                       // protected
-                && (modifier != PRIVATE || properties.getBool(PRIVATE_ATTRIBUTES))) { // extract
-                                                                                      // private
-            return true;
-        }
-        report("attribute");
-        return false;
+        boolean allowed = !attribute.isStatic() || properties.getBool(ExtractionProperty.STATIC_ATTRIBUTES);
+        allowed &= modifier != PUBLIC || properties.getBool(ExtractionProperty.PUBLIC_ATTRIBUTES);
+        allowed &= modifier != NO_MODIFIER || properties.getBool(ExtractionProperty.DEFAULT_ATTRIBUTES);
+        allowed &= modifier != PROTECTED || properties.getBool(ExtractionProperty.PROTECTED_ATTRIBUTES);
+        allowed &= modifier != PRIVATE || properties.getBool(ExtractionProperty.PRIVATE_ATTRIBUTES);
+        return report("attribute", allowed);
     }
 
     /**
@@ -87,26 +65,16 @@ public class SelectionHelper {
     public boolean allowsGenerating(ExtractedMethod method) {
         AccessLevelModifier modifier = method.getModifier();
         MethodType type = method.getMethodType();
-        if (method.isSelected() && (type != MethodType.CONSTRUCTOR || properties.getBool(CONSTRUCTORS))
-                && (!method.isAbstract() || properties.getBool(ABSTRACT_METHODS)) // extract
-                                                                                  // abstract
-                && (!method.isStatic() || properties.getBool(STATIC_METHODS)) // extract
-                                                                              // static
-                && (modifier != NO_MODIFIER || properties.getBool(DEFAULT_METHODS)) // extract
-                                                                                    // default
-                && (modifier != PROTECTED || properties.getBool(PROTECTED_METHODS)) // extract
-                                                                                    // protected
-                && (modifier != PRIVATE || properties.getBool(PRIVATE_METHODS)) // extract
-                                                                                // private
-                && (type != MethodType.ACCESSOR || properties.getBool(ACCESS_METHODS))  // extract
-                                                                                        // accessors
-                && (type != MethodType.MUTATOR || properties.getBool(ACCESS_METHODS))) { // extract
-                                                                                         // mutators
-            return true;
-        } else {
-            report(type.toString());
-        }
-        return false;
+        boolean allowed = method.isSelected();
+        allowed &= type != MethodType.CONSTRUCTOR || properties.getBool(ExtractionProperty.CONSTRUCTORS);
+        allowed &= !method.isAbstract() || properties.getBool(ExtractionProperty.ABSTRACT_METHODS);
+        allowed &= !method.isStatic() || properties.getBool(ExtractionProperty.STATIC_METHODS);
+        allowed &= modifier != NO_MODIFIER || properties.getBool(ExtractionProperty.DEFAULT_METHODS);
+        allowed &= modifier != PROTECTED || properties.getBool(ExtractionProperty.PROTECTED_METHODS);
+        allowed &= modifier != PRIVATE || properties.getBool(ExtractionProperty.PRIVATE_METHODS);
+        allowed &= type != MethodType.ACCESSOR || properties.getBool(ExtractionProperty.ACCESS_METHODS);
+        allowed &= type != MethodType.MUTATOR || properties.getBool(ExtractionProperty.ACCESS_METHODS);
+        return report(type.toString(), allowed);
     }
 
     /**
@@ -115,11 +83,9 @@ public class SelectionHelper {
      * @return true if it may be generated.
      */
     public boolean allowsGenerating(ExtractedPackage subpackage) {
-        if (subpackage.isSelected() && (!subpackage.isEmpty() || properties.getBool(EMPTY_PACKAGES))) {
-            return true;
-        }
-        report("package");
-        return false;
+        boolean allowed = subpackage.isSelected();
+        allowed &= (!subpackage.isEmpty() || properties.getBool(ExtractionProperty.EMPTY_PACKAGES));
+        return report("package", allowed);
     }
 
     /**
@@ -128,17 +94,11 @@ public class SelectionHelper {
      * @return true if it may be generated.
      */
     public boolean allowsGenerating(ExtractedType type) {
-        if (type.isSelected() && (!type.isInnerType() || properties.getBool(NESTED_TYPES))) {
-            if (type instanceof ExtractedClass) {
-                return !((ExtractedClass) type).isThrowable() || properties.getBool(THROWABLES);
-            } else {
-                return true;
-            }
+        boolean allowed = type.isSelected() && (!type.isInnerType() || properties.getBool(ExtractionProperty.NESTED_TYPES));
+        if (type instanceof ExtractedClass) {
+            allowed &= !((ExtractedClass) type).isThrowable() || properties.getBool(ExtractionProperty.THROWABLES);
         }
-        report(type.getClass().getSimpleName().substring(9).toLowerCase()); // Class,
-                                                                            // Interface,
-                                                                            // Enumeration
-        return false;
+        return report(type.getClass().getSimpleName().substring(9).toLowerCase(), allowed); // class, interface, enum
     }
 
     /**
@@ -154,8 +114,7 @@ public class SelectionHelper {
             Collections.sort(list); // sort keys
             String pluralSuffix;
             for (String element : list) { // for every reported element
-                pluralSuffix = element.endsWith("s") ? "es" : "s"; // add plural
-                                                                   // suffix
+                pluralSuffix = element.endsWith("s") ? "es" : "s"; // add plural suffix
                 logger.info("   " + element + pluralSuffix + ": " + reportMap.get(element)); // print
             }
         }
@@ -171,13 +130,18 @@ public class SelectionHelper {
 
     /**
      * Increases the number of ungenerated features for a specific type of features.
+     * @param allowed specifies whether the generation should be allowed or not.
      * @param feature is the specific type of features.
+     * @return the value of the parameter allowed
      */
-    private void report(String feature) {
-        if (reportMap.containsKey(feature)) {
-            reportMap.put(feature, reportMap.get(feature) + 1);
-        } else {
-            reportMap.put(feature, 1);
+    private boolean report(String feature, boolean allowed) {
+        if (!allowed) { // if generating was not allowed:
+            if (reportMap.containsKey(feature)) { // if has already reported on feature
+                reportMap.put(feature, reportMap.get(feature) + 1); // increase
+            } else { // if never reported on feature
+                reportMap.put(feature, 1); // create new entry for feature
+            }
         }
+        return allowed; // return whether it was allowed or not.
     }
 }
