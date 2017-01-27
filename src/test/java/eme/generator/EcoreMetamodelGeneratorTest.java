@@ -6,7 +6,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.junit.Before;
 import org.junit.Test;
 
-import eme.generator.saving.CustomPathSavingStrategy;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
@@ -42,7 +41,7 @@ public class EcoreMetamodelGeneratorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullStrategy() {
-        generator.changeSavingStrategy(new CustomPathSavingStrategy()); // has to pass
+        generator.changeSavingStrategy("CustomPath"); // has to pass
         generator.changeSavingStrategy(null); // throws exception
     }
 

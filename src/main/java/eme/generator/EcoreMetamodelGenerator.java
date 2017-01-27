@@ -22,9 +22,9 @@ import eme.properties.ExtractionProperties;
 public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
+    private final EPackageGenerator ePackageGenerator;
     private EPackage metamodel;
     private String projectName;
-    private final ExtractionProperties properties;
     private AbstractSavingStrategy savingStrategy;
 
     /**
@@ -32,28 +32,24 @@ public class EcoreMetamodelGenerator {
      * @param properties is the ExtractionProperties class for the exraction.
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
-        this.properties = properties;
-        String strategy = properties.getSavingStrategy();
-        if ("OutputProject".equals(strategy)) {
+        ePackageGenerator = new EPackageGenerator(properties); // build generators
+        changeSavingStrategy(properties.getSavingStrategy()); // set saving strategy
+    }
+
+    /**
+     * Changes the {@link AbstractSavingStrategy} to a new one.
+     * @param strategyName is the name of the new saving strategy.
+     */
+    public void changeSavingStrategy(String strategyName) { // Add custom strategies here
+        if ("OutputProject".equals(strategyName)) {
             savingStrategy = new OutputProjectSavingStrategy(OUTPUT_PROJECT);
-        } else if ("SameProject".equals(strategy)) {
+        } else if ("SameProject".equals(strategyName)) {
             savingStrategy = new SameProjectSavingStrategy();
-        } else if ("CustomPath".equals(strategy)) {
+        } else if ("CustomPath".equals(strategyName)) {
             savingStrategy = new CustomPathSavingStrategy();
         } else {
             savingStrategy = new NewProjectSavingStrategy();
         }
-    }
-
-    /**
-     * Changes the saving strategy to a new one.
-     * @param newStrategy is the new saving strategy.
-     */
-    public void changeSavingStrategy(AbstractSavingStrategy newStrategy) {
-        if (newStrategy == null) {
-            throw new IllegalArgumentException("The new strategy cannot be null!");
-        }
-        savingStrategy = newStrategy;
     }
 
     /**
@@ -67,9 +63,8 @@ public class EcoreMetamodelGenerator {
         if (root == null || !root.isSelected()) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null or deselected: " + model.toString());
         }
-        EPackageGenerator ePackageGenerator = new EPackageGenerator(properties, model); // build generators
         projectName = model.getProjectName(); // store project name.
-        metamodel = ePackageGenerator.generate(); // generate model model.
+        metamodel = ePackageGenerator.generate(model); // generate model model.
         return metamodel;
     }
 

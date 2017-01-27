@@ -20,25 +20,24 @@ public class EPackageGenerator {
     private final SelectionHelper selector;
 
     /**
-     * Basic constructor.
+     * Basic constructor, sets the properties.
      * @param properties is the {@link ExtractionProperties} class for the extraction.
-     * @param model is the {@link IntermediateModel} instance which is used to extract a metamodel.
      */
-    public EPackageGenerator(ExtractionProperties properties, IntermediateModel model) {
+    public EPackageGenerator(ExtractionProperties properties) {
         this.properties = properties;
-        this.model = model; // set model
         ecoreFactory = EcoreFactory.eINSTANCE;
         selector = new SelectionHelper(properties); // build selection helper
     }
 
     /**
-     * Generates an Ecore metamodel from the {@link IntermediateModel} of the {@link EPackageGenerator}.
+     * Generates an Ecore metamodel from an {@link IntermediateModel}.
+     * @param model is the {@link IntermediateModel}.
      * @return the root {@link EPackage} of the Ecore metamodel.
      */
-    public EPackage generate() {
+    public EPackage generate(IntermediateModel model) {
+        this.model = model; // set model
         EPackage eRoot = generateEPackage(model.getRoot()); // generate base model:
         classifierGenerator.completeEClassifiers(); // complete EClasses
-
         selector.generateReport(); // print reports
         return eRoot; // return Ecore metamodel root package
     }
