@@ -1,17 +1,15 @@
 package eme.properties;
 
 /**
- * Enumeration for the extraction property keys and their default values.
+ * Enumeration for the extraction properties that can be interpreted as boolean values.
  * @author Timur Saglam
  */
-public enum ExtractionProperty {
+public enum BinaryProperty {
     ABSTRACT_METHODS("ExtractAbstractMethods", "true"),
     ACCESS_METHODS("ExtractAccessMethods", "false"),
     CONSTRUCTORS("ExtractConstructors", "false"),
-    DATATYPE_PACKAGE("DataTypePackageName", "DATATYPES"),
     DEFAULT_ATTRIBUTES("ExtractDefaultAttributes", "true"),
     DEFAULT_METHODS("ExtractDefaultMethods", "true"),
-    DEFAULT_PACKAGE("DefaultPackageName", "DEFAULT"),
     EMPTY_PACKAGES("ExtractEmptyPackages", "true"),
     NESTED_TYPES("ExtractNestedTypes", "false"),
     PRIVATE_ATTRIBUTES("ExtractPrivateAttributes", "false"),
@@ -19,22 +17,19 @@ public enum ExtractionProperty {
     PROTECTED_ATTRIBUTES("ExtractProtectedAttributes", "false"),
     PROTECTED_METHODS("ExtractProtectedMethods", "false"),
     PUBLIC_ATTRIBUTES("ExtractPublicAttributes", "true"),
-    SAVING_STRATEGY("SavingStrategy", "NewProject"),
     STATIC_ATTRIBUTES("ExtractStaticAttributes", "false"),
     STATIC_METHODS("ExtractStaticMethods", "false"),
     THROWABLES("ExtractThrowables", "false");
 
-    private final boolean binary;
     private final String defaultValue;
     private final String key;
 
     /**
      * Private constructor for enum values with key and default value of an extraction property.
      */
-    ExtractionProperty(String key, String defaultValue) {
+    BinaryProperty(String key, String defaultValue) {
         this.key = key;
         this.defaultValue = defaultValue;
-        binary = "true".equals(defaultValue) || "false".equals(defaultValue);
     }
 
     /**
@@ -51,13 +46,5 @@ public enum ExtractionProperty {
      */
     public String getKey() {
         return key;
-    }
-
-    /**
-     * Checks whether a extraction property can be interpreted as boolean.
-     * @return the true if it can.
-     */
-    public boolean isBinary() {
-        return binary;
     }
 }

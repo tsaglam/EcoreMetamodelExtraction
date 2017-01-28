@@ -44,23 +44,20 @@ public class ExtractionProperties {
     }
 
     /**
-     * TODO
-     * @param property
-     * @return
+     * Accessor method for binary properties.
+     * @param property is the {@link BinaryProperty}.
+     * @return the boolean value of the property.
      */
-    public boolean getBool(ExtractionProperty property) {
-        if (property.isBinary()) {
-            return Boolean.parseBoolean(properties.getProperty(property.getKey(), property.getDefaultValue()));
-        }
-        throw new IllegalArgumentException("Cannot interpret " + property + " as a boolean value.");
+    public boolean get(BinaryProperty property) {
+        return Boolean.parseBoolean(properties.getProperty(property.getKey(), property.getDefaultValue()));
     }
 
     /**
-     * TODO
-     * @param property
-     * @return
+     * Accessor method for text properties.
+     * @param property is the {@link TextProperty}.
+     * @return the String value of the property.
      */
-    public String get(ExtractionProperty property) {
+    public String get(TextProperty property) {
         return properties.getProperty(property.getKey(), property.getDefaultValue());
     }
 
@@ -80,11 +77,21 @@ public class ExtractionProperties {
     }
 
     /**
-     * TODO
-     * @param property
-     * @param value
+     * Mutator method for binary properties.
+     * @param property is the {@link TextProperty}.
+     * @param value is the String value to set.
      */
-    public void set(ExtractionProperty property, String value) {
+    public void set(BinaryProperty property, boolean value) {
+        properties.setProperty(property.getKey(), Boolean.toString(value));
+
+    }
+
+    /**
+     * Mutator method for text properties.
+     * @param property is the {@link BinaryProperty}.
+     * @param value is the boolean value to set.
+     */
+    public void set(TextProperty property, String value) {
         properties.setProperty(property.getKey(), value);
     }
 

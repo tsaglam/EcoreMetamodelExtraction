@@ -20,8 +20,8 @@ import eme.model.ExtractedType;
 import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
+import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
-import eme.properties.ExtractionProperty;
 
 /**
  * This class helps to decide whether a extracted element may be generated or not. It combines rules from a properties
@@ -49,11 +49,11 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedAttribute attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
-        boolean allowed = !attribute.isStatic() || properties.getBool(ExtractionProperty.STATIC_ATTRIBUTES);
-        allowed &= modifier != PUBLIC || properties.getBool(ExtractionProperty.PUBLIC_ATTRIBUTES);
-        allowed &= modifier != NO_MODIFIER || properties.getBool(ExtractionProperty.DEFAULT_ATTRIBUTES);
-        allowed &= modifier != PROTECTED || properties.getBool(ExtractionProperty.PROTECTED_ATTRIBUTES);
-        allowed &= modifier != PRIVATE || properties.getBool(ExtractionProperty.PRIVATE_ATTRIBUTES);
+        boolean allowed = !attribute.isStatic() || properties.get(BinaryProperty.STATIC_ATTRIBUTES);
+        allowed &= modifier != PUBLIC || properties.get(BinaryProperty.PUBLIC_ATTRIBUTES);
+        allowed &= modifier != NO_MODIFIER || properties.get(BinaryProperty.DEFAULT_ATTRIBUTES);
+        allowed &= modifier != PROTECTED || properties.get(BinaryProperty.PROTECTED_ATTRIBUTES);
+        allowed &= modifier != PRIVATE || properties.get(BinaryProperty.PRIVATE_ATTRIBUTES);
         return report("attribute", allowed);
     }
 
@@ -66,14 +66,14 @@ public class SelectionHelper {
         AccessLevelModifier modifier = method.getModifier();
         MethodType type = method.getMethodType();
         boolean allowed = method.isSelected();
-        allowed &= type != MethodType.CONSTRUCTOR || properties.getBool(ExtractionProperty.CONSTRUCTORS);
-        allowed &= !method.isAbstract() || properties.getBool(ExtractionProperty.ABSTRACT_METHODS);
-        allowed &= !method.isStatic() || properties.getBool(ExtractionProperty.STATIC_METHODS);
-        allowed &= modifier != NO_MODIFIER || properties.getBool(ExtractionProperty.DEFAULT_METHODS);
-        allowed &= modifier != PROTECTED || properties.getBool(ExtractionProperty.PROTECTED_METHODS);
-        allowed &= modifier != PRIVATE || properties.getBool(ExtractionProperty.PRIVATE_METHODS);
-        allowed &= type != MethodType.ACCESSOR || properties.getBool(ExtractionProperty.ACCESS_METHODS);
-        allowed &= type != MethodType.MUTATOR || properties.getBool(ExtractionProperty.ACCESS_METHODS);
+        allowed &= type != MethodType.CONSTRUCTOR || properties.get(BinaryProperty.CONSTRUCTORS);
+        allowed &= !method.isAbstract() || properties.get(BinaryProperty.ABSTRACT_METHODS);
+        allowed &= !method.isStatic() || properties.get(BinaryProperty.STATIC_METHODS);
+        allowed &= modifier != NO_MODIFIER || properties.get(BinaryProperty.DEFAULT_METHODS);
+        allowed &= modifier != PROTECTED || properties.get(BinaryProperty.PROTECTED_METHODS);
+        allowed &= modifier != PRIVATE || properties.get(BinaryProperty.PRIVATE_METHODS);
+        allowed &= type != MethodType.ACCESSOR || properties.get(BinaryProperty.ACCESS_METHODS);
+        allowed &= type != MethodType.MUTATOR || properties.get(BinaryProperty.ACCESS_METHODS);
         return report(type.toString(), allowed);
     }
 
@@ -84,7 +84,7 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedPackage subpackage) {
         boolean allowed = subpackage.isSelected();
-        allowed &= (!subpackage.isEmpty() || properties.getBool(ExtractionProperty.EMPTY_PACKAGES));
+        allowed &= (!subpackage.isEmpty() || properties.get(BinaryProperty.EMPTY_PACKAGES));
         return report("package", allowed);
     }
 
@@ -94,9 +94,9 @@ public class SelectionHelper {
      * @return true if it may be generated.
      */
     public boolean allowsGenerating(ExtractedType type) {
-        boolean allowed = type.isSelected() && (!type.isInnerType() || properties.getBool(ExtractionProperty.NESTED_TYPES));
+        boolean allowed = type.isSelected() && (!type.isInnerType() || properties.get(BinaryProperty.NESTED_TYPES));
         if (type instanceof ExtractedClass) {
-            allowed &= !((ExtractedClass) type).isThrowable() || properties.getBool(ExtractionProperty.THROWABLES);
+            allowed &= !((ExtractedClass) type).isThrowable() || properties.get(BinaryProperty.THROWABLES);
         }
         return report(type.getClass().getSimpleName().substring(9).toLowerCase(), allowed); // class, interface, enum
     }
