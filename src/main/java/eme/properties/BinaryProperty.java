@@ -5,38 +5,38 @@ package eme.properties;
  * @author Timur Saglam
  */
 public enum BinaryProperty {
-    ABSTRACT_METHODS("ExtractAbstractMethods", "true"),
-    ACCESS_METHODS("ExtractAccessMethods", "false"),
-    CONSTRUCTORS("ExtractConstructors", "false"),
-    DEFAULT_ATTRIBUTES("ExtractDefaultAttributes", "true"),
-    DEFAULT_METHODS("ExtractDefaultMethods", "true"),
-    EMPTY_PACKAGES("ExtractEmptyPackages", "true"),
-    NESTED_TYPES("ExtractNestedTypes", "false"),
-    PRIVATE_ATTRIBUTES("ExtractPrivateAttributes", "false"),
-    PRIVATE_METHODS("ExtractPrivateMethods", "false"),
-    PROTECTED_ATTRIBUTES("ExtractProtectedAttributes", "false"),
-    PROTECTED_METHODS("ExtractProtectedMethods", "false"),
-    PUBLIC_ATTRIBUTES("ExtractPublicAttributes", "true"),
-    STATIC_ATTRIBUTES("ExtractStaticAttributes", "false"),
-    STATIC_METHODS("ExtractStaticMethods", "false"),
-    THROWABLES("ExtractThrowables", "false");
+    ABSTRACT_METHODS("ExtractAbstractMethods", true),
+    ACCESS_METHODS("ExtractAccessMethods", false),
+    CONSTRUCTORS("ExtractConstructors", false),
+    DEFAULT_ATTRIBUTES("ExtractDefaultAttributes", true),
+    DEFAULT_METHODS("ExtractDefaultMethods", true),
+    EMPTY_PACKAGES("ExtractEmptyPackages", true),
+    NESTED_TYPES("ExtractNestedTypes", false),
+    PRIVATE_ATTRIBUTES("ExtractPrivateAttributes", false),
+    PRIVATE_METHODS("ExtractPrivateMethods", false),
+    PROTECTED_ATTRIBUTES("ExtractProtectedAttributes", false),
+    PROTECTED_METHODS("ExtractProtectedMethods", false),
+    PUBLIC_ATTRIBUTES("ExtractPublicAttributes", true),
+    STATIC_ATTRIBUTES("ExtractStaticAttributes", false),
+    STATIC_METHODS("ExtractStaticMethods", false),
+    THROWABLES("ExtractThrowables", false);
 
-    private final String defaultValue;
+    private final boolean defaultValue;
     private final String key;
 
     /**
      * Private constructor for enum values with key and default value of an extraction property.
      */
-    BinaryProperty(String key, String defaultValue) {
+    BinaryProperty(String key, boolean defaultValue) {
         this.key = key;
         this.defaultValue = defaultValue;
     }
 
     /**
-     * Accessor for the default value String.
+     * Accessor for the default value.
      * @return the default value.
      */
-    public String getDefaultValue() {
+    public boolean getDefaultValue() {
         return defaultValue;
     }
 

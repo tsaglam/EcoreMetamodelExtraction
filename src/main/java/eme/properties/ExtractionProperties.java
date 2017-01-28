@@ -49,7 +49,7 @@ public class ExtractionProperties {
      * @return the boolean value of the property.
      */
     public boolean get(BinaryProperty property) {
-        return Boolean.parseBoolean(properties.getProperty(property.getKey(), property.getDefaultValue()));
+        return Boolean.parseBoolean(properties.getProperty(property.getKey(), Boolean.toString(property.getDefaultValue())));
     }
 
     /**
