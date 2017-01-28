@@ -1,7 +1,7 @@
 package eme.codegen
 
 class WrapperGenerator {
-	
+
 	def String generate(String className, String factoryName, String packagePath) '''
 		package wrappers
 		
@@ -21,9 +21,4 @@ class WrapperGenerator {
 			}
 		}
 	'''
-	
-	def static void main(String[] args) {
-		val WrapperGenerator gen = new WrapperGenerator;
-		print(gen.generate("Account","finance","DEFAULT.finance"));
-	}
 }
