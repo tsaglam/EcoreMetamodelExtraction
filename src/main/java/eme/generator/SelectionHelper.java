@@ -84,7 +84,7 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedPackage subpackage) {
         boolean allowed = subpackage.isSelected();
-        allowed &= (!subpackage.isEmpty() || properties.get(BinaryProperty.EMPTY_PACKAGES));
+        allowed &= !subpackage.isEmpty() || properties.get(BinaryProperty.EMPTY_PACKAGES);
         return report("package", allowed);
     }
 

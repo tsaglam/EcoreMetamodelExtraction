@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * architecturware.cvs.sourceforge.net/viewvc/architecturware/oaw_v4/core.plugin/plugin.oaw4/main/src/org/openarchitectureware/wizards/EclipseHelper.java
  * @author Timur Saglam
  */
-public abstract class EMFProjectGenerator {
+public final class EMFProjectGenerator {
     private static final Logger logger = LogManager.getLogger(EMFProjectGenerator.class.getName());
 
     /**
@@ -50,27 +50,27 @@ public abstract class EMFProjectGenerator {
             project = workspace.getRoot().getProject(finalName);
         }
         IJavaProject javaProject = JavaCore.create(project);
-        IProjectDescription projectDescription = ResourcesPlugin.getWorkspace().newProjectDescription(finalName);
-        projectDescription.setLocation(null);
+        IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(finalName);
+        description.setLocation(null);
         try {
-            project.create(projectDescription, null);
+            project.create(description, null);
         } catch (CoreException exception) {
             logger.error("Error while creating project resource in workspace", exception);
         }
         List<IClasspathEntry> classpathEntries = new ArrayList<IClasspathEntry>();
-        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" });
-        ICommand java = projectDescription.newCommand();
+        description.setNatureIds(new String[] { JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" });
+        ICommand java = description.newCommand();
         java.setBuilderName(JavaCore.BUILDER_ID);
-        ICommand manifest = projectDescription.newCommand();
+        ICommand manifest = description.newCommand();
         manifest.setBuilderName("org.eclipse.pde.ManifestBuilder");
-        ICommand schema = projectDescription.newCommand();
+        ICommand schema = description.newCommand();
         schema.setBuilderName("org.eclipse.pde.SchemaBuilder");
-        ICommand oaw = projectDescription.newCommand();
-        projectDescription.setBuildSpec(new ICommand[] { java, manifest, schema, oaw });
+        ICommand oaw = description.newCommand();
+        description.setBuildSpec(new ICommand[] { java, manifest, schema, oaw });
         IFolder srcContainer = null;
         try {
             project.open(null);
-            project.setDescription(projectDescription, null);
+            project.setDescription(description, null);
             srcContainer = project.getFolder("src");
             if (!srcContainer.exists()) {
                 srcContainer.create(false, true, null);

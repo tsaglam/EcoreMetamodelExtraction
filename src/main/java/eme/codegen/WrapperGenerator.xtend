@@ -3,7 +3,7 @@ package eme.codegen
 class WrapperGenerator {
 
 	def String generate(String className, String factoryName, String packagePath) '''
-		package wrappers
+		package wrappers.«packagePath»
 		
 		import org.eclipse.xtend.lib.annotations.Delegate
 		import «packagePath».«className»

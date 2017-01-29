@@ -14,7 +14,7 @@ import eme.properties.TextProperty;
  * @author Timur Saglam
  */
 public class EPackageGenerator {
-    private EClassifierGenerator classifierGenerator;
+    private EClassifierGenerator classGenerator;
     private final EcoreFactory ecoreFactory;
     private IntermediateModel model;
     private final ExtractionProperties properties;
@@ -38,7 +38,7 @@ public class EPackageGenerator {
     public EPackage generate(IntermediateModel model) {
         this.model = model; // set model
         EPackage eRoot = generateEPackage(model.getRoot()); // generate base model:
-        classifierGenerator.completeEClassifiers(); // complete EClasses
+        classGenerator.completeEClassifiers(); // complete EClasses
         selector.generateReport(); // print reports
         return eRoot; // return Ecore metamodel root package
     }
@@ -64,7 +64,7 @@ public class EPackageGenerator {
         }
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
             if (selector.allowsGenerating(type)) { // if is allowed to
-                ePackage.getEClassifiers().add(classifierGenerator.generateEClassifier(type)); // extract
+                ePackage.getEClassifiers().add(classGenerator.generateEClassifier(type)); // extract
             }
         }
         return ePackage;
@@ -77,7 +77,7 @@ public class EPackageGenerator {
         EPackage root = ecoreFactory.createEPackage(); // create object
         root.setName(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default name
         root.setNsPrefix(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default prefix
-        classifierGenerator = new EClassifierGenerator(model, root, selector);
+        classGenerator = new EClassifierGenerator(model, root, selector);
         return root;
     }
 }

@@ -41,7 +41,7 @@ public class EcoreMetamodelGenerator {
      * Changes the {@link AbstractSavingStrategy} to a new one.
      * @param strategyName is the name of the new saving strategy.
      */
-    public void changeSavingStrategy(String strategyName) { // Add custom strategies here
+    public final void changeSavingStrategy(String strategyName) { // Add custom strategies here
         if ("OutputProject".equals(strategyName)) {
             savingStrategy = new OutputProjectSavingStrategy(OUTPUT_PROJECT);
         } else if ("SameProject".equals(strategyName)) {

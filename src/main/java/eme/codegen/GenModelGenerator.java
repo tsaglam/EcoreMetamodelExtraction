@@ -25,11 +25,11 @@ import eme.generator.saving.SavingInformation;
  * @author Timur Saglam
  */
 public class GenModelGenerator {
-    private GenJDKLevel complianceLevel;
-    private String importerID;
-    private final Logger logger = LogManager.getLogger(GenModelGenerator.class.getName());
-    private String rootExtendsClass;
-    private String xmlEncoding;
+    private final GenJDKLevel complianceLevel;
+    private final String importerID;
+    private static final Logger logger = LogManager.getLogger(GenModelGenerator.class.getName());
+    private final String rootExtendsClass;
+    private final String xmlEncoding;
 
     /**
      * Basic constructor builds GenModelGenerator with default values.

@@ -25,8 +25,8 @@ import eme.model.datatypes.WildcardStatus;
  */
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
-    private final Map<String, EClassifier> createdEClassifiers;
-    private final ExternalTypeHierarchy externalTypeHierarchy;
+    private final Map<String, EClassifier> eClassifierMap;
+    private final ExternalTypeHierarchy typeHierarchy;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
     private final Map<String, EDataType> typeMap;
@@ -34,13 +34,13 @@ public class EDataTypeGenerator {
     /**
      * Basic constructor, builds the type maps.
      * @param model is the {@link IntermediateModel}.
-     * @param createdEClassifiers is the list of created {@link EClassifier}s. This is needed to get custom data types.
-     * @param externalTypeHierarchy is the external type package hierarchy.
+     * @param eClassifierMap is the list of created {@link EClassifier}s. This is needed to get custom data types.
+     * @param typeHierarchy is the external type package hierarchy.
      */
-    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> createdEClassifiers, ExternalTypeHierarchy externalTypeHierarchy) {
+    public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> eClassifierMap, ExternalTypeHierarchy typeHierarchy) {
         this.model = model;
-        this.createdEClassifiers = createdEClassifiers; // set classifier map.
-        this.externalTypeHierarchy = externalTypeHierarchy;
+        this.eClassifierMap = eClassifierMap; // set classifier map.
+        this.typeHierarchy = typeHierarchy;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         typeMap = new HashMap<String, EDataType>(); // create type map.
         fillMap(); // fill type map.
@@ -94,14 +94,14 @@ public class EDataTypeGenerator {
     public EClassifier generate(ExtractedDataType extractedDataType) {
         EDataType eDataType;
         String fullName = extractedDataType.getFullType();
-        if (createdEClassifiers.containsKey(fullName)) { // if is custom class
-            return createdEClassifiers.get(fullName);
+        if (eClassifierMap.containsKey(fullName)) { // if is custom class
+            return eClassifierMap.get(fullName);
         } else if (typeMap.containsKey(fullName)) { // if is basic type or already known
             return typeMap.get(fullName); // access EDataType
         } else { // if its an external type
             eDataType = generateExternal(extractedDataType); // create new EDataType
             addTypeParameters(eDataType, extractedDataType); // try to guess type parameters
-            externalTypeHierarchy.add(eDataType);
+            typeHierarchy.add(eDataType);
             return eDataType;
         }
     }

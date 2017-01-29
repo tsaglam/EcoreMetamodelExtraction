@@ -28,10 +28,10 @@ import eme.model.datatypes.ExtractedAttribute;
  */
 public class EClassifierGenerator {
     private static final Logger logger = LogManager.getLogger(EClassifierGenerator.class.getName());
-    private final Map<String, EClassifier> createdEClassifiers;
+    private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final ExternalTypeHierarchy externalTypes;
-    private final Map<EClass, ExtractedType> incompleteEClasses;
+    private final Map<EClass, ExtractedType> bareEClasses;
     private final IntermediateModel model;
     private final EOperationGenerator operationGenerator;
     private final SelectionHelper selector;
@@ -47,10 +47,10 @@ public class EClassifierGenerator {
         this.model = model;
         this.selector = selector;
         ecoreFactory = EcoreFactory.eINSTANCE;
-        createdEClassifiers = new HashMap<String, EClassifier>();
-        incompleteEClasses = new HashMap<EClass, ExtractedType>();
+        eClassifierMap = new HashMap<String, EClassifier>();
+        bareEClasses = new HashMap<EClass, ExtractedType>();
         externalTypes = new ExternalTypeHierarchy(root, selector.getProperties());
-        typeGenerator = new EDataTypeGenerator(model, createdEClassifiers, externalTypes);
+        typeGenerator = new EDataTypeGenerator(model, eClassifierMap, externalTypes);
         operationGenerator = new EOperationGenerator(typeGenerator, selector);
     }
 
@@ -59,9 +59,9 @@ public class EClassifierGenerator {
      * objects and sorts the external types.
      */
     public void completeEClassifiers() {
-        for (EClass eClass : incompleteEClasses.keySet()) { // for every generated EClass
-            addAttributes(incompleteEClasses.get(eClass), eClass); // add attributes
-            operationGenerator.addOperations(incompleteEClasses.get(eClass), eClass); // add methods
+        for (EClass eClass : bareEClasses.keySet()) { // for every generated EClass
+            addAttributes(bareEClasses.get(eClass), eClass); // add attributes
+            operationGenerator.addOperations(bareEClasses.get(eClass), eClass); // add methods
         }
         externalTypes.sort();
     }
@@ -74,8 +74,8 @@ public class EClassifierGenerator {
      */
     public EClassifier generateEClassifier(ExtractedType type) {
         String fullName = type.getFullName();
-        if (createdEClassifiers.containsKey(fullName)) { // if already created:
-            return createdEClassifiers.get(fullName); // just return from map.
+        if (eClassifierMap.containsKey(fullName)) { // if already created:
+            return eClassifierMap.get(fullName); // just return from map.
         }
         EClassifier eClassifier = null;
         if (type.getClass() == ExtractedInterface.class) { // build interface:
@@ -89,7 +89,7 @@ public class EClassifierGenerator {
         }
         typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
         eClassifier.setName(type.getName()); // set name
-        createdEClassifiers.put(fullName, eClassifier); // store created classifier
+        eClassifierMap.put(fullName, eClassifier); // store created classifier
         return eClassifier;
     }
 
@@ -133,8 +133,8 @@ public class EClassifierGenerator {
     private void addSuperClass(ExtractedClass extractedClass, List<EClass> toList) {
         String superClassName = extractedClass.getSuperClass(); // super class name
         if (superClassName != null) { // if actually has super type
-            if (createdEClassifiers.containsKey(superClassName)) { // if is already created:
-                toList.add((EClass) createdEClassifiers.get(superClassName)); // get from map.
+            if (eClassifierMap.containsKey(superClassName)) { // if is already created:
+                toList.add((EClass) eClassifierMap.get(superClassName)); // get from map.
             } else if (model.contains(superClassName)) { // if is not created yet
                 toList.add((EClass) generateEClassifier(model.getType(superClassName))); // create
             } else { // else: is external type
@@ -149,8 +149,8 @@ public class EClassifierGenerator {
      */
     private void addSuperInterfaces(ExtractedType type, List<EClass> toList) {
         for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
-            if (createdEClassifiers.containsKey(interfaceName)) { // if already created
-                toList.add((EClass) createdEClassifiers.get(interfaceName)); // add
+            if (eClassifierMap.containsKey(interfaceName)) { // if already created
+                toList.add((EClass) eClassifierMap.get(interfaceName)); // add
             } else if (model.contains(interfaceName)) { // if is not created yet
                 toList.add((EClass) generateEClassifier(model.getType(interfaceName))); // create
             } else { // else: is external type
@@ -168,7 +168,7 @@ public class EClassifierGenerator {
         eClass.setAbstract(isAbstract); // set abstract or not
         eClass.setInterface(isInterface); // set interface or not
         addSuperInterfaces(extractedType, eClass.getESuperTypes()); // add super interfaces
-        incompleteEClasses.put(eClass, extractedType); // finish building later
+        bareEClasses.put(eClass, extractedType); // finish building later
         return eClass;
     }
 
@@ -190,6 +190,6 @@ public class EClassifierGenerator {
      * Checks whether a specific type name is an already created EClass.
      */
     private boolean isEClass(String typeName) {
-        return createdEClassifiers.containsKey(typeName) && !(createdEClassifiers.get(typeName) instanceof EEnum);
+        return eClassifierMap.containsKey(typeName) && !(eClassifierMap.get(typeName) instanceof EEnum);
     }
 }

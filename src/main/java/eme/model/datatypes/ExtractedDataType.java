@@ -117,7 +117,7 @@ public class ExtractedDataType {
     /**
      * Builds the full and simple name from the initial full name. The full name has to be set.
      */
-    private void buildNames() {
+    private final void buildNames() {
         typeName = fullTypeName.contains(".") ? fullTypeName.substring(fullTypeName.lastIndexOf('.') + 1) : fullTypeName;
         typeName = isArray() ? typeName + "Array" : typeName; // add "Array" if is array
         typeName = arrayDimension > 1 ? typeName + arrayDimension + "D" : typeName; // add dimension
