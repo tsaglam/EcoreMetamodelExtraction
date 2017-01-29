@@ -1,5 +1,6 @@
 package eme.generator;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
@@ -44,6 +45,34 @@ public class EPackageGenerator {
     }
 
     /**
+     * Adds subpackages to the {@link EPackage}.
+     */
+    private void addSubpackages(EPackage ePackage, ExtractedPackage extractedPackage) {
+        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
+            if (selector.allowsGenerating(subpackage)) { // if is allowed to
+                ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
+            }
+        }
+    }
+
+    /**
+     * Adds types to the package with the help of the {@link EClassifierGenerator}.
+     */
+    private void addTypes(EPackage ePackage, ExtractedPackage extractedPackage) { // TODO (HIGH) in which class?
+        for (ExtractedType type : extractedPackage.getTypes()) { // for all types
+            if (selector.allowsGenerating(type)) { // if is allowed to
+                EClassifier eClassifier = classGenerator.generateEClassifier(type); // TODO (HIGH) properties:
+                if (type.isInnerType()) { // build hierarchy for inner types and add to package
+                    String path = type.getFullName().replace(extractedPackage.getFullName() + '.', "");
+                    new EPackageHierarchy(ePackage).add(eClassifier, path.replace(".", "InnerTypes."));
+                } else { // add normal type directly
+                    ePackage.getEClassifiers().add(eClassifier); // extract
+                }
+            }
+        }
+    }
+
+    /**
      * Generates an {@link EPackage} from an {@link ExtractedPackage}. Recursively calls this method to all contained
      * elements.
      */
@@ -57,16 +86,8 @@ public class EPackageGenerator {
             ePackage.setNsPrefix(extractedPackage.getName());
         }
         ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
-        for (ExtractedPackage subpackage : extractedPackage.getSubpackages()) { // for all packages
-            if (selector.allowsGenerating(subpackage)) { // if is allowed to
-                ePackage.getESubpackages().add(generateEPackage(subpackage)); // extract
-            }
-        }
-        for (ExtractedType type : extractedPackage.getTypes()) { // for all types
-            if (selector.allowsGenerating(type)) { // if is allowed to
-                ePackage.getEClassifiers().add(classGenerator.generateEClassifier(type)); // extract
-            }
-        }
+        addSubpackages(ePackage, extractedPackage);
+        addTypes(ePackage, extractedPackage);
         return ePackage;
     }
 

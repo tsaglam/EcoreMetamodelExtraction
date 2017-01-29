@@ -56,11 +56,11 @@ public class EDataTypeGenerator {
     public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
-            if (genericArgument.isWildcard()) {
+            if (genericArgument.isWildcard()) { // wildcard argument:
                 addBound(eArgument, genericArgument);
-            } else if (isTypeParameter(genericArgument, classifier)) {
+            } else if (isTypeParameter(genericArgument, classifier)) { // type parameter argument:
                 eArgument.setETypeParameter(findTypeParameter(genericArgument, classifier));
-            } else {
+            } else { // normal generic argument:
                 eArgument.setEClassifier(generate(genericArgument));
             }
             addGenericArguments(eArgument, genericArgument, classifier); // recursively add generic arguments
