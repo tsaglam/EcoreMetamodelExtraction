@@ -9,30 +9,20 @@ import org.eclipse.emf.common.util.Monitor;
  * @author Timur Saglam
  */
 public class MonitorToLoggerAdapter implements Monitor {
-    private final Logger logger;
     private boolean canceled;
+    private final Logger logger;
 
     /**
      * Basic constructor, sets the logger.
-     * @param logger is the logger to feed the tasks and their messages.
+     * @param logger is the logger to redirect to the tasks and their messages.
      */
     public MonitorToLoggerAdapter(Logger logger) {
         this.logger = logger;
     }
 
     @Override
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    @Override
-    public void setCanceled(boolean value) {
-        canceled = value;
-    }
-
-    @Override
-    public void setBlocked(Diagnostic reason) {
-        // Does nothing.
+    public void beginTask(String name, int totalWork) {
+        redirectToLogger(name);
     }
 
     @Override
@@ -41,26 +31,7 @@ public class MonitorToLoggerAdapter implements Monitor {
     }
 
     @Override
-    public void beginTask(String name, int totalWork) {
-        if (name != null && name.length() > 1) {
-            logger.debug(name);
-        }
-    }
-
-    @Override
-    public void setTaskName(String name) {
-        // Does nothing.
-    }
-
-    @Override
-    public void subTask(String name) {
-        if (name != null && name.length() > 1) {
-            logger.debug(name);
-        }
-    }
-
-    @Override
-    public void worked(int work) {
+    public void done() {
         // Does nothing.
     }
 
@@ -70,7 +41,42 @@ public class MonitorToLoggerAdapter implements Monitor {
     }
 
     @Override
-    public void done() {
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    @Override
+    public void setBlocked(Diagnostic reason) {
+        redirectToLogger(reason.getMessage());
+    }
+
+    @Override
+    public void setCanceled(boolean value) {
+        canceled = value;
+    }
+
+    @Override
+    public void setTaskName(String name) {
+        redirectToLogger(name);
+    }
+
+    @Override
+    public void subTask(String name) {
+        redirectToLogger(name);
+    }
+
+    @Override
+    public void worked(int work) {
         // Does nothing.
+    }
+
+    /**
+     * Redirects a message to the logger if it is not null or only one character.
+     * @param message is the message that gets redirected.
+     */
+    private void redirectToLogger(String message) {
+        if (message != null && message.length() > 1) {
+            logger.debug(message);
+        }
     }
 }
