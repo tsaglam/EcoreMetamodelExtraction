@@ -14,6 +14,8 @@ public enum TextProperty {
 
     /**
      * Private constructor for enum values with key and default value of an extraction property.
+     * @param key is the key of the property.
+     * @param defaultValue is the default value of the property.
      */
     TextProperty(String key, String defaultValue) {
         this.key = key;

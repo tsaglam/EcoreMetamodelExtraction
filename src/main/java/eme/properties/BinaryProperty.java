@@ -26,6 +26,8 @@ public enum BinaryProperty {
 
     /**
      * Private constructor for enum values with key and default value of an extraction property.
+     * @param key is the key of the property.
+     * @param defaultValue is the default value of the property.
      */
     BinaryProperty(String key, boolean defaultValue) {
         this.key = key;
