@@ -39,7 +39,7 @@ public class JavaProjectParser {
         setup(project);
         try {
             parsePackages(project); // parse project
-            typeParser.parseExternalTypes(dataTypeParser.getPotentialExternalTypes()); // parse potential external
+            typeParser.parseExternalTypes(dataTypeParser.getDataTypes()); // parse potential external
         } catch (JavaModelException exception) {
             logger.fatal("Error while extracting the model.", exception);
         }

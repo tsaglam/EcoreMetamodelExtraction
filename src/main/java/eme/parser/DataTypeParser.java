@@ -40,10 +40,10 @@ public class DataTypeParser {
     }
 
     /**
-     * Returns the set of potential external types.
-     * @return the set of type names.
+     * Returns a copy of the set of potential external type names.
+     * @return the new set of type names.
      */
-    public Set<String> getPotentialExternalTypes() {
+    public Set<String> getDataTypes() {
         return new HashSet<String>(dataTypes);
     }
 
@@ -164,6 +164,10 @@ public class DataTypeParser {
      */
     private String parseUnresolved(String signature, IType declaringType) throws JavaModelException {
         String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
+        int genericIndex = typeName.lastIndexOf(Signature.C_GENERIC_START); // last index of <
+        if (genericIndex >= 0) { // if has generic arguments
+            typeName = typeName.substring(0, genericIndex); // cut generic arguments
+        }
         if (Character.isUpperCase(typeName.charAt(0)) && typeName.contains(".")) { // if is inner type
             typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
         }

@@ -12,7 +12,6 @@ import eme.model.datatypes.ExtractedTypeParameter;
  */
 public abstract class ExtractedType extends ExtractedElement {
     protected final List<ExtractedAttribute> attributes;
-    protected boolean innerType;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
     protected String superClass;
@@ -29,10 +28,6 @@ public abstract class ExtractedType extends ExtractedElement {
         methods = new LinkedList<ExtractedMethod>();
         attributes = new LinkedList<ExtractedAttribute>();
         typeParameters = new LinkedList<ExtractedTypeParameter>();
-        if (name.contains("$")) { // dollar in name means its a nested type
-            innerType = true; // set nested true and adapt parent
-            outerType = name.substring(0, name.lastIndexOf('$'));
-        }
     }
 
     /**
@@ -95,8 +90,8 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Returns the name of the outer type of an type, if that type is an inner type.
-     * @return name of the outer type, null if the type is not an inner type.
+     * Accessor for the name of the types outer type.
+     * @return the outer type name or null if it is not a inner type.
      */
     public String getOuterType() {
         return outerType;
@@ -134,6 +129,14 @@ public abstract class ExtractedType extends ExtractedElement {
      * @return true if it is a inner type.
      */
     public boolean isInnerType() {
-        return innerType;
+        return outerType != null;
+    }
+
+    /**
+     * Mutator for the name of the types outer type.
+     * @param outerType is the name.
+     */
+    public void setOuterType(String outerType) {
+        this.outerType = outerType;
     }
 }

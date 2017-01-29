@@ -26,6 +26,7 @@ import eme.model.datatypes.ExtractedAttribute;
  * @author Timur Saglam
  */
 public class JavaTypeParser {
+    private static final char ETS = '.'; // enclosing type separator // TODO (HIGH) naming
     private static final Logger logger = LogManager.getLogger(JavaTypeParser.class.getName());
     private final DataTypeParser dataTypeParser;
     private final JavaMethodParser methodParser;
@@ -75,15 +76,16 @@ public class JavaTypeParser {
         if (iType.isClass()) {
             extractedType = parseClass(iType); // create class
         } else if (iType.isInterface()) {
-            extractedType = new ExtractedInterface(iType.getFullyQualifiedName()); // create interface
+            extractedType = new ExtractedInterface(iType.getFullyQualifiedName(ETS)); // create interface
         } else if (iType.isEnum()) {
             extractedType = parseEnumeration(iType); // create enum
         }
+        parseOuterType(iType, extractedType); // parse outer type name
         dataTypeParser.parseTypeParameters(iType, extractedType);
         parseAttributes(iType, extractedType); // parse attributes
         methodParser.parseMethods(iType, extractedType); // parse methods
         for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
-            extractedType.addInterface(superInterface.getFullyQualifiedName()); // add interface
+            extractedType.addInterface(superInterface.getFullyQualifiedName(ETS)); // add interface
         }
         return extractedType;
     }
@@ -94,7 +96,7 @@ public class JavaTypeParser {
     private boolean inheritsFromThrowable(IType type) throws JavaModelException {
         ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
         for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
-            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName())) { // if is called throwable
+            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName(ETS))) { // if is called throwable
                 return true; // is true
             }
         }
@@ -122,12 +124,12 @@ public class JavaTypeParser {
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean isAbstract = Flags.isAbstract(type.getFlags());
         boolean throwable = inheritsFromThrowable(type);
-        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(), isAbstract, throwable);
+        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(ETS), isAbstract, throwable);
         newClass.setSuperClass(type.getSuperclassName());
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
             if (superType != null) { // could be null, prevents exception
-                newClass.setSuperClass(superType.getFullyQualifiedName()); // set super type name.
+                newClass.setSuperClass(superType.getFullyQualifiedName(ETS)); // set super type name.
             }
         }
         return newClass;
@@ -137,12 +139,24 @@ public class JavaTypeParser {
      * Parse an {@link IType} that has been identified as enumeration.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName());
+        ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName(ETS));
         for (IField field : type.getFields()) { // for every enumeral
             if (Flags.isEnum(field.getFlags())) {
                 newEnum.addEnumeral(field.getElementName()); // add to enum
             }
         }
         return newEnum;
+    }
+
+    /**
+     * Parses the outer type name of an {@link IType} if it has one.
+     * @param iType is the {@link IType}.
+     * @param extractedType is the {@link ExtractedType} which receives the parsed information.
+     */
+    private void parseOuterType(IType iType, ExtractedType extractedType) {
+        IType outerType = iType.getDeclaringType();
+        if (outerType != null) { // if is inner type
+            extractedType.setOuterType(outerType.getFullyQualifiedName(ETS)); // add outer type name
+        }
     }
 }
