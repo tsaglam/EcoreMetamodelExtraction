@@ -11,13 +11,6 @@ import eme.EcoreMetamodelExtraction;
 public class ExtractAndSaveHandler extends MainHandler {
 
     /**
-     * Basic constructor, calls {@link eme.handlers.MainHandler#MainHandler()}
-     */
-    public ExtractAndSaveHandler() {
-        super();
-    }
-
-    /**
      * @see eme.handlers.MainHandler#startExtraction(org.eclipse.core.resources.IProject)
      */
     @Override
