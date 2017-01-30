@@ -12,40 +12,32 @@ import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.properties.ExtractionProperties;
+
 /**
- * This class allows to build a package structure, a package hierarchy from the package paths of .
+ * This class allows to build a package structure, a {@link EPackage} hierarchy for {@link EClassifier}s.
  * @author Timur Saglam
  */
-public class EPackageHierarchy {
-    /**
-     * Creates new empty {@link EPackage} from name and super package only.
-     */
-    protected static EPackage generatePackage(String name, EPackage superPackage) {
-        EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
-        ePackage.setName(name);
-        ePackage.setNsPrefix(name);
-        ePackage.setNsURI(superPackage.getNsURI() + "." + name); // Set URI
-        superPackage.getESubpackages().add(ePackage); // add to the super package
-        return ePackage;
-    }
+public abstract class EPackageHierarchy {
+    protected final EPackage basePackage;
 
-    private final EPackage basePackage;
-
+    protected final ExtractionProperties properties;
     /**
      * Basic constructor.
      * @param basePackage is the base {@link EPackage} of hierarchy.
+     * @param properties is the instance of the {@link ExtractionProperties} class.
      */
-    public EPackageHierarchy(EPackage basePackage) {
+    public EPackageHierarchy(EPackage basePackage, ExtractionProperties properties) {
         this.basePackage = basePackage;
+        this.properties = properties;
     }
 
     /**
      * Adds an {@link EClassifier} to the package hierarchy. Generates the missing packages for the hierarchy.
      * @param classifier is the new {@link EClassifier}.
-     * @param fullName is the full name of the classifier, including the packages. This is used to build the hierarchy.
+     * @param path is an array of package names. This is used to build the hierarchy.
      */
-    public void add(EClassifier classifier, String fullName) {
-        String[] path = packagePath(fullName); // get packages from name
+    public void add(EClassifier classifier, String[] path) {
         EPackage currentPackage = basePackage; // package pointer for traversing packages
         for (int i = 0; i < path.length; i++) {  // for every package in path
             currentPackage = getSubpackage(path[i], currentPackage); // traverse through hierarchy
@@ -58,17 +50,6 @@ public class EPackageHierarchy {
      */
     public void sort() {
         sort(basePackage);
-    }
-
-    /**
-     * Extracts the package path from an name.
-     */
-    private String[] packagePath(String name) {
-        if (name.contains(".")) { // if has package path
-            return name.substring(0, name.lastIndexOf('.')).split("\\."); // get path
-        } else {
-            return new String[] {}; // no package.
-        }
     }
 
     /**
@@ -100,8 +81,11 @@ public class EPackageHierarchy {
     }
 
     /**
-     * Returns a specific sub package of an {@link EPackage}. Creates a new one from the package path if it does not
-     * exist.
+     * Checks whether an {@link EPackage} has a subpackage with a specific name. If it has, the subpackage is returned.
+     * If it has not, a new empty one is created.
+     * @param name is the name of the desired subpackage.
+     * @param superPackage is the {@link EPackage} to search in.
+     * @return the subpackage.
      */
     protected EPackage getSubpackage(String name, EPackage superPackage) {
         for (EPackage subpackage : superPackage.getESubpackages()) { // for all subpackages
@@ -110,5 +94,33 @@ public class EPackageHierarchy {
             }
         } // if wanted package does not exist:
         return generatePackage(name, superPackage); // create new
+    }
+
+    /**
+     * Extracts the package path from an full name (e.g. "java.lang.String" => ["java", "lang"]).
+     * @param name is the full name of a type.
+     * @return the array of package names.
+     */
+    protected String[] packagePath(String name) {
+        if (name.contains(".")) { // if has package path
+            return name.substring(0, name.lastIndexOf('.')).split("\\."); // get path
+        } else {
+            return new String[] {}; // no package.
+        }
+    }
+
+    /**
+     * Creates new empty {@link EPackage} from name and super package only.
+     * @param name is the name of the new empty {@link EPackage}.
+     * @param superPackage is the super package the new empty {@link EPackage} gets added to.
+     * @return the {@link EPackage}.
+     */
+    protected static EPackage generatePackage(String name, EPackage superPackage) {
+        EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
+        ePackage.setName(name);
+        ePackage.setNsPrefix(name);
+        ePackage.setNsURI(superPackage.getNsURI() + "." + name); // Set URI
+        superPackage.getESubpackages().add(ePackage); // add to the super package
+        return ePackage;
     }
 }

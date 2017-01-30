@@ -7,7 +7,7 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
 /**
- * This class allows to build a package structure, a external type package hierarchy from a list of EDataTypes.
+ * This class allows to build an external type package hierarchy from EDataTypes.
  * @author Timur Saglam
  */
 public class ExternalTypeHierarchy extends EPackageHierarchy {
@@ -15,10 +15,10 @@ public class ExternalTypeHierarchy extends EPackageHierarchy {
     /**
      * Simple constructor, builds the base for the hierarchy.
      * @param root is the root {@link EPackage} of the metamodel.
-     * @param properties is the properties class.
+     * @param properties is the instance of the {@link ExtractionProperties} class.
      */
     public ExternalTypeHierarchy(EPackage root, ExtractionProperties properties) {
-        super(generatePackage(properties.get(TextProperty.DATATYPE_PACKAGE), root));
+        super(generatePackage(properties.get(TextProperty.DATATYPE_PACKAGE), root), properties);
     }
 
     /**
@@ -26,6 +26,7 @@ public class ExternalTypeHierarchy extends EPackageHierarchy {
      * @param dataType is the new {@link EDataType}.
      */
     public void add(EDataType dataType) {
-        super.add(dataType, dataType.getInstanceTypeName());
+        String[] path = packagePath(dataType.getInstanceTypeName()); // get packages from name
+        add(dataType, path); // call super class
     }
 }
