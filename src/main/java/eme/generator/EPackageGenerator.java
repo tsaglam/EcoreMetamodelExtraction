@@ -61,10 +61,11 @@ public class EPackageGenerator {
     private void addTypes(EPackage ePackage, ExtractedPackage extractedPackage) { // TODO (HIGH) in which class?
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
             if (selector.allowsGenerating(type)) { // if is allowed to
-                EClassifier eClassifier = classGenerator.generateEClassifier(type); // TODO (HIGH) properties:
-                if (type.isInnerType()) { // build hierarchy for inner types and add to package
-                    String path = type.getFullName().replace(extractedPackage.getFullName() + '.', "");
-                    new EPackageHierarchy(ePackage).add(eClassifier, path.replace(".", "InnerTypes."));
+                EClassifier eClassifier = classGenerator.generateEClassifier(type);
+                if (type.isInnerType()) {
+                    String path = type.getFullName().replace(extractedPackage.getFullName() + '.', ""); // relative path
+                    path = path.replace(".", properties.get(TextProperty.NESTED_TYPE_PACKAGE) + "."); // custom packages
+                    new EPackageHierarchy(ePackage).add(eClassifier, path); // build inner type package structure
                 } else { // add normal type directly
                     ePackage.getEClassifiers().add(eClassifier); // extract
                 }

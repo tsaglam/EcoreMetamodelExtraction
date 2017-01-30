@@ -7,6 +7,7 @@ package eme.properties;
 public enum TextProperty {
     DATATYPE_PACKAGE("DataTypePackageName", "DATATYPES"),
     DEFAULT_PACKAGE("DefaultPackageName", "DEFAULT"),
+    NESTED_TYPE_PACKAGE("NestedTypePackageSuffix", "InnerTypes"),
     SAVING_STRATEGY("SavingStrategy", "NewProject");
 
     private final String defaultValue;
