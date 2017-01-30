@@ -12,8 +12,8 @@ public class ExtractedPackage extends ExtractedElement {
     private final List<ExtractedClass> classes;
     private final List<ExtractedEnumeration> enumerations;
     private final List<ExtractedInterface> interfaces;
-    private final List<ExtractedType> types;
     private final List<ExtractedPackage> subpackages;
+    private final List<ExtractedType> types;
     protected boolean root;
 
     /**

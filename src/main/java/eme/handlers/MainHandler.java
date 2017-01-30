@@ -24,8 +24,8 @@ import eme.EcoreMetamodelExtraction;
  * @author Timur Saglam
  */
 public abstract class MainHandler extends AbstractHandler {
-    private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private static boolean configured;
+    private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
 
     /**

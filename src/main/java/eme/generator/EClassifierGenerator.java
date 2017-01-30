@@ -28,10 +28,10 @@ import eme.model.datatypes.ExtractedAttribute;
  */
 public class EClassifierGenerator {
     private static final Logger logger = LogManager.getLogger(EClassifierGenerator.class.getName());
+    private final Map<EClass, ExtractedType> bareEClasses;
     private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final ExternalTypeHierarchy externalTypes;
-    private final Map<EClass, ExtractedType> bareEClasses;
     private final IntermediateModel model;
     private final EOperationGenerator operationGenerator;
     private final SelectionHelper selector;

@@ -26,9 +26,9 @@ import eme.model.datatypes.WildcardStatus;
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EClassifier> eClassifierMap;
-    private final ExternalTypeHierarchy typeHierarchy;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
+    private final ExternalTypeHierarchy typeHierarchy;
     private final Map<String, EDataType> typeMap;
 
     /**
