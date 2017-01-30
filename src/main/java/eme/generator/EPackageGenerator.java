@@ -1,4 +1,4 @@
-package eme.generator;
+package eme.generator; // TODO (MEDIUM) add to own subpackage
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
@@ -58,7 +58,7 @@ public class EPackageGenerator {
     /**
      * Adds types to the package with the help of the {@link EClassifierGenerator}.
      */
-    private void addTypes(EPackage ePackage, ExtractedPackage extractedPackage) { // TODO (HIGH) in which class?
+    private void addTypes(EPackage ePackage, ExtractedPackage extractedPackage) {
         for (ExtractedType type : extractedPackage.getTypes()) { // for all types
             if (selector.allowsGenerating(type)) { // if is allowed to
                 EClassifier eClassifier = classGenerator.generateEClassifier(type);
