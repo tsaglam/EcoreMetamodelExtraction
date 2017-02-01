@@ -41,7 +41,7 @@ public class JavaProjectParser {
             parsePackages(project); // parse project
             typeParser.parseExternalTypes(dataTypeParser.getDataTypes()); // parse potential external
         } catch (JavaModelException exception) {
-            logger.fatal("Error while extracting the model.", exception);
+            throw new RuntimeException("Error while extracting the model.", exception);
         }
         currentModel.sort(); // sort model content
         currentModel.print(); // print intermediate model.

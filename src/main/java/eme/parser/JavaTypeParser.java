@@ -76,13 +76,13 @@ public class JavaTypeParser {
         if (iType.isClass()) {
             extractedType = parseClass(iType); // create class
         } else if (iType.isInterface()) {
-            extractedType = new ExtractedInterface(iType.getFullyQualifiedName(DOT)); // create interface
+            extractedType = parseInterface(iType);
         } else if (iType.isEnum()) {
             extractedType = parseEnumeration(iType); // create enum
         }
         parseOuterType(iType, extractedType); // parse outer type name
         dataTypeParser.parseTypeParameters(iType, extractedType);
-        parseAttributes(iType, extractedType); // parse attributes
+        parseAttributes(iType, extractedType); // parse attribute
         methodParser.parseMethods(iType, extractedType); // parse methods
         for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
             extractedType.addInterface(superInterface.getFullyQualifiedName(DOT)); // add interface
@@ -146,6 +146,13 @@ public class JavaTypeParser {
             }
         }
         return newEnum;
+    }
+
+    /**
+     * Parses an {@link IType} that has been identified as interface.
+     */
+    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
+        return new ExtractedInterface(type.getFullyQualifiedName(DOT)); // create interface
     }
 
     /**
