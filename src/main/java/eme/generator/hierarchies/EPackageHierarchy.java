@@ -1,4 +1,4 @@
-package eme.generator;
+package eme.generator.hierarchies;
 
 import java.util.Collections;
 import java.util.HashMap;

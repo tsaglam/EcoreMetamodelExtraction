@@ -4,6 +4,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 
+import eme.generator.hierarchies.InnerTypeHierarchy;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;

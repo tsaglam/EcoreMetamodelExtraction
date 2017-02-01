@@ -1,4 +1,4 @@
-package eme.generator;
+package eme.generator.hierarchies;
 
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;

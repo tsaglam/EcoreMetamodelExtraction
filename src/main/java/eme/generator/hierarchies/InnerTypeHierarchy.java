@@ -1,4 +1,4 @@
-package eme.generator;
+package eme.generator.hierarchies;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
