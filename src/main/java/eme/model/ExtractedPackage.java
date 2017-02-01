@@ -13,7 +13,6 @@ public class ExtractedPackage extends ExtractedElement {
     private final List<ExtractedEnumeration> enumerations;
     private final List<ExtractedInterface> interfaces;
     private final List<ExtractedPackage> subpackages;
-    private final List<ExtractedType> types;
     protected boolean root;
 
     /**
@@ -26,7 +25,6 @@ public class ExtractedPackage extends ExtractedElement {
         classes = new LinkedList<ExtractedClass>();
         interfaces = new LinkedList<ExtractedInterface>();
         enumerations = new LinkedList<ExtractedEnumeration>();
-        types = new LinkedList<ExtractedType>();
         root = false;
     }
 
@@ -50,7 +48,6 @@ public class ExtractedPackage extends ExtractedElement {
         } else if (type.getClass() == ExtractedEnumeration.class) {
             enumerations.add((ExtractedEnumeration) type);
         }
-        types.add(type);
     }
 
     /**
@@ -90,6 +87,9 @@ public class ExtractedPackage extends ExtractedElement {
      * @return the types.
      */
     public List<ExtractedType> getTypes() {
+        List<ExtractedType> types = new LinkedList<ExtractedType>(enumerations);
+        types.addAll(classes);
+        types.addAll(interfaces);
         return types;
     }
 
@@ -103,7 +103,7 @@ public class ExtractedPackage extends ExtractedElement {
                 return false;
             }
         }
-        return types.isEmpty();
+        return getTypes().isEmpty();
     }
 
     /**
@@ -128,7 +128,6 @@ public class ExtractedPackage extends ExtractedElement {
         Collections.sort(interfaces);
         Collections.sort(classes);
         Collections.sort(enumerations);
-        Collections.sort(types);
         Collections.sort(subpackages);
         for (ExtractedPackage subpackage : subpackages) {
             subpackage.sort(); // sort the content of alles subpackages.

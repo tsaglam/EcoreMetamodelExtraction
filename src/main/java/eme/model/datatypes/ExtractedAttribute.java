@@ -6,20 +6,22 @@ import eme.model.IntermediateModel;
  * Represents an extracted Attribute in {@link IntermediateModel}
  * @author Timur Saglam
  */
-public class ExtractedAttribute extends ExtractedParameter {
+public class ExtractedAttribute extends ExtractedVariable {
     private boolean finalAttribute;
     private AccessLevelModifier modifier;
+
     private boolean staticAttribute;
 
     /**
      * Basic constructor, creates the attribute. Sets access level modifier to {@link AccessLevelModifier}.NO_MODIFIER,
      * final and static to false.
      * @param identifier is the name of the attribute.
-     * @param fullName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and "char".
-     * @param arrayCount is the amount of array dimensions, should be 0 if it is not an array.
+     * @param fullTypeName is the full name of type of the attribute, like "java.lang.String", "java.util.list" and
+     * "char".
+     * @param arrayDimension is the amount of array dimensions, should be 0 if it is not an array.
      */
-    public ExtractedAttribute(String identifier, String fullName, int arrayCount) {
-        super(identifier, fullName, arrayCount);
+    public ExtractedAttribute(String identifier, String fullTypeName, int arrayDimension) {
+        super(identifier, fullTypeName, arrayDimension);
         modifier = AccessLevelModifier.NO_MODIFIER;
         staticAttribute = false;
         finalAttribute = false;
@@ -50,16 +52,27 @@ public class ExtractedAttribute extends ExtractedParameter {
     }
 
     /**
-     * Sets the flags of the attribute. That means whether the attribute is static, whether the attribute is final and
-     * what access level modifier it has.
-     * @param modifier is the access level modifier.
-     * @param staticAttribute determines whether the attribute is static or not.
+     * Mutator for the property final.
      * @param finalAttribute determines whether the attribute is final or not.
      */
-    public void setFlags(AccessLevelModifier modifier, boolean staticAttribute, boolean finalAttribute) {
-        this.modifier = modifier;
-        this.staticAttribute = staticAttribute;
+    public void setFinal(boolean finalAttribute) {
         this.finalAttribute = finalAttribute;
+    }
+
+    /**
+     * Mutator for the {@link AccessLevelModifier} of the attribute.
+     * @param modifier is the access level modifier.
+     */
+    public void setModifier(AccessLevelModifier modifier) {
+        this.modifier = modifier;
+    }
+
+    /**
+     * Mutator for the property static.
+     * @param staticAttribute determines whether the attribute is static or not.
+     */
+    public void setStatic(boolean staticAttribute) {
+        this.staticAttribute = staticAttribute;
     }
 
     @Override

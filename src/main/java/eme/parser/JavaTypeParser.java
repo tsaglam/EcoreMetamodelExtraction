@@ -112,7 +112,9 @@ public class JavaTypeParser {
             int flags = field.getFlags();
             if (!Flags.isEnum(flags)) { // if is no enumeral
                 attribute = dataTypeParser.parseField(field, iType);
-                attribute.setFlags(AccessLevelModifier.getFrom(flags), Flags.isStatic(flags), Flags.isFinal(flags));
+                attribute.setFinal(Flags.isFinal(flags));
+                attribute.setStatic(Flags.isStatic(flags));
+                attribute.setModifier(AccessLevelModifier.getFrom(flags));
                 extractedType.addAttribute(attribute);
             }
         }
