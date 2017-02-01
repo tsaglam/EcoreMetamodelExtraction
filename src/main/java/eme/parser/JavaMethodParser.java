@@ -1,17 +1,14 @@
 package eme.parser;
 
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
 import eme.model.MethodType;
-import eme.model.datatypes.AccessLevelModifier;
 
 /**
  * Parser class for Java Methods (Methods, parameters, return types, throws declarations). Uses the class
@@ -40,9 +37,11 @@ public class JavaMethodParser {
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
             methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
-            int flags = method.getFlags();
             extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
-            extractedMethod.setFlags(AccessLevelModifier.getFrom(flags), parseMethodType(method), Flags.isStatic(flags), Flags.isAbstract(flags));
+            extractedMethod.setAbstract(JDTAdapter.isAbstract(method));
+            extractedMethod.setStatic(JDTAdapter.isStatic(method));
+            extractedMethod.setMethodType(parseMethodType(method));
+            extractedMethod.setModifier(JDTAdapter.getModifier(method));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(dataTypeParser.parseParameter(parameter, method));
             }
@@ -71,7 +70,7 @@ public class JavaMethodParser {
      */
     private boolean isAccessor(IMethod method) throws JavaModelException {
         if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
-            return method.getNumberOfParameters() == 0 && !Signature.SIG_VOID.equals(method.getReturnType());
+            return method.getNumberOfParameters() == 0 && !JDTAdapter.isVoid(method.getReturnType());
         }
         return false;
     }
@@ -81,7 +80,7 @@ public class JavaMethodParser {
      */
     private boolean isMutator(IMethod method) throws JavaModelException {
         if (isAccessMethod("set", method)) { // if name fits
-            return method.getNumberOfParameters() == 1 && Signature.SIG_VOID.equals(method.getReturnType());
+            return method.getNumberOfParameters() == 1 && JDTAdapter.isVoid(method.getReturnType());
         }
         return false;
     }

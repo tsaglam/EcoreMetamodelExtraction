@@ -108,18 +108,35 @@ public class ExtractedMethod extends ExtractedElement {
     }
 
     /**
-     * Sets the flags of the method. That means whether the method is static, whether the method is abstract and what
-     * access level modifier it has.
-     * @param modifier is the {@link AccessLevelModifier}.
-     * @param methodType is the {@link MethodType}.
-     * @param isStatic determines whether the method is static or not.
+     * Mutator for the property abstract.
      * @param isAbstract determines whether the method is abstract or not.
      */
-    public void setFlags(AccessLevelModifier modifier, MethodType methodType, boolean isStatic, boolean isAbstract) {
-        this.modifier = modifier;
-        this.methodType = methodType;
-        this.isStatic = isStatic;
+    public void setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
+    }
+
+    /**
+     * Mutator for the method type.
+     * @param methodType is the {@link MethodType}.
+     */
+    public void setMethodType(MethodType methodType) {
+        this.methodType = methodType;
+    }
+
+    /**
+     * Mutator for the modifier.
+     * @param modifier is the {@link AccessLevelModifier}.
+     */
+    public void setModifier(AccessLevelModifier modifier) {
+        this.modifier = modifier;
+    }
+
+    /**
+     * Mutator for the property abstract.
+     * @param isStatic determines whether the method is static or not.
+     */
+    public void setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -17,7 +16,6 @@ import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
-import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
@@ -26,7 +24,6 @@ import eme.model.datatypes.ExtractedAttribute;
  * @author Timur Saglam
  */
 public class JavaTypeParser {
-    private static final char DOT = '.'; // enclosing type separator
     private static final Logger logger = LogManager.getLogger(JavaTypeParser.class.getName());
     private final DataTypeParser dataTypeParser;
     private final JavaMethodParser methodParser;
@@ -85,7 +82,7 @@ public class JavaTypeParser {
         parseAttributes(iType, extractedType); // parse attribute
         methodParser.parseMethods(iType, extractedType); // parse methods
         for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
-            extractedType.addInterface(superInterface.getFullyQualifiedName(DOT)); // add interface
+            extractedType.addInterface(JDTAdapter.getName(superInterface)); // add interface
         }
         return extractedType;
     }
@@ -96,7 +93,7 @@ public class JavaTypeParser {
     private boolean inheritsFromThrowable(IType type) throws JavaModelException {
         ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
         for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
-            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName(DOT))) { // if is called throwable
+            if ("java.lang.Throwable".equals(superType)) { // if is called throwable
                 return true; // is true
             }
         }
@@ -109,12 +106,11 @@ public class JavaTypeParser {
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
         for (IField field : iType.getFields()) {
-            int flags = field.getFlags();
-            if (!Flags.isEnum(flags)) { // if is no enumeral
+            if (!JDTAdapter.isEnum(field)) { // if is no enumeral
                 attribute = dataTypeParser.parseField(field, iType);
-                attribute.setFinal(Flags.isFinal(flags));
-                attribute.setStatic(Flags.isStatic(flags));
-                attribute.setModifier(AccessLevelModifier.getFrom(flags));
+                attribute.setFinal(JDTAdapter.isFinal(field));
+                attribute.setStatic(JDTAdapter.isStatic(field));
+                attribute.setModifier(JDTAdapter.getModifier(field));
                 extractedType.addAttribute(attribute);
             }
         }
@@ -124,14 +120,13 @@ public class JavaTypeParser {
      * Parses an {@link IType} that has been identified as class.
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
-        boolean isAbstract = Flags.isAbstract(type.getFlags());
         boolean throwable = inheritsFromThrowable(type);
-        ExtractedClass newClass = new ExtractedClass(type.getFullyQualifiedName(DOT), isAbstract, throwable);
+        ExtractedClass newClass = new ExtractedClass(JDTAdapter.getName(type), JDTAdapter.isAbstract(type), throwable);
         newClass.setSuperClass(type.getSuperclassName());
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
             if (superType != null) { // could be null, prevents exception
-                newClass.setSuperClass(superType.getFullyQualifiedName(DOT)); // set super type name.
+                newClass.setSuperClass(JDTAdapter.getName(superType)); // set super type name.
             }
         }
         return newClass;
@@ -141,9 +136,9 @@ public class JavaTypeParser {
      * Parse an {@link IType} that has been identified as enumeration.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration newEnum = new ExtractedEnumeration(type.getFullyQualifiedName(DOT));
+        ExtractedEnumeration newEnum = new ExtractedEnumeration(JDTAdapter.getName(type));
         for (IField field : type.getFields()) { // for every enumeral
-            if (Flags.isEnum(field.getFlags())) {
+            if (JDTAdapter.isEnum(field)) {
                 newEnum.addEnumeral(field.getElementName()); // add to enum
             }
         }
@@ -154,7 +149,7 @@ public class JavaTypeParser {
      * Parses an {@link IType} that has been identified as interface.
      */
     private ExtractedInterface parseInterface(IType type) throws JavaModelException {
-        return new ExtractedInterface(type.getFullyQualifiedName(DOT)); // create interface
+        return new ExtractedInterface(JDTAdapter.getName(type)); // create interface
     }
 
     /**
@@ -165,7 +160,7 @@ public class JavaTypeParser {
     private void parseOuterType(IType iType, ExtractedType extractedType) {
         IType outerType = iType.getDeclaringType();
         if (outerType != null) { // if is inner type
-            extractedType.setOuterType(outerType.getFullyQualifiedName(DOT)); // add outer type name
+            extractedType.setOuterType(JDTAdapter.getName(outerType)); // add outer type name
         }
     }
 }

@@ -22,7 +22,6 @@ import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 import eme.model.datatypes.ExtractedTypeParameter;
-import eme.model.datatypes.WildcardStatus;
 
 /**
  * Helper class to deal with type signatures and generate data types. Parses fields, parameters and return types.
@@ -103,7 +102,7 @@ public class DataTypeParser {
      */
     public ExtractedDataType parseReturnType(IMethod iMethod) throws JavaModelException {
         String signature = iMethod.getReturnType(); // get return type signature
-        if (Signature.SIG_VOID.equals(signature)) {
+        if (JDTAdapter.isVoid(signature)) {
             return null; // void signature, no return type.
         }
         return parseDataType(signature, iMethod.getDeclaringType());
@@ -132,14 +131,14 @@ public class DataTypeParser {
      */
     private String getFullName(String typeSignature, IType declaringType) throws JavaModelException {
         String signature = Signature.getElementType(typeSignature); // remove array information
-        if (signature.charAt(0) == Signature.C_SUPER || signature.charAt(0) == Signature.C_EXTENDS) {
+        if (JDTAdapter.hasLowerBound(signature) || JDTAdapter.hasUpperBound(signature)) {
             signature = signature.substring(1); // remove wild card parameter
         }
         String name = Signature.getSignatureSimpleName(signature); // get plain name
         String[][] resolvedType = declaringType.resolveType(name); // resolve type from name
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             name = Signature.toQualifiedName(resolvedType[0]); // generate full qualified name
-        } else if (signature.charAt(0) == Signature.C_UNRESOLVED) { // if not resolved
+        } else if (JDTAdapter.isUnresolved(signature)) { // if not resolved
             name = parseUnresolved(signature, declaringType); // try to resolve manually
         }
         dataTypes.add(name); // potential external type
@@ -153,7 +152,7 @@ public class DataTypeParser {
         List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
         for (String argumentSignature : Signature.getTypeArguments(signature)) { // for every argument
             ExtractedDataType genericArgument = parseDataType(argumentSignature, declaringType);
-            genericArgument.setWildcardStatus(parseWildcardStatus(argumentSignature));
+            genericArgument.setWildcardStatus(JDTAdapter.getWildcardStatus(argumentSignature));
             genericArguments.add(genericArgument); // add generic type argument
         }
         return genericArguments;
@@ -172,20 +171,6 @@ public class DataTypeParser {
             typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
         }
         return typeName; // return type name
-    }
-
-    /**
-     * Parses signature and return {@link WildcardStatus}.
-     */
-    private WildcardStatus parseWildcardStatus(String signature) {
-        if (signature.contains(Character.toString(Signature.C_STAR))) {
-            return WildcardStatus.WILDCARD; // is unbound wildcard
-        } else if (signature.contains(Character.toString(Signature.C_EXTENDS))) {
-            return WildcardStatus.WILDCARD_UPPER_BOUND; // is upper bound wildcard
-        } else if (signature.contains(Character.toString(Signature.C_SUPER))) {
-            return WildcardStatus.WILDCARD_LOWER_BOUND; // is lower bound wildcard
-        } // else:
-        return WildcardStatus.NO_WILDCARD; // is no wildcard
     }
 
     /**
