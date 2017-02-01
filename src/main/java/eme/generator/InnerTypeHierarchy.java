@@ -29,7 +29,7 @@ public class InnerTypeHierarchy extends EPackageHierarchy {
      */
     public void add(EClassifier classifier, String relativePath) {
         String suffix = properties.get(TextProperty.NESTED_TYPE_PACKAGE);
-        String path = relativePath.replace(".",  suffix + "."); // rename packages to avoid name collisions
+        String path = relativePath.replace(".", suffix + "."); // rename packages to avoid name collisions
         super.add(classifier, packagePath(path)); // add with split up path
     }
 }

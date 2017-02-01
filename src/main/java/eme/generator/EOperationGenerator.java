@@ -56,11 +56,7 @@ public class EOperationGenerator {
      */
     private void addExceptions(EOperation operation, ExtractedMethod method, EClass eClass) {
         for (ExtractedDataType exception : method.getThrowsDeclarations()) {
-            if (typeGenerator.isTypeParameter(exception, eClass)) {
-                operation.getEGenericExceptions().add(typeGenerator.generateGeneric(exception, eClass));
-            } else {
-                operation.getEExceptions().add(typeGenerator.generate(exception)); // generate data type
-            }
+            typeGenerator.addException(operation, exception, eClass);
         }
     }
 
@@ -72,12 +68,7 @@ public class EOperationGenerator {
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
             eParameter = ecoreFactory.createEParameter();
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            if (typeGenerator.isTypeParameter(parameter, eClass)) {
-                eParameter.setEGenericType(typeGenerator.generateGeneric(parameter, eClass));
-            } else {
-                eParameter.setEType(typeGenerator.generate(parameter)); // generate data type
-            }
-            typeGenerator.addGenericArguments(eParameter.getEGenericType(), parameter, eClass); // add generic
+            typeGenerator.addDataType(eParameter, parameter, eClass); // add type type to EParameter
             list.add(eParameter);
         }
     }
@@ -87,12 +78,7 @@ public class EOperationGenerator {
      */
     private void addReturnType(EOperation operation, ExtractedDataType returnType, EClass eClass) {
         if (returnType != null) { // if return type is not void
-            if (typeGenerator.isTypeParameter(returnType, eClass)) {
-                operation.setEGenericType(typeGenerator.generateGeneric(returnType, eClass));
-            } else {
-                operation.setEType(typeGenerator.generate(returnType)); // generate data type
-            }
-            typeGenerator.addGenericArguments(operation.getEGenericType(), returnType, eClass);
+            typeGenerator.addDataType(operation, returnType, eClass); // add type to return type
         }
     }
 }

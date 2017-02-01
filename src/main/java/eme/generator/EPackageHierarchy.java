@@ -22,6 +22,7 @@ public abstract class EPackageHierarchy {
     protected final EPackage basePackage;
 
     protected final ExtractionProperties properties;
+
     /**
      * Basic constructor.
      * @param basePackage is the base {@link EPackage} of hierarchy.

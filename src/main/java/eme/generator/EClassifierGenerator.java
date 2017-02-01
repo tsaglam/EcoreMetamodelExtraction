@@ -117,12 +117,7 @@ public class EClassifierGenerator {
     private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
         feature.setName(attribute.getIdentifier()); // set name
         feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
-        if (typeGenerator.isTypeParameter(attribute, eClass)) { // if is generic
-            feature.setEGenericType(typeGenerator.generateGeneric(attribute, eClass)); // generate generic
-        } else {
-            feature.setEType(typeGenerator.generate(attribute)); // generate data type
-        }
-        typeGenerator.addGenericArguments(feature.getEGenericType(), attribute, eClass); // add generic args
+        typeGenerator.addDataType(feature, attribute, eClass); // add type to attribute
         eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
 
