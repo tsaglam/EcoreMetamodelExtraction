@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -164,7 +164,7 @@ public class DataTypeParser {
     private String parseUnresolved(String signature, IType declaringType) throws JavaModelException {
         String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
         int genericIndex = typeName.lastIndexOf(Signature.C_GENERIC_START); // last index of <
-        if (genericIndex >= 0) { // if has generic arguments
+        if (genericIndex >= 0) { // if has generic arguments // TODO (HIGH) use Util class
             typeName = typeName.substring(0, genericIndex); // cut generic arguments
         }
         if (Character.isUpperCase(typeName.charAt(0)) && typeName.contains(".")) { // if is inner type
@@ -178,19 +178,19 @@ public class DataTypeParser {
      * find the IType.
      */
     private IType resolveFromImports(String typeName, IType declaringType) throws JavaModelException {
+        ICompilationUnit unit = declaringType.getCompilationUnit();
         IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // project
-        Matcher matcher = Pattern.compile("import\\s+([a-zA_Z_][\\.\\w]*);").matcher(declaringType.getCompilationUnit().getSource());
-        IType resolvedType = null;
-        while (matcher.find()) { // search for package declarations in the source code
-            if (matcher.group().contains(typeName.split("\\.")[0])) { // if package declaration contains outer type
-                resolvedType = project.findType(matcher.group().substring(7, matcher.group().lastIndexOf('.')), typeName);
+        for (IImportDeclaration importDeclaration : unit.getImports()) {
+            String name = importDeclaration.getElementName();
+            if (name.contains(typeName.split("\\.")[0])) { // if package declaration contains outer type
+                IType resolvedType = project.findType(name.substring(0, name.lastIndexOf('.')), typeName);
                 if (resolvedType != null) { // if resolved an existing IType
                     logger.warn("Resolved type " + resolvedType.getFullyQualifiedName('.') + " through import declarations!");
-                    break; // was successful
+                    return resolvedType; // was successful
                 }
             }
         }
-        return resolvedType;
+        return null;
     }
 
     /**
