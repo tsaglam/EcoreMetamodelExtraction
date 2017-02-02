@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedEnumeral;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
@@ -139,7 +140,7 @@ public class JavaTypeParser {
         ExtractedEnumeration newEnum = new ExtractedEnumeration(JDTAdapter.getName(type));
         for (IField field : type.getFields()) { // for every enumeral
             if (JDTAdapter.isEnum(field)) {
-                newEnum.addEnumeral(field.getElementName()); // add to enum
+                newEnum.addEnumeral(new ExtractedEnumeral(field.getElementName())); // add to enum
             }
         }
         return newEnum;

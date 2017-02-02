@@ -8,7 +8,7 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedEnumeration extends ExtractedType {
-    private final List<String> enumerals;
+    private final List<ExtractedEnumeral> enumerals;
 
     /**
      * Basic constructor.
@@ -16,14 +16,14 @@ public class ExtractedEnumeration extends ExtractedType {
      */
     public ExtractedEnumeration(String fullName) {
         super(fullName);
-        enumerals = new LinkedList<String>();
+        enumerals = new LinkedList<ExtractedEnumeral>();
     }
 
     /**
      * Adds a enumeral to the enum
      * @param enumeral is the new value.
      */
-    public void addEnumeral(String enumeral) {
+    public void addEnumeral(ExtractedEnumeral enumeral) {
         enumerals.add(enumeral);
     }
 
@@ -31,7 +31,7 @@ public class ExtractedEnumeration extends ExtractedType {
      * accessor for the enumerals of the enumeration.
      * @return the enumerals in a List.
      */
-    public List<String> getEnumerals() {
+    public List<ExtractedEnumeral> getEnumerals() {
         return enumerals;
     }
 }

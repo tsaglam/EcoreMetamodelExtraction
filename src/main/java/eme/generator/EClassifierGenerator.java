@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.generator.hierarchies.ExternalTypeHierarchy;
 import eme.model.ExtractedClass;
+import eme.model.ExtractedEnumeral;
 import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
@@ -173,9 +174,9 @@ public class EClassifierGenerator {
      */
     private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
         EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
-        for (String enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
+        for (ExtractedEnumeral enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
             EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
-            literal.setName(enumeral); // set name.
+            literal.setName(enumeral.getName()); // set name.
             literal.setValue(eEnum.getELiterals().size()); // set ordinal.
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
