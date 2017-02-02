@@ -16,7 +16,7 @@ public class IntermediateModel {
     private final Set<ExtractedType> externalTypes;
     private final Set<ExtractedPackage> packages;
     private final String projectName;
-    private ExtractedPackage rootElement;
+    private ExtractedPackage rootPackage;
     private final Set<ExtractedType> types;
 
     /**
@@ -36,8 +36,8 @@ public class IntermediateModel {
      */
     public void add(ExtractedPackage newPackage) {
         if (packages.add(newPackage)) {
-            if (rootElement == null) { // if it is the first package
-                rootElement = newPackage; // add as root
+            if (rootPackage == null) { // if it is the first package
+                rootPackage = newPackage; // add as root
                 newPackage.setAsRoot(); // mark as root
             } else {
                 getPackage(newPackage.getParentName()).add(newPackage);
@@ -138,7 +138,7 @@ public class IntermediateModel {
      * @return the root package.
      */
     public ExtractedPackage getRoot() {
-        return rootElement;
+        return rootPackage;
     }
 
     /**
@@ -166,7 +166,7 @@ public class IntermediateModel {
      * every subpackage.
      */
     public void sort() {
-        rootElement.sort();
+        rootPackage.sort();
     }
 
     @Override
