@@ -36,12 +36,12 @@ public class JavaMethodParser {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = JDTAdapter.getName(iType) + "." + method.getElementName(); // build name
+            methodName = Util.getName(iType) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
-            extractedMethod.setAbstract(JDTAdapter.isAbstract(method));
-            extractedMethod.setStatic(JDTAdapter.isStatic(method));
+            extractedMethod.setAbstract(Util.isAbstract(method));
+            extractedMethod.setStatic(Util.isStatic(method));
             extractedMethod.setMethodType(parseMethodType(method));
-            extractedMethod.setModifier(JDTAdapter.getModifier(method));
+            extractedMethod.setModifier(Util.getModifier(method));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(dataTypeParser.parseParameter(parameter, method));
             }
@@ -70,7 +70,7 @@ public class JavaMethodParser {
      */
     private boolean isAccessor(IMethod method) throws JavaModelException {
         if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
-            return method.getNumberOfParameters() == 0 && !JDTAdapter.isVoid(method.getReturnType());
+            return method.getNumberOfParameters() == 0 && !Util.isVoid(method.getReturnType());
         }
         return false;
     }
@@ -80,7 +80,7 @@ public class JavaMethodParser {
      */
     private boolean isMutator(IMethod method) throws JavaModelException {
         if (isAccessMethod("set", method)) { // if name fits
-            return method.getNumberOfParameters() == 1 && JDTAdapter.isVoid(method.getReturnType());
+            return method.getNumberOfParameters() == 1 && Util.isVoid(method.getReturnType());
         }
         return false;
     }

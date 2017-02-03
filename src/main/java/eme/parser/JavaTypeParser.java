@@ -83,7 +83,7 @@ public class JavaTypeParser {
         parseAttributes(iType, extractedType); // parse attribute
         methodParser.parseMethods(iType, extractedType); // parse methods
         for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
-            extractedType.addInterface(JDTAdapter.getName(superInterface)); // add interface
+            extractedType.addInterface(Util.getName(superInterface)); // add interface
         }
         return extractedType;
     }
@@ -107,11 +107,11 @@ public class JavaTypeParser {
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
         for (IField field : iType.getFields()) {
-            if (!JDTAdapter.isEnum(field)) { // if is no enumeral
+            if (!Util.isEnum(field)) { // if is no enumeral
                 attribute = dataTypeParser.parseField(field, iType);
-                attribute.setFinal(JDTAdapter.isFinal(field));
-                attribute.setStatic(JDTAdapter.isStatic(field));
-                attribute.setModifier(JDTAdapter.getModifier(field));
+                attribute.setFinal(Util.isFinal(field));
+                attribute.setStatic(Util.isStatic(field));
+                attribute.setModifier(Util.getModifier(field));
                 extractedType.addAttribute(attribute);
             }
         }
@@ -122,12 +122,12 @@ public class JavaTypeParser {
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean throwable = inheritsFromThrowable(type);
-        ExtractedClass newClass = new ExtractedClass(JDTAdapter.getName(type), JDTAdapter.isAbstract(type), throwable);
+        ExtractedClass newClass = new ExtractedClass(Util.getName(type), Util.isAbstract(type), throwable);
         newClass.setSuperClass(type.getSuperclassName());
         if (type.getSuperclassName() != null) { // get full super type:
             IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
             if (superType != null) { // could be null, prevents exception
-                newClass.setSuperClass(JDTAdapter.getName(superType)); // set super type name.
+                newClass.setSuperClass(Util.getName(superType)); // set super type name.
             }
         }
         return newClass;
@@ -137,9 +137,9 @@ public class JavaTypeParser {
      * Parse an {@link IType} that has been identified as enumeration.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration newEnum = new ExtractedEnumeration(JDTAdapter.getName(type));
+        ExtractedEnumeration newEnum = new ExtractedEnumeration(Util.getName(type));
         for (IField field : type.getFields()) { // for every enumeral
-            if (JDTAdapter.isEnum(field)) {
+            if (Util.isEnum(field)) {
                 newEnum.addEnumeral(new ExtractedEnumeral(field.getElementName())); // add to enum
             }
         }
@@ -150,7 +150,7 @@ public class JavaTypeParser {
      * Parses an {@link IType} that has been identified as interface.
      */
     private ExtractedInterface parseInterface(IType type) throws JavaModelException {
-        return new ExtractedInterface(JDTAdapter.getName(type)); // create interface
+        return new ExtractedInterface(Util.getName(type)); // create interface
     }
 
     /**
@@ -161,7 +161,7 @@ public class JavaTypeParser {
     private void parseOuterType(IType iType, ExtractedType extractedType) {
         IType outerType = iType.getDeclaringType();
         if (outerType != null) { // if is inner type
-            extractedType.setOuterType(JDTAdapter.getName(outerType)); // add outer type name
+            extractedType.setOuterType(Util.getName(outerType)); // add outer type name
         }
     }
 }

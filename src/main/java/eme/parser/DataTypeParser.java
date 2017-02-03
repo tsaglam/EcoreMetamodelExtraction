@@ -102,7 +102,7 @@ public class DataTypeParser {
      */
     public ExtractedDataType parseReturnType(IMethod iMethod) throws JavaModelException {
         String signature = iMethod.getReturnType(); // get return type signature
-        if (JDTAdapter.isVoid(signature)) {
+        if (Util.isVoid(signature)) {
             return null; // void signature, no return type.
         }
         return parseDataType(signature, iMethod.getDeclaringType());
@@ -131,14 +131,14 @@ public class DataTypeParser {
      */
     private String getFullName(String typeSignature, IType declaringType) throws JavaModelException {
         String signature = Signature.getElementType(typeSignature); // remove array information
-        if (JDTAdapter.hasLowerBound(signature) || JDTAdapter.hasUpperBound(signature)) {
+        if (Util.hasLowerBound(signature) || Util.hasUpperBound(signature)) {
             signature = signature.substring(1); // remove wild card parameter
         }
         String name = Signature.getSignatureSimpleName(signature); // get plain name
         String[][] resolvedType = declaringType.resolveType(name); // resolve type from name
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             name = Signature.toQualifiedName(resolvedType[0]); // generate full qualified name
-        } else if (JDTAdapter.isUnresolved(signature)) { // if not resolved
+        } else if (Util.isUnresolved(signature)) { // if not resolved
             name = parseUnresolved(signature, declaringType); // try to resolve manually
         }
         dataTypes.add(name); // potential external type
@@ -152,7 +152,7 @@ public class DataTypeParser {
         List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
         for (String argumentSignature : Signature.getTypeArguments(signature)) { // for every argument
             ExtractedDataType genericArgument = parseDataType(argumentSignature, declaringType);
-            genericArgument.setWildcardStatus(JDTAdapter.getWildcardStatus(argumentSignature));
+            genericArgument.setWildcardStatus(Util.getWildcardStatus(argumentSignature));
             genericArguments.add(genericArgument); // add generic type argument
         }
         return genericArguments;
@@ -163,10 +163,10 @@ public class DataTypeParser {
      */
     private String parseUnresolved(String signature, IType declaringType) throws JavaModelException {
         String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
-        if (JDTAdapter.hasGenericArguments(typeName)) {
-            typeName = JDTAdapter.removeGenericArguments(typeName);
+        if (Util.hasGenericArguments(typeName)) {
+            typeName = Util.removeGenericArguments(typeName);
         }
-        if (JDTAdapter.isNestedType(typeName)) { // if is inner type
+        if (Util.isNestedType(typeName)) { // if is inner type
             typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
         }
         return typeName; // return type name
@@ -184,7 +184,7 @@ public class DataTypeParser {
             if (name.contains(typeName.split("\\.")[0])) { // if package declaration contains outer type
                 IType resolvedType = project.findType(name.substring(0, name.lastIndexOf('.')), typeName);
                 if (resolvedType != null) { // if resolved an existing IType
-                    logger.warn("Resolved type " + JDTAdapter.getName(resolvedType) + " through import declarations!");
+                    logger.warn("Resolved type " + Util.getName(resolvedType) + " through import declarations!");
                     return resolvedType; // was successful
                 }
             }
@@ -196,14 +196,14 @@ public class DataTypeParser {
      * Tries to resolve an unresolved inner type (e.g. "Outer.Inner") and return its full name.
      */
     private String resolveInnerType(String innerType, IType declaringType) throws JavaModelException {
-        String declaringTypeName = JDTAdapter.getName(declaringType); // get parent name
+        String declaringTypeName = Util.getName(declaringType); // get parent name
         IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // try to resolve locally:
         IType iType = project.findType(declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')), innerType);
         if (iType == null) { // if still not resolved
             iType = resolveFromImports(innerType, declaringType); // try resolving it from import
         }
         if (iType != null) { // if is resolved (one way or another)
-            return JDTAdapter.getName(iType); // return resolved name
+            return Util.getName(iType); // return resolved name
         } // else:
         return innerType; // return unresolved name
     }
