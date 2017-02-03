@@ -1,4 +1,4 @@
-package eme.generator; // TODO (MEDIUM) add to own subpackage
+package eme.generator;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;

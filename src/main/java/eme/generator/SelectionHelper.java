@@ -14,6 +14,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import eme.model.ExtractedClass;
+import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
@@ -70,6 +72,7 @@ public class SelectionHelper {
         allowed &= !method.isAbstract() || properties.get(BinaryProperty.ABSTRACT_METHODS);
         allowed &= !method.isStatic() || properties.get(BinaryProperty.STATIC_METHODS);
         allowed &= modifier != NO_MODIFIER || properties.get(BinaryProperty.DEFAULT_METHODS);
+        allowed &= modifier != PUBLIC || properties.get(BinaryProperty.PUBLIC_METHODS);
         allowed &= modifier != PROTECTED || properties.get(BinaryProperty.PROTECTED_METHODS);
         allowed &= modifier != PRIVATE || properties.get(BinaryProperty.PRIVATE_METHODS);
         allowed &= type != MethodType.ACCESSOR || properties.get(BinaryProperty.ACCESS_METHODS);
@@ -96,7 +99,12 @@ public class SelectionHelper {
     public boolean allowsGenerating(ExtractedType type) {
         boolean allowed = type.isSelected() && (!type.isInnerType() || properties.get(BinaryProperty.NESTED_TYPES));
         if (type instanceof ExtractedClass) {
+            allowed &= properties.get(BinaryProperty.CLASSES);
             allowed &= !((ExtractedClass) type).isThrowable() || properties.get(BinaryProperty.THROWABLES);
+        } else if (type instanceof ExtractedInterface) {
+            allowed &= properties.get(BinaryProperty.INTERFACES);
+        } else if (type instanceof ExtractedEnumeration) {
+            allowed &= properties.get(BinaryProperty.ENUMS);
         }
         return report(type.getClass().getSimpleName().substring(9).toLowerCase(), allowed); // class, interface, enum
     }
