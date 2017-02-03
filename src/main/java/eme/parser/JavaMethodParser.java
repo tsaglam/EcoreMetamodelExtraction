@@ -36,7 +36,7 @@ public class JavaMethodParser {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = iType.getFullyQualifiedName() + "." + method.getElementName(); // build name
+            methodName = JDTAdapter.getName(iType) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
             extractedMethod.setAbstract(JDTAdapter.isAbstract(method));
             extractedMethod.setStatic(JDTAdapter.isStatic(method));

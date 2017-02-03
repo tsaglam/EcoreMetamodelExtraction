@@ -34,6 +34,10 @@ public final class JDTAdapter { // TODO (HIGH) comments
         return AccessLevelModifier.NO_MODIFIER;
     }
 
+    public static String getName(IType iType) {
+        return iType.getFullyQualifiedName('.');
+    }
+
     public static WildcardStatus getWildcardStatus(String signature) {
         if (signature.contains(Character.toString(Signature.C_STAR))) {
             return WildcardStatus.WILDCARD; // is unbound wildcard
@@ -43,6 +47,10 @@ public final class JDTAdapter { // TODO (HIGH) comments
             return WildcardStatus.WILDCARD_LOWER_BOUND; // is lower bound wildcard
         } // else:
         return WildcardStatus.NO_WILDCARD; // is no wildcard
+    }
+
+    public static boolean hasGenericArguments(String name) {
+        return name.contains(Character.toString(Signature.C_GENERIC_START));
     }
 
     public static boolean hasLowerBound(String signature) {
@@ -65,6 +73,10 @@ public final class JDTAdapter { // TODO (HIGH) comments
         return Flags.isFinal(iMember.getFlags());
     }
 
+    public static boolean isNestedType(String name) {
+        return name.contains(".") && Character.isUpperCase(name.charAt(0));
+    }
+
     public static boolean isStatic(IMember iMember) throws JavaModelException {
         return Flags.isStatic(iMember.getFlags());
     }
@@ -77,7 +89,7 @@ public final class JDTAdapter { // TODO (HIGH) comments
         return Signature.SIG_VOID.equals(signature);
     }
 
-    public static String getName(IType iType) {
-        return iType.getFullyQualifiedName('.');
+    public static String removeGenericArguments(String name) {
+        return name.substring(0, name.lastIndexOf(Signature.C_GENERIC_START));
     }
 }
