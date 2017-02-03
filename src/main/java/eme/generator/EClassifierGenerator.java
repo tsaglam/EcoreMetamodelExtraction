@@ -1,7 +1,6 @@
 package eme.generator;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
@@ -84,7 +83,7 @@ public class EClassifierGenerator {
             eClassifier = generateEClass(type, true, true);
         } else if (type.getClass() == ExtractedClass.class) { // build class:
             EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false);
-            addSuperClass((ExtractedClass) type, eClass.getESuperTypes()); // get superclass
+            addSuperClass((ExtractedClass) type, eClass); // get superclass
             eClassifier = eClass;
         } else if (type.getClass() == ExtractedEnumeration.class) { // build enum:
             eClassifier = generateEEnum((ExtractedEnumeration) type);
@@ -124,36 +123,23 @@ public class EClassifierGenerator {
     }
 
     /**
-     * Adds the super class of an extracted class to a specific List of EClasses. If the extracted class has no super
+     * Adds the super class of an extracted class to a specific {@link EClass}. If the extracted class has no super
      * class, no EClass is added.
      */
-    private void addSuperClass(ExtractedClass extractedClass, List<EClass> toList) {
-        String superClassName = extractedClass.getSuperClass(); // super class name
-        if (superClassName != null) { // if actually has super type
-            if (eClassifierMap.containsKey(superClassName)) { // if is already created:
-                toList.add((EClass) eClassifierMap.get(superClassName)); // get from map.
-            } else if (model.contains(superClassName)) { // if is not created yet
-                toList.add((EClass) generateEClassifier(model.getType(superClassName))); // create
-            } else { // else: is external type
-                logger.warn("Could not use external type as super class: " + superClassName);
-            }
+    private void addSuperClass(ExtractedClass extractedClass, EClass eClass) {
+        String className = extractedClass.getSuperClass(); // super class name
+        if (className != null) { // if actually has super type
+            generateSuperType(className, eClass);
         }
     }
 
     /**
-     * Adds all super interfaces of an extracted type to a specific List of EClasses. If the extracted type has no super
+     * Adds all super interfaces of an extracted type to a specific {@link EClass}. If the extracted type has no super
      * interfaces, no EClass is added.
      */
-    private void addSuperInterfaces(ExtractedType type, List<EClass> toList) {
+    private void addSuperInterfaces(ExtractedType type, EClass eClass) {
         for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
-            if (eClassifierMap.containsKey(interfaceName)) { // if already created
-                toList.add((EClass) eClassifierMap.get(interfaceName)); // add
-            } else if (model.contains(interfaceName)) { // if is not created yet
-                toList.add((EClass) generateEClassifier(model.getType(interfaceName))); // create
-            } else { // else: is external type
-                logger.warn("Could not use external type as super interface: " + interfaceName);
-            }
-
+            generateSuperType(interfaceName, eClass);
         }
     }
 
@@ -164,7 +150,7 @@ public class EClassifierGenerator {
         EClass eClass = ecoreFactory.createEClass(); // build object
         eClass.setAbstract(isAbstract); // set abstract or not
         eClass.setInterface(isInterface); // set interface or not
-        addSuperInterfaces(extractedType, eClass.getESuperTypes()); // add super interfaces
+        addSuperInterfaces(extractedType, eClass); // add super interfaces
         bareEClasses.put(eClass, extractedType); // finish building later
         return eClass;
     }
@@ -181,6 +167,23 @@ public class EClassifierGenerator {
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
         return eEnum;
+    }
+
+    /**
+     * Generates (if allowed) an {@link EClassifier} from an name which refers to a {@link ExtractedType} in the model
+     * and adds it as super type to an {@link EClass}.
+     */
+    private void generateSuperType(String name, EClass subClass) { // TODO generic super types
+        if (eClassifierMap.containsKey(name)) { // if is already created:
+            subClass.getESuperTypes().add((EClass) eClassifierMap.get(name)); // get from map.
+        } else if (model.contains(name)) { // if is not created yet
+            ExtractedType type = model.getType(name);
+            if (selector.allowsGenerating(type)) {
+                subClass.getESuperTypes().add((EClass) generateEClassifier(type)); // create new
+            }
+        } else { // else: is external type
+            logger.warn("Could not use external type as super type: " + name);
+        }
     }
 
     /**
