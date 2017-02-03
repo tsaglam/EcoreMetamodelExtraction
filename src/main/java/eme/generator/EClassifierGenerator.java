@@ -78,7 +78,7 @@ public class EClassifierGenerator {
         if (eClassifierMap.containsKey(fullName)) { // if already created:
             return eClassifierMap.get(fullName); // just return from map.
         }
-        EClassifier eClassifier = null;
+        EClassifier eClassifier = null; // TODO (LOW) Use visitor pattern.
         if (type.getClass() == ExtractedInterface.class) { // build interface:
             eClassifier = generateEClass(type, true, true);
         } else if (type.getClass() == ExtractedClass.class) { // build class:
