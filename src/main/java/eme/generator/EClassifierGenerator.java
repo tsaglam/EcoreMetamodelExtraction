@@ -70,6 +70,17 @@ public class EClassifierGenerator {
     }
 
     /**
+     * Generates a dummy {@link EClassifier}
+     * @param name is the name of the dummy.
+     * @return the dummy {@link EClassifier}, which is an empty {@link EClass}.
+     */
+    public EClassifier generateDummy(String name) {
+        EClass eClass = ecoreFactory.createEClass();
+        eClass.setName(name);
+        return eClass;
+    }
+
+    /**
      * Generates an {@link EClassifier} from an ExtractedType, if the type was not already generated.
      * @param type is the {@link ExtractedType}.
      * @return the {@link EClassifier}, which is either an {@link EClass}, an {@link ExtractedInterface} or an

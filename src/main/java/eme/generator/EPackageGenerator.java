@@ -8,6 +8,7 @@ import eme.generator.hierarchies.InnerTypeHierarchy;
 import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
+import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
@@ -100,6 +101,10 @@ public class EPackageGenerator {
         root.setName(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default name
         root.setNsPrefix(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default prefix
         classGenerator = new EClassifierGenerator(model, root, selector);
+        if (properties.get(BinaryProperty.DUMMY_CLASS)) {
+            EClassifier dummy = classGenerator.generateDummy(properties.get(TextProperty.DUMMY_NAME));
+            root.getEClassifiers().add(dummy); // add dummy class to root package
+        }
         return root;
     }
 }
