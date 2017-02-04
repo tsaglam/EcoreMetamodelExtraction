@@ -57,7 +57,6 @@ public class JavaTypeParser {
                 IType iType = project.findType(typeName); // try to find IType
                 if (iType != null) { // if IType was found:
                     model.addExternal(parseType(iType));  // add to model.
-                    logger.info("Resolved external type " + typeName);
                 }
             }
         }
