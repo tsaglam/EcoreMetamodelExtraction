@@ -142,7 +142,7 @@ public class DataTypeParser {
             name = parseUnresolved(signature, declaringType); // try to resolve manually
         }
         dataTypes.add(name); // potential external type
-        return name; // return type name
+        return name;
     }
 
     /**

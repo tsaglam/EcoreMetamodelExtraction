@@ -11,6 +11,7 @@ public enum BinaryProperty {
     CONSTRUCTORS("ExtractConstructors", false),
     DEFAULT_ATTRIBUTES("ExtractDefaultAttributes", true),
     DEFAULT_METHODS("ExtractDefaultMethods", true),
+    DUMMY_CLASS("GenerateDummyClass", false),
     EMPTY_PACKAGES("ExtractEmptyPackages", true),
     ENUMS("ExtractEnumerations", true),
     INTERFACES("ExtractInterfaces", true),
