@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -22,6 +23,7 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedDataType;
 
 /**
  * Generator class for Ecore classifiers ({@link EClassifier}s).
@@ -127,9 +129,9 @@ public class EClassifierGenerator {
      * class, no EClass is added.
      */
     private void addSuperClass(ExtractedClass extractedClass, EClass eClass) {
-        String className = extractedClass.getSuperClass(); // super class name
-        if (className != null) { // if actually has super type
-            generateSuperType(className, eClass);
+        ExtractedDataType superClass = extractedClass.getSuperClass(); // super class name
+        if (superClass != null) { // if actually has super type
+            addSuperType(superClass, eClass);
         }
     }
 
@@ -138,8 +140,26 @@ public class EClassifierGenerator {
      * interfaces, no EClass is added.
      */
     private void addSuperInterfaces(ExtractedType type, EClass eClass) {
-        for (String interfaceName : type.getSuperInterfaces()) { // for all interfaces
-            generateSuperType(interfaceName, eClass);
+        for (ExtractedDataType superInterface : type.getSuperInterfaces()) { // for all interfaces
+            addSuperType(superInterface, eClass);
+        }
+    }
+
+    /**
+     * Generates (if allowed) an {@link EClassifier} from an name which refers to a {@link ExtractedType} in the model
+     * and adds it as super type to an {@link EClass}.
+     */
+    private void addSuperType(ExtractedDataType superType, EClass eClass) {
+        String superTypeName = superType.getFullType();
+        if (eClassifierMap.containsKey(superTypeName)) { // if is already created:
+            generateSuperRelation(eClass, (EClass) eClassifierMap.get(superTypeName), superType);
+        } else if (model.contains(superTypeName)) { // if is not created yet
+            ExtractedType extractedType = model.getType(superTypeName);
+            if (selector.allowsGenerating(extractedType)) { // is super type can be generated
+                generateSuperRelation(eClass, (EClass) generateEClassifier(extractedType), superType);
+            }
+        } else { // is external type
+            logger.warn("Could not use external type as super type: " + superTypeName);
         }
     }
 
@@ -170,19 +190,15 @@ public class EClassifierGenerator {
     }
 
     /**
-     * Generates (if allowed) an {@link EClassifier} from an name which refers to a {@link ExtractedType} in the model
-     * and adds it as super type to an {@link EClass}.
+     * Generates a super type relation from an {@link EClass} to another {@link EClass}, with the help of an
+     * {@link ExtractedDataType} of the super type.
      */
-    private void generateSuperType(String name, EClass subClass) { // TODO generic super types
-        if (eClassifierMap.containsKey(name)) { // if is already created:
-            subClass.getESuperTypes().add((EClass) eClassifierMap.get(name)); // get from map.
-        } else if (model.contains(name)) { // if is not created yet
-            ExtractedType type = model.getType(name);
-            if (selector.allowsGenerating(type)) {
-                subClass.getESuperTypes().add((EClass) generateEClassifier(type)); // create new
+    private void generateSuperRelation(EClass subType, EClass superType, ExtractedDataType dataType) {
+        subType.getESuperTypes().add(superType); // add inheritance relation.
+        for (EGenericType genericType : subType.getEGenericSuperTypes()) {
+            if (genericType.getEClassifier().equals(superType)) { // find related EGenericType
+                typeGenerator.addGenericArguments(genericType, dataType, subType); // add arguments
             }
-        } else { // else: is external type
-            logger.warn("Could not use external type as super type: " + name);
         }
     }
 

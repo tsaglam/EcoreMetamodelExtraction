@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
 
 /**
@@ -14,8 +15,8 @@ public abstract class ExtractedType extends ExtractedElement {
     protected final List<ExtractedAttribute> attributes;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
-    protected String superClass;
-    protected final List<String> superInterfaces;
+    protected ExtractedDataType superClass;
+    protected final List<ExtractedDataType> superInterfaces;
     protected final List<ExtractedTypeParameter> typeParameters;
 
     /**
@@ -24,7 +25,7 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public ExtractedType(String fullName) {
         super(fullName);
-        superInterfaces = new LinkedList<String>();
+        superInterfaces = new LinkedList<ExtractedDataType>();
         methods = new LinkedList<ExtractedMethod>();
         attributes = new LinkedList<ExtractedAttribute>();
         typeParameters = new LinkedList<ExtractedTypeParameter>();
@@ -39,10 +40,10 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * Adds an interface name as super interface.
+     * Adds an interface as super interface.
      * @param superInterface is the new super interface.
      */
-    public void addInterface(String superInterface) {
+    public void addInterface(ExtractedDataType superInterface) {
         superInterfaces.add(superInterface);
     }
 
@@ -98,10 +99,10 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * accessor for the list of super interface names.
-     * @return the list of super interface names.
+     * accessor for the list of super interfaces.
+     * @return the list of super interfaces.
      */
-    public List<String> getSuperInterfaces() {
+    public List<ExtractedDataType> getSuperInterfaces() {
         return superInterfaces;
     }
 

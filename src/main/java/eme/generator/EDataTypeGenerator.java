@@ -28,11 +28,11 @@ import eme.model.datatypes.WildcardStatus;
  */
 public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
+    private final Map<String, EDataType> dataTypeMap;
     private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final IntermediateModel model;
     private final ExternalTypeHierarchy typeHierarchy;
-    private final Map<String, EDataType> dataTypeMap;
 
     /**
      * Basic constructor, builds the type maps.
@@ -81,6 +81,28 @@ public class EDataTypeGenerator {
     }
 
     /**
+     * Adds all generic arguments from an {@link ExtractedDataType} to an {@link EGenericType}. For all generic
+     * arguments add their generic arguments recursively.
+     * @param genericType is the generic type of an attribute, a parameter or a method.
+     * @param dataType is the extracted data type, an attribute, a parameter or a return type.
+     * @param classifier is the EClassifier which owns the generic type.
+     */
+    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
+        for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
+            EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
+            if (genericArgument.isWildcard()) { // wildcard argument:
+                addWildcardBound(eArgument, genericArgument);
+            } else if (isTypeParameter(genericArgument, classifier)) { // type parameter argument:
+                eArgument.setETypeParameter(findTypeParameter(genericArgument, classifier));
+            } else { // normal generic argument:
+                eArgument.setEClassifier(generate(genericArgument));
+            }
+            addGenericArguments(eArgument, genericArgument, classifier); // recursively add generic arguments
+            genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
+        }
+    }
+
+    /**
      * Adds all generic type parameters from an {@link ExtractedType} to a {@link EClassifier}.
      * @param classifier is the classifier.
      * @param type is the extracted type.
@@ -92,22 +114,6 @@ public class EDataTypeGenerator {
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
             addBounds(eTypeParameter, typeParameter, classifier);
             classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
-        }
-    }
-
-    /**
-     * Adds a bound to an wild card argument if it has one.
-     */
-    private void addWildcardBound(EGenericType eArgument, ExtractedDataType genericArgument) {
-        WildcardStatus status = genericArgument.getWildcardStatus(); // get wild card status
-        if (status != WildcardStatus.WILDCARD) { // if has bounds:
-            EGenericType bound = ecoreFactory.createEGenericType(); // create bound
-            bound.setEClassifier(generate(genericArgument)); // generate bound type
-            if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
-                eArgument.setELowerBound(bound); // add lower bound
-            } else {
-                eArgument.setEUpperBound(bound); // add upper bound
-            }
         }
     }
 
@@ -131,24 +137,18 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all generic arguments from an {@link ExtractedDataType} to an {@link EGenericType}. For all generic
-     * arguments add their generic arguments recursively.
-     * @param genericType is the generic type of an attribute, a parameter or a method.
-     * @param dataType is the extracted data type, an attribute, a parameter or a return type.
-     * @param classifier is the EClassifier which owns the generic type.
+     * Adds a bound to an wild card argument if it has one.
      */
-    private void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
-        for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
-            EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
-            if (genericArgument.isWildcard()) { // wildcard argument:
-                addWildcardBound(eArgument, genericArgument);
-            } else if (isTypeParameter(genericArgument, classifier)) { // type parameter argument:
-                eArgument.setETypeParameter(findTypeParameter(genericArgument, classifier));
-            } else { // normal generic argument:
-                eArgument.setEClassifier(generate(genericArgument));
+    private void addWildcardBound(EGenericType eArgument, ExtractedDataType genericArgument) {
+        WildcardStatus status = genericArgument.getWildcardStatus(); // get wild card status
+        if (status != WildcardStatus.WILDCARD) { // if has bounds:
+            EGenericType bound = ecoreFactory.createEGenericType(); // create bound
+            bound.setEClassifier(generate(genericArgument)); // generate bound type
+            if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
+                eArgument.setELowerBound(bound); // add lower bound
+            } else {
+                eArgument.setEUpperBound(bound); // add upper bound
             }
-            addGenericArguments(eArgument, genericArgument, classifier); // recursively add generic arguments
-            genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
         }
     }
 

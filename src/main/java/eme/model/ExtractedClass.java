@@ -1,5 +1,7 @@
 package eme.model;
 
+import eme.model.datatypes.ExtractedDataType;
+
 /**
  * Represents a class in the {@link IntermediateModel}.
  * @author Timur Saglam
@@ -21,10 +23,10 @@ public class ExtractedClass extends ExtractedType {
     }
 
     /**
-     * accessor for the name of the super class.
-     * @return the super class name.
+     * accessor for the super class.
+     * @return the super class.
      */
-    public String getSuperClass() {
+    public ExtractedDataType getSuperClass() {
         return superClass;
     }
 
@@ -48,7 +50,7 @@ public class ExtractedClass extends ExtractedType {
      * Sets a class as super class.
      * @param superClass is the new super class.
      */
-    public void setSuperClass(String superClass) {
+    public void setSuperClass(ExtractedDataType superClass) {
         this.superClass = superClass;
     }
 }

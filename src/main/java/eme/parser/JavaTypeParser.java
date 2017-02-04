@@ -82,8 +82,8 @@ public class JavaTypeParser {
         dataTypeParser.parseTypeParameters(iType, extractedType);
         parseAttributes(iType, extractedType); // parse attribute
         methodParser.parseMethods(iType, extractedType); // parse methods
-        for (IType superInterface : iType.newSupertypeHierarchy(null).getSuperInterfaces(iType)) {
-            extractedType.addInterface(Util.getName(superInterface)); // add interface
+        for (String signature : iType.getSuperInterfaceTypeSignatures()) {
+            extractedType.addInterface(dataTypeParser.parseDataType(signature, iType)); // add interface
         }
         return extractedType;
     }
@@ -123,12 +123,9 @@ public class JavaTypeParser {
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean throwable = inheritsFromThrowable(type);
         ExtractedClass newClass = new ExtractedClass(Util.getName(type), Util.isAbstract(type), throwable);
-        newClass.setSuperClass(type.getSuperclassName());
-        if (type.getSuperclassName() != null) { // get full super type:
-            IType superType = type.newSupertypeHierarchy(null).getSuperclass(type);
-            if (superType != null) { // could be null, prevents exception
-                newClass.setSuperClass(Util.getName(superType)); // set super type name.
-            }
+        String signature = type.getSuperclassTypeSignature();
+        if (signature != null) { // get full super type:
+            newClass.setSuperClass(dataTypeParser.parseDataType(signature, type)); // set super
         }
         return newClass;
     }
