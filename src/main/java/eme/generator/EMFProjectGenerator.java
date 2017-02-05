@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * @author Timur Saglam
  */
 public final class EMFProjectGenerator {
+    private final static String JAVA_VERSION = "JavaSE-1.8";
     private static final Logger logger = LogManager.getLogger(EMFProjectGenerator.class.getName());
 
     /**
@@ -81,7 +82,7 @@ public final class EMFProjectGenerator {
         IClasspathEntry srcClasspathEntry = JavaCore.newSourceEntry(srcContainer.getFullPath());
         classpathEntries.add(0, srcClasspathEntry);
         classpathEntries.add(JavaCore.newContainerEntry(
-                new Path("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7")));
+                new Path("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + JAVA_VERSION)));
         classpathEntries.add(JavaCore.newContainerEntry(new Path("org.eclipse.pde.core.requiredPlugins")));
         try {
             javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]), null);
@@ -116,6 +117,7 @@ public final class EMFProjectGenerator {
         manifestContent.append("Bundle-Version: 1.0.0\n");
         manifestContent.append("Require-Bundle: ");
         manifestContent.append(" org.eclipse.emf.ecore\n");
+        manifestContent.append("Bundle-RequiredExecutionEnvironment: " + JAVA_VERSION + "\n");
         IFolder metaInf = project.getFolder("META-INF");
         try {
             metaInf.create(false, true, null);
