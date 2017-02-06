@@ -1,5 +1,12 @@
 package eme.extractor;
 
+import static eme.extractor.JDTUtil.getModifier;
+import static eme.extractor.JDTUtil.getName;
+import static eme.extractor.JDTUtil.isAbstract;
+import static eme.extractor.JDTUtil.isEnum;
+import static eme.extractor.JDTUtil.isFinal;
+import static eme.extractor.JDTUtil.isStatic;
+
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
@@ -106,11 +113,11 @@ public class JavaTypeExtractor {
     private void parseAttributes(IType iType, ExtractedType extractedType) throws JavaModelException {
         ExtractedAttribute attribute;
         for (IField field : iType.getFields()) {
-            if (!Util.isEnum(field)) { // if is no enumeral
+            if (!isEnum(field)) { // if is no enumeral
                 attribute = dataTypeParser.parseField(field, iType);
-                attribute.setFinal(Util.isFinal(field));
-                attribute.setStatic(Util.isStatic(field));
-                attribute.setModifier(Util.getModifier(field));
+                attribute.setFinal(isFinal(field));
+                attribute.setStatic(isStatic(field));
+                attribute.setModifier(getModifier(field));
                 extractedType.addAttribute(attribute);
             }
         }
@@ -121,7 +128,7 @@ public class JavaTypeExtractor {
      */
     private ExtractedClass parseClass(IType type) throws JavaModelException {
         boolean throwable = inheritsFromThrowable(type);
-        ExtractedClass newClass = new ExtractedClass(Util.getName(type), Util.isAbstract(type), throwable);
+        ExtractedClass newClass = new ExtractedClass(getName(type), isAbstract(type), throwable);
         String signature = type.getSuperclassTypeSignature();
         if (signature != null) { // get full super type:
             newClass.setSuperClass(dataTypeParser.parseDataType(signature, type)); // set super
@@ -133,9 +140,9 @@ public class JavaTypeExtractor {
      * Parse an {@link IType} that has been identified as enumeration.
      */
     private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration newEnum = new ExtractedEnumeration(Util.getName(type));
+        ExtractedEnumeration newEnum = new ExtractedEnumeration(getName(type));
         for (IField field : type.getFields()) { // for every enumeral
-            if (Util.isEnum(field)) {
+            if (isEnum(field)) {
                 newEnum.addEnumeral(new ExtractedEnumeral(field.getElementName())); // add to enum
             }
         }
@@ -146,7 +153,7 @@ public class JavaTypeExtractor {
      * Parses an {@link IType} that has been identified as interface.
      */
     private ExtractedInterface parseInterface(IType type) throws JavaModelException {
-        return new ExtractedInterface(Util.getName(type)); // create interface
+        return new ExtractedInterface(getName(type)); // create interface
     }
 
     /**
@@ -157,7 +164,7 @@ public class JavaTypeExtractor {
     private void parseOuterType(IType iType, ExtractedType extractedType) {
         IType outerType = iType.getDeclaringType();
         if (outerType != null) { // if is inner type
-            extractedType.setOuterType(Util.getName(outerType)); // add outer type name
+            extractedType.setOuterType(getName(outerType)); // add outer type name
         }
     }
 }

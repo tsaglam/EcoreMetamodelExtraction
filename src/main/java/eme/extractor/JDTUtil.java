@@ -13,12 +13,12 @@ import eme.model.datatypes.WildcardStatus;
  * This class offers simple adapter methods for JDT functionality that makes code unreadable.
  * @author Timur Saglam
  */
-public final class Util {
+public final class JDTUtil {
 
     /**
      * Private constructor for static class.
      */
-    private Util() {
+    private JDTUtil() {
         // Private constructor.
     }
 

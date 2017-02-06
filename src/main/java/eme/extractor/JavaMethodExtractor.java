@@ -1,5 +1,11 @@
 package eme.extractor;
 
+import static eme.extractor.JDTUtil.getModifier;
+import static eme.extractor.JDTUtil.getName;
+import static eme.extractor.JDTUtil.isAbstract;
+import static eme.extractor.JDTUtil.isStatic;
+import static eme.extractor.JDTUtil.isVoid;
+
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -36,12 +42,12 @@ public class JavaMethodExtractor {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : iType.getMethods()) { // for every method
-            methodName = Util.getName(iType) + "." + method.getElementName(); // build name
+            methodName = getName(iType) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
-            extractedMethod.setAbstract(Util.isAbstract(method));
-            extractedMethod.setStatic(Util.isStatic(method));
+            extractedMethod.setAbstract(isAbstract(method));
+            extractedMethod.setStatic(isStatic(method));
             extractedMethod.setMethodType(parseMethodType(method));
-            extractedMethod.setModifier(Util.getModifier(method));
+            extractedMethod.setModifier(getModifier(method));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
                 extractedMethod.addParameter(dataTypeParser.parseParameter(parameter, method));
             }
@@ -70,7 +76,7 @@ public class JavaMethodExtractor {
      */
     private boolean isAccessor(IMethod method) throws JavaModelException {
         if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
-            return method.getNumberOfParameters() == 0 && !Util.isVoid(method.getReturnType());
+            return method.getNumberOfParameters() == 0 && !isVoid(method.getReturnType());
         }
         return false;
     }
@@ -80,7 +86,7 @@ public class JavaMethodExtractor {
      */
     private boolean isMutator(IMethod method) throws JavaModelException {
         if (isAccessMethod("set", method)) { // if name fits
-            return method.getNumberOfParameters() == 1 && Util.isVoid(method.getReturnType());
+            return method.getNumberOfParameters() == 1 && isVoid(method.getReturnType());
         }
         return false;
     }
