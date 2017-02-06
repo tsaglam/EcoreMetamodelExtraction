@@ -1,22 +1,29 @@
 package eme.generator;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
+import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
- * Generator class for Ecore operations ({@link EOperation}s).
+ * Generator class for Ecore members ({@link EOperation}s and {@link EStructuralFeature}s).
  * @author Timur Saglam
  */
-public class EOperationGenerator {
+public class MemberGenerator {
+    private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final SelectionHelper selector;
     private final EDataTypeGenerator typeGenerator;
@@ -25,11 +32,32 @@ public class EOperationGenerator {
      * Basic constructor.
      * @param typeGenerator is the {@link EDataTypeGenerator} instance.
      * @param selector is the {@link SelectionHelper} instance.
+     * @param eClassifierMap is the map of already generated {@link EClassifier}s.
      */
-    public EOperationGenerator(EDataTypeGenerator typeGenerator, SelectionHelper selector) {
+    public MemberGenerator(EDataTypeGenerator typeGenerator, SelectionHelper selector, Map<String, EClassifier> eClassifierMap) {
         this.typeGenerator = typeGenerator;
         this.selector = selector;
+        this.eClassifierMap = eClassifierMap;
         ecoreFactory = EcoreFactory.eINSTANCE;
+    }
+
+    /**
+     * Adds the attributes of an {@link ExtractedType} to a specific {@link EClass}.
+     * @param extractedType is the {@link ExtractedType}
+     * @param eClass is the {@link EClass}.
+     */
+    public void addAttributes(ExtractedType extractedType, EClass eClass) {
+        for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
+            if (selector.allowsGenerating(attribute)) { // if should be generated:
+                if (isEClass(attribute.getFullType())) { // if type is EClass:
+                    EReference reference = ecoreFactory.createEReference();
+                    reference.setContainment(true); // has to be contained
+                    addStructuralFeature(reference, attribute, eClass); // build reference
+                } else { // if it is EDataType:
+                    addStructuralFeature(ecoreFactory.createEAttribute(), attribute, eClass); // build attribute
+                }
+            }
+        }
     }
 
     /**
@@ -80,5 +108,23 @@ public class EOperationGenerator {
         if (returnType != null) { // if return type is not void
             typeGenerator.addDataType(operation, returnType, eClass); // add type to return type
         }
+    }
+
+    /**
+     * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
+     * EAttribute or an EReference. If it is a reference, containment has to be set manually.
+     */
+    private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
+        feature.setName(attribute.getIdentifier()); // set name
+        feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
+        typeGenerator.addDataType(feature, attribute, eClass); // add type to attribute
+        eClass.getEStructuralFeatures().add(feature); // add feature to EClass
+    }
+
+    /**
+     * Checks whether a specific type name is an already created EClass.
+     */
+    private boolean isEClass(String typeName) {
+        return eClassifierMap.containsKey(typeName) && !(eClassifierMap.get(typeName) instanceof EEnum);
     }
 }

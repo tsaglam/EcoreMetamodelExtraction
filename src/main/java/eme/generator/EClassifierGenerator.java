@@ -11,8 +11,6 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.generator.hierarchies.ExternalTypeHierarchy;
@@ -22,7 +20,6 @@ import eme.model.ExtractedEnumeration;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
-import eme.model.datatypes.ExtractedAttribute;
 import eme.model.datatypes.ExtractedDataType;
 
 /**
@@ -35,8 +32,8 @@ public class EClassifierGenerator {
     private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final ExternalTypeHierarchy externalTypes;
+    private final MemberGenerator memberGenerator;
     private final IntermediateModel model;
-    private final EOperationGenerator operationGenerator;
     private final SelectionHelper selector;
     private final EDataTypeGenerator typeGenerator;
 
@@ -54,7 +51,7 @@ public class EClassifierGenerator {
         bareEClasses = new HashMap<EClass, ExtractedType>();
         externalTypes = new ExternalTypeHierarchy(root, selector.getProperties());
         typeGenerator = new EDataTypeGenerator(model, eClassifierMap, externalTypes);
-        operationGenerator = new EOperationGenerator(typeGenerator, selector);
+        memberGenerator = new MemberGenerator(typeGenerator, selector, eClassifierMap);
     }
 
     /**
@@ -63,8 +60,8 @@ public class EClassifierGenerator {
      */
     public void completeEClassifiers() {
         for (EClass eClass : bareEClasses.keySet()) { // for every generated EClass
-            addAttributes(bareEClasses.get(eClass), eClass); // add attributes
-            operationGenerator.addOperations(bareEClasses.get(eClass), eClass); // add methods
+            memberGenerator.addAttributes(bareEClasses.get(eClass), eClass); // add attributes
+            memberGenerator.addOperations(bareEClasses.get(eClass), eClass); // add methods
         }
         externalTypes.sort();
     }
@@ -105,34 +102,6 @@ public class EClassifierGenerator {
         eClassifier.setName(type.getName()); // set name
         eClassifierMap.put(fullName, eClassifier); // store created classifier
         return eClassifier;
-    }
-
-    /**
-     * Adds the attributes of an extracted type to a specific List of EStructuralFeatures.
-     */
-    private void addAttributes(ExtractedType extractedType, EClass eClass) {
-        for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
-            if (selector.allowsGenerating(attribute)) { // if should be generated:
-                if (isEClass(attribute.getFullType())) { // if type is EClass:
-                    EReference reference = ecoreFactory.createEReference();
-                    reference.setContainment(true); // has to be contained
-                    addStructuralFeature(reference, attribute, eClass); // build reference
-                } else { // if it is EDataType:
-                    addStructuralFeature(ecoreFactory.createEAttribute(), attribute, eClass); // build attribute
-                }
-            }
-        }
-    }
-
-    /**
-     * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
-     * EAttribute or an EReference. If it is a reference, containment has to be set manually.
-     */
-    private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
-        feature.setName(attribute.getIdentifier()); // set name
-        feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
-        typeGenerator.addDataType(feature, attribute, eClass); // add type to attribute
-        eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
 
     /**
@@ -211,12 +180,5 @@ public class EClassifierGenerator {
                 typeGenerator.addGenericArguments(genericType, dataType, subType); // add arguments
             }
         }
-    }
-
-    /**
-     * Checks whether a specific type name is an already created EClass.
-     */
-    private boolean isEClass(String typeName) {
-        return eClassifierMap.containsKey(typeName) && !(eClassifierMap.get(typeName) instanceof EEnum);
     }
 }
