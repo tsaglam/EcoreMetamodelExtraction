@@ -1,4 +1,4 @@
-package eme.parser;
+package eme.extractor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,17 +18,17 @@ import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 
 /**
- * The class analyzes java projects and builds intermediate models with the help of the {@link JavaTypeParser},
- * {@link JavaMethodParser} and {@link DataTypeParser}.
+ * The class analyzes java projects and builds intermediate models with the help of the {@link JavaTypeExtractor},
+ * {@link JavaMethodExtractor} and {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
-public class JavaProjectParser {
-    private static final Logger logger = LogManager.getLogger(JavaProjectParser.class.getName());
+public class JavaProjectExtractor {
+    private static final Logger logger = LogManager.getLogger(JavaProjectExtractor.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
-    private DataTypeParser dataTypeParser;
+    private DataTypeExtractor dataTypeParser;
     private int packageCounter;
-    private JavaTypeParser typeParser;
+    private JavaTypeExtractor typeParser;
 
     /**
      * Analyzes a {@link IJavaProject} and builds an {@link IntermediateModel}.
@@ -105,8 +105,8 @@ public class JavaProjectParser {
      */
     private void setup(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
-        dataTypeParser = new DataTypeParser();
-        typeParser = new JavaTypeParser(currentModel, project, dataTypeParser);
+        dataTypeParser = new DataTypeExtractor();
+        typeParser = new JavaTypeExtractor(currentModel, project, dataTypeParser);
         logger.info("Started parsing the project...");
     }
 }

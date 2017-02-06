@@ -1,4 +1,4 @@
-package eme.parser;
+package eme.extractor;
 
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
@@ -12,17 +12,17 @@ import eme.model.MethodType;
 
 /**
  * Parser class for Java Methods (Methods, parameters, return types, throws declarations). Uses the class
- * {@link DataTypeParser}.
+ * {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
-public class JavaMethodParser {
-    private final DataTypeParser dataTypeParser;
+public class JavaMethodExtractor {
+    private final DataTypeExtractor dataTypeParser;
 
     /**
      * Basic constructor.
      * @param dataTypeParser sets the DataTypeParser.
      */
-    public JavaMethodParser(DataTypeParser dataTypeParser) {
+    public JavaMethodExtractor(DataTypeExtractor dataTypeParser) {
         this.dataTypeParser = dataTypeParser;
     }
 

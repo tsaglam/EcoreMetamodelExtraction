@@ -10,10 +10,10 @@ import org.eclipse.jdt.core.JavaCore;
 
 import eme.codegen.CodeGenerator;
 import eme.codegen.GenModelGenerator;
+import eme.extractor.JavaProjectExtractor;
 import eme.generator.EcoreMetamodelGenerator;
 import eme.generator.saving.SavingInformation;
 import eme.model.IntermediateModel;
-import eme.parser.JavaProjectParser;
 import eme.properties.ExtractionProperties;
 
 /**
@@ -24,17 +24,17 @@ public class EcoreMetamodelExtraction {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelExtraction.class.getName());
     private final EcoreMetamodelGenerator generator;
     private final GenModelGenerator genModelGenerator;
-    private final JavaProjectParser parser;
+    private final JavaProjectExtractor parser;
     private final ExtractionProperties properties;
 
     /**
-     * Basic constructor. Builds {@link JavaProjectParser}, {@link EcoreMetamodelGenerator} and
+     * Basic constructor. Builds {@link JavaProjectExtractor}, {@link EcoreMetamodelGenerator} and
      * {@link GenModelGenerator}.
      */
     public EcoreMetamodelExtraction() {
         logger.info("Started EME...");
         properties = new ExtractionProperties();
-        parser = new JavaProjectParser();
+        parser = new JavaProjectExtractor();
         generator = new EcoreMetamodelGenerator(properties);
         genModelGenerator = new GenModelGenerator();
     }

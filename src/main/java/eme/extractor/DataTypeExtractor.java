@@ -1,4 +1,4 @@
-package eme.parser;
+package eme.extractor;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,14 +27,14 @@ import eme.model.datatypes.ExtractedTypeParameter;
  * Helper class to deal with type signatures and generate data types. Parses fields, parameters and return types.
  * @author Timur Saglam
  */
-public class DataTypeParser {
-    private static final Logger logger = LogManager.getLogger(DataTypeParser.class.getName());
+public class DataTypeExtractor {
+    private static final Logger logger = LogManager.getLogger(DataTypeExtractor.class.getName());
     private final Set<String> dataTypes;
 
     /**
      * Basic constructor, sets the set for the potential external types.
      */
-    public DataTypeParser() {
+    public DataTypeExtractor() {
         this.dataTypes = new HashSet<String>();
     }
 

@@ -1,4 +1,4 @@
-package eme.parser;
+package eme.extractor;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMember;

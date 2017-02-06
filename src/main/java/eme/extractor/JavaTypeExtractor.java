@@ -1,4 +1,4 @@
-package eme.parser;
+package eme.extractor;
 
 import java.util.Set;
 
@@ -20,14 +20,14 @@ import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
- * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodParser} and the
- * {@link DataTypeParser}.
+ * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodExtractor} and the
+ * {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
-public class JavaTypeParser {
-    private static final Logger logger = LogManager.getLogger(JavaTypeParser.class.getName());
-    private final DataTypeParser dataTypeParser;
-    private final JavaMethodParser methodParser;
+public class JavaTypeExtractor {
+    private static final Logger logger = LogManager.getLogger(JavaTypeExtractor.class.getName());
+    private final DataTypeExtractor dataTypeParser;
+    private final JavaMethodExtractor methodParser;
     private final IntermediateModel model;
     private final IJavaProject project;
 
@@ -37,11 +37,11 @@ public class JavaTypeParser {
      * @param project sets the current project, which is parsed.
      * @param dataTypeParser sets the DataTypeParser.
      */
-    public JavaTypeParser(IntermediateModel model, IJavaProject project, DataTypeParser dataTypeParser) {
+    public JavaTypeExtractor(IntermediateModel model, IJavaProject project, DataTypeExtractor dataTypeParser) {
         this.dataTypeParser = dataTypeParser;
         this.model = model;
         this.project = project;
-        methodParser = new JavaMethodParser(dataTypeParser);
+        methodParser = new JavaMethodExtractor(dataTypeParser);
     }
 
     /**
