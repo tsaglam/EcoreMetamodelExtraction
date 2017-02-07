@@ -15,5 +15,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.importer.ecore;bundle-version="2.8.0",
  org.eclipse.emf.codegen.ecore;bundle-version="2.12.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: eme.generator.saving
-
+Export-Package: eme,
+ eme.extractor,
+ eme.generator,
+ eme.generator.hierarchies,
+ eme.generator.saving,
+ eme.handlers,
+ eme.model,
+ eme.model.datatypes,
+ eme.properties

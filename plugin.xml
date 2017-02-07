@@ -16,12 +16,7 @@
       <command
             categoryId="EcoreMetamodelExtraction.commands.category"
             id="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
-            name="Extract And Save from">
-      </command>
-      <command
-            categoryId="EcoreMetamodelExtraction.commands.category"
-            id="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
-            name="Extract, Save And Generate From...">
+            name="Extract &amp; Save From...">
       </command>
    </extension>
    <extension
@@ -77,7 +72,7 @@
             <command
                   commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
                   icon="src/main/resources/eme.gif"
-                  tooltip="EcoreMetamodelExtraction (Choose And Save From...)"
+                  tooltip="EcoreMetamodelExtraction (Extract &amp; Save from...)"
                   id="EcoreMetamodelExtraction.toolbars.chooseProjectCommand">
             </command>
          </toolbar>
