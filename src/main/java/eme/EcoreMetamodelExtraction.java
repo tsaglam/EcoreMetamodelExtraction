@@ -3,12 +3,12 @@ package eme;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 import eme.extractor.JavaProjectExtractor;
 import eme.generator.EcoreMetamodelGenerator;
+import eme.generator.GeneratedEcoreMetamodel;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
 
@@ -37,19 +37,21 @@ public class EcoreMetamodelExtraction {
      * Starts the Ecore metamodel extraction for a specific {@link IProject}. The {@link IProject} will be parsed and an
      * Ecore metamodel will be build and saved as an Ecore file.
      * @param project is the specific {@link IProject} for the extraction.
+     * @return the Ecore metamodel.
      */
-    public void extractAndSaveFrom(IProject project) {
-        extractFrom(project); // extract metamodel from project
+    public GeneratedEcoreMetamodel extractAndSaveFrom(IProject project) {
+        GeneratedEcoreMetamodel metamodel = extractFrom(project); // extract metamodel from project
         generator.saveMetamodel(); // save metamodel
+        return metamodel;
     }
 
     /**
      * Starts the Ecore metamodel extraction for a specific {@link IProject}. The {@link IProject} will be parsed and an
      * Ecore metamodel will be build.
      * @param project is the specific {@link IProject} for the extraction.
-     * @return the Ecore metamodel with the default {@link EPackage} as root.
+     * @return the Ecore metamodel.
      */
-    public EPackage extractFrom(IProject project) {
+    public GeneratedEcoreMetamodel extractFrom(IProject project) {
         logger.info("Started extraction of project " + project.getName());
         check(project); // check if valid.
         IJavaProject javaProject = JavaCore.create(project); // create java project

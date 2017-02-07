@@ -24,7 +24,7 @@ public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private final EPackageGenerator ePackageGenerator;
-    private EPackage metamodel;
+    private GeneratedEcoreMetamodel metamodel;
     private String projectName;
     private AbstractSavingStrategy savingStrategy;
 
@@ -58,14 +58,15 @@ public class EcoreMetamodelGenerator {
      * @param model is the {@link IntermediateModel} that is the source for the generator.
      * @return the root element of the metamodel, an {@link EPackage}.
      */
-    public EPackage generateMetamodelFrom(IntermediateModel model) {
+    public GeneratedEcoreMetamodel generateMetamodelFrom(IntermediateModel model) {
         logger.info("Started generating the metamodel...");
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null || !root.isSelected()) { // check if valid.
             throw new IllegalArgumentException("The root of an model can't be null or deselected: " + model.toString());
         }
         projectName = model.getProjectName(); // store project name.
-        metamodel = ePackageGenerator.generate(model); // generate model model.
+        EPackage eRoot = ePackageGenerator.generate(model); // generate model model.
+        metamodel = new GeneratedEcoreMetamodel(eRoot);
         return metamodel;
     }
 
@@ -78,6 +79,8 @@ public class EcoreMetamodelGenerator {
         if (metamodel == null) {
             throw new IllegalStateException("Cannot save Ecore metamodel before extracting one.");
         }
-        return savingStrategy.save(metamodel, projectName);
+        SavingInformation savingInformation = savingStrategy.save(metamodel.getRoot(), projectName);
+        metamodel.setSavingInformation(savingInformation);
+        return savingInformation;
     }
 }

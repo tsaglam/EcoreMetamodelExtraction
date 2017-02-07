@@ -26,7 +26,7 @@ public class EcoreMetamodelGeneratorTest {
     @Test
     public void testPackageStructure() {
         buildMVCPackages();
-        EPackage metamodel = generator.generateMetamodelFrom(model);
+        EPackage metamodel = generator.generateMetamodelFrom(model).getRoot();
         assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getName());
         assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getNsPrefix());
         assertEquals(model.getProjectName() + "/", metamodel.getNsURI());
