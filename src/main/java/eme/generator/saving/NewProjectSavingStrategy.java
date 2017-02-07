@@ -74,7 +74,7 @@ public class NewProjectSavingStrategy extends AbstractSavingStrategy {
      */
     @Override
     protected String getFilePath() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IWorkspace workspace = ResourcesPlugin.getWorkspace(); // TODO (MEDIUM) replace slashes with File.separator
         return workspace.getRoot().getLocation().toFile().getPath() + "/" + generatedProjectName + "/model/";
     }
 }

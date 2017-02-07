@@ -36,7 +36,7 @@ public class CustomPathSavingStrategy extends AbstractSavingStrategy {
             dialog.setFileName(projectName + ".ecore");
             result = dialog.open(); // calculate result:
         }
-        int index = result.lastIndexOf('/') + 1;
+        int index = result.lastIndexOf('/') + 1; // TODO (MEDIUM) replace slashes with File.separator
         path = result.substring(0, index);
         name = result.substring(index, result.lastIndexOf('.'));
         shell.close();

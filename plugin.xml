@@ -34,10 +34,6 @@
             class="eme.handlers.ExtractAndSaveHandler"
             commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand">
       </handler>
-      <handler
-            class="eme.handlers.ExtractAndGenerateHandler"
-            commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand">
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -52,12 +48,6 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+2">
-      </key>
-      <key
-            commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+3">
       </key>
    </extension>
    <extension
@@ -77,11 +67,6 @@
                   commandId="EcoreMetamodelExtraction.commands.extractAndSaveCommand"
                   id="EcoreMetamodelExtraction.menus.extractAndSaveCommand"
                   mnemonic="R">
-            </command>
-            <command
-                  commandId="EcoreMetamodelExtraction.commands.extractAndGenerateCommand"
-                  id="EcoreMetamodelExtraction.menus.extractAndGenerateCommand"
-                  mnemonic="T">
             </command>
          </menu>
       </menuContribution>
