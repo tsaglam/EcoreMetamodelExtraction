@@ -1,5 +1,6 @@
 package eme.generator.saving;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 public abstract class AbstractSavingStrategy {
     private static final Logger logger = LogManager.getLogger(AbstractSavingStrategy.class.getName());
     private final boolean saveInProject;
+    protected final char SLASH = File.separatorChar;
 
     /**
      * Basic constructor. Takes the name of the project.

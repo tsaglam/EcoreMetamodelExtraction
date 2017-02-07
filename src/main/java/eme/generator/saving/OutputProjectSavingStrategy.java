@@ -64,7 +64,7 @@ public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
      * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
     @Override
-    protected String getFilePath() { // TODO (MEDIUM) replace slashes with File.separator
-        return workspace.getRoot().getLocation().toFile().getPath() + "/" + outputProjectName + "/model/";
+    protected String getFilePath() {
+        return workspace.getRoot().getLocation().toFile().getPath() + SLASH + outputProjectName + SLASH + "model" + SLASH;
     }
 }
