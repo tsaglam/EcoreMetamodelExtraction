@@ -24,6 +24,7 @@ public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private final EPackageGenerator ePackageGenerator;
+    private final ExtractionProperties properties;
     private GeneratedEcoreMetamodel metamodel;
     private String projectName;
     private AbstractSavingStrategy savingStrategy;
@@ -33,8 +34,8 @@ public class EcoreMetamodelGenerator {
      * @param properties is the ExtractionProperties class for the exraction.
      */
     public EcoreMetamodelGenerator(ExtractionProperties properties) {
+        this.properties = properties;
         ePackageGenerator = new EPackageGenerator(properties); // build generators
-        changeSavingStrategy(properties.get(TextProperty.SAVING_STRATEGY)); // set saving strategy
     }
 
     /**
@@ -59,6 +60,7 @@ public class EcoreMetamodelGenerator {
      * @return the root element of the metamodel, an {@link EPackage}.
      */
     public GeneratedEcoreMetamodel generateMetamodelFrom(IntermediateModel model) {
+        changeSavingStrategy(properties.get(TextProperty.SAVING_STRATEGY)); // set saving strategy
         logger.info("Started generating the metamodel...");
         ExtractedPackage root = model.getRoot(); // get root package.
         if (root == null || !root.isSelected()) { // check if valid.
