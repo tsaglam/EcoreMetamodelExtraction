@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.generator.saving.AbstractSavingStrategy;
+import eme.generator.saving.CopyProjectSaving;
 import eme.generator.saving.CustomPathSaving;
 import eme.generator.saving.NewProjectSaving;
 import eme.generator.saving.ExistingProjectSaving;
@@ -24,9 +25,9 @@ public class EcoreMetamodelGenerator {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelGenerator.class.getName());
     private static final String OUTPUT_PROJECT = "EME-Generator-Output";
     private final EPackageGenerator ePackageGenerator;
-    private final ExtractionProperties properties;
     private GeneratedEcoreMetamodel metamodel;
     private String projectName;
+    private final ExtractionProperties properties;
     private AbstractSavingStrategy savingStrategy;
 
     /**
@@ -49,6 +50,8 @@ public class EcoreMetamodelGenerator {
             savingStrategy = new OriginalProjectSaving();
         } else if ("CustomPath".equals(strategyName)) {
             savingStrategy = new CustomPathSaving();
+        } else if ("CopyProject".equals(strategyName)) {
+            savingStrategy = new CopyProjectSaving("Model"); // TODO (HIGH) use properties for suffix
         } else {
             savingStrategy = new NewProjectSaving();
         }
