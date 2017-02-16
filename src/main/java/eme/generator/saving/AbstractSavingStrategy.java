@@ -73,7 +73,7 @@ public abstract class AbstractSavingStrategy {
             refreshFolder(getFilePath());
         }
         logger.info("The extracted metamodel was saved under: " + getFilePath());
-        return new SavingInformation(filePath, fileName, projectName);
+        return new SavingInformation(filePath, fileName);
     }
 
     /**

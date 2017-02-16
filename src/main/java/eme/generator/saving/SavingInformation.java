@@ -1,5 +1,7 @@
 package eme.generator.saving;
 
+import java.io.File;
+
 /**
  * Container class that contains information about a saved Ecore metamodel.
  * @author Timur Saglam
@@ -13,12 +15,12 @@ public class SavingInformation {
      * Basic constructor that sets the information.
      * @param filePath is the path where the Ecore file was saved.
      * @param fileName is the name of file where the Ecore metamodel was saved in.
-     * @param projectName is the name of the saved project.
      */
-    public SavingInformation(String filePath, String fileName, String projectName) {
+    public SavingInformation(String filePath, String fileName) {
         this.filePath = filePath;
         this.fileName = fileName;
-        this.projectName = projectName;
+        String[] segments = filePath.split(File.separator);
+        projectName = segments[segments.length - 2];
     }
 
     /**
