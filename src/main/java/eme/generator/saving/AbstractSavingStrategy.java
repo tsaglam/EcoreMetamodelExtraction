@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -96,6 +97,36 @@ public abstract class AbstractSavingStrategy {
     protected abstract void beforeSaving(String projectName);
 
     /**
+     * Returns the project suffix, which basically is a separator character and a suffix, depending on the naming type
+     * of the projects name.
+     * @param projectName is the projects name. determines which identifier is used.
+     * @param suffix is the project name suffix.
+     * @return the project identifier.
+     */
+    protected String createSuffix(String projectName, String suffix) {
+        char[] candidates = { ' ', '.', '-', '_', ':' }; // possible separators
+        char separator = Character.MIN_VALUE; // 0000
+        int max = 0;
+        for (char candidate : candidates) { // for every candidate
+            int ctr = 0; // count occurrences in project name:
+            for (int i = 0; i < projectName.length(); i++) {
+                ctr = (candidate == projectName.charAt(i)) ? (ctr + 1) : ctr;
+            }
+            if (ctr > max) { // if candidate is new most used candidate
+                max = ctr; // set as new preferred separator
+                separator = candidate;
+            }
+        }
+        if (!projectName.matches(".*[A-Z].*")) { // if has no upper case
+            suffix = suffix.toLowerCase(); // use lower case suffix
+        }
+        if (separator == Character.MIN_VALUE) { // no separator was chosen
+            return suffix; // return suffix without separator
+        }
+        return separator + suffix; // identifier = separator + suffix
+    }
+
+    /**
      * Determines the name of the ecore file.
      * @return the file name.
      */
@@ -106,4 +137,17 @@ public abstract class AbstractSavingStrategy {
      * @return the file path.
      */
     protected abstract String getFilePath();
+
+    /**
+     * Check whether the output project exists.
+     */
+    protected boolean projectExists(String name) {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        for (IProject iProject : root.getProjects()) {
+            if (iProject.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

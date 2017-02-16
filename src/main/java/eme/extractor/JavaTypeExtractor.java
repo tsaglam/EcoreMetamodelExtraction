@@ -27,8 +27,8 @@ import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedAttribute;
 
 /**
- * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodExtractor} and the
- * {@link DataTypeExtractor}.
+ * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodExtractor} and
+ * the {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
 public class JavaTypeExtractor {

@@ -3,8 +3,6 @@ package eme.generator.saving;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -16,7 +14,6 @@ public class ExistingProjectSaving extends AbstractSavingStrategy {
     private final DateTimeFormatter formatter;
     private final String outputProjectName;
     private String projectName;
-    private final IWorkspace workspace;
 
     /**
      * Basic constructor.
@@ -25,23 +22,10 @@ public class ExistingProjectSaving extends AbstractSavingStrategy {
     public ExistingProjectSaving(String outputProjectName) {
         super(true);
         this.outputProjectName = outputProjectName;
-        workspace = ResourcesPlugin.getWorkspace();
         formatter = DateTimeFormatter.ofPattern("-yyyy-MM-dd-HH:mm.ss"); // date time format
-        outputProjectCheck();
-    }
-
-    /**
-     * Check whether the output project exists.
-     */
-    private void outputProjectCheck() {
-        IWorkspaceRoot root = workspace.getRoot();
-        IProject[] projects = root.getProjects();
-        for (IProject iProject : projects) {
-            if (iProject.getName().equals(outputProjectName)) {
-                return;
-            }
+        if (!projectExists(outputProjectName)) {
+            throw new IllegalArgumentException("The specified output project could not be found: " + outputProjectName);
         }
-        throw new IllegalArgumentException("The specified output project could not be found: " + outputProjectName);
     }
 
     /*
@@ -65,6 +49,7 @@ public class ExistingProjectSaving extends AbstractSavingStrategy {
      */
     @Override
     protected String getFilePath() {
-        return workspace.getRoot().getLocation().toFile().getPath() + SLASH + outputProjectName + SLASH + "model" + SLASH;
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        return root.getLocation().toFile().getPath() + SLASH + outputProjectName + SLASH + "model" + SLASH;
     }
 }

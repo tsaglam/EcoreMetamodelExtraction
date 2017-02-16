@@ -36,7 +36,7 @@ public class CustomPathSaving extends AbstractSavingStrategy {
             dialog.setFileName(projectName + ".ecore");
             result = dialog.open(); // calculate result:
         }
-        int index = result.lastIndexOf(SLASH) + 1; 
+        int index = result.lastIndexOf(SLASH) + 1;
         path = result.substring(0, index);
         name = result.substring(index, result.lastIndexOf('.'));
         shell.close();

@@ -8,7 +8,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * @author Timur Saglam
  */
 public class OriginalProjectSaving extends AbstractSavingStrategy {
-    private String projectName;
+    protected String projectName;
 
     /**
      * Basic constructor.
