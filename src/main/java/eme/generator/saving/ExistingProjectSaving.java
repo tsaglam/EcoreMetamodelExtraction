@@ -9,10 +9,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
- * Saving Strategy that saves in an existing Eclipse Project.
+ * Saving Strategy that saves the ecore file in an existing Eclipse Project.
  * @author Timur Saglam
  */
-public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
+public class ExistingProjectSaving extends AbstractSavingStrategy {
     private final DateTimeFormatter formatter;
     private final String outputProjectName;
     private String projectName;
@@ -22,7 +22,7 @@ public class OutputProjectSavingStrategy extends AbstractSavingStrategy {
      * Basic constructor.
      * @param outputProjectName is the name of the Eclipse project where models will be saved in.
      */
-    public OutputProjectSavingStrategy(String outputProjectName) {
+    public ExistingProjectSaving(String outputProjectName) {
         super(true);
         this.outputProjectName = outputProjectName;
         workspace = ResourcesPlugin.getWorkspace();

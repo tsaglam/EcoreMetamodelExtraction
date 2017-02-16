@@ -7,17 +7,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import eme.generator.EMFProjectGenerator;
 
 /**
- * Saving strategy that creates a new project for very saved model.
+ * Saving strategy that creates a new project for every saved ecore file.
  * @author Timur Saglam
  */
-public class NewProjectSavingStrategy extends AbstractSavingStrategy {
+public class NewProjectSaving extends AbstractSavingStrategy {
     private String fileName;
     private String generatedProjectName;
 
     /**
      * Basic constructor.
      */
-    public NewProjectSavingStrategy() {
+    public NewProjectSaving() {
         super(true);
     }
 

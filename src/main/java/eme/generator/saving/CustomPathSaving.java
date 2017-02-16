@@ -6,17 +6,17 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Saving strategy that lets the user choose a custom path.
+ * Saving strategy that lets the user choose a custom path to save the ecore file.
  * @author Timur Saglam
  */
-public class CustomPathSavingStrategy extends AbstractSavingStrategy {
+public class CustomPathSaving extends AbstractSavingStrategy {
     private String name;
     private String path;
 
     /**
      * Basic constructor.
      */
-    public CustomPathSavingStrategy() {
+    public CustomPathSaving() {
         super(false); // don't refresh folder
     }
 

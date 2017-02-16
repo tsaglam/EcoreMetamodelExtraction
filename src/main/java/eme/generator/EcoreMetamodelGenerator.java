@@ -5,10 +5,10 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.generator.saving.AbstractSavingStrategy;
-import eme.generator.saving.CustomPathSavingStrategy;
-import eme.generator.saving.NewProjectSavingStrategy;
-import eme.generator.saving.OutputProjectSavingStrategy;
-import eme.generator.saving.SameProjectSavingStrategy;
+import eme.generator.saving.CustomPathSaving;
+import eme.generator.saving.NewProjectSaving;
+import eme.generator.saving.ExistingProjectSaving;
+import eme.generator.saving.OriginalProjectSaving;
 import eme.generator.saving.SavingInformation;
 import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
@@ -43,14 +43,14 @@ public class EcoreMetamodelGenerator {
      * @param strategyName is the name of the new saving strategy.
      */
     public final void changeSavingStrategy(String strategyName) { // Add custom strategies here
-        if ("OutputProject".equals(strategyName)) {
-            savingStrategy = new OutputProjectSavingStrategy(OUTPUT_PROJECT);
-        } else if ("SameProject".equals(strategyName)) {
-            savingStrategy = new SameProjectSavingStrategy();
+        if ("ExistingProject".equals(strategyName)) {
+            savingStrategy = new ExistingProjectSaving(OUTPUT_PROJECT);
+        } else if ("OriginalProject".equals(strategyName)) {
+            savingStrategy = new OriginalProjectSaving();
         } else if ("CustomPath".equals(strategyName)) {
-            savingStrategy = new CustomPathSavingStrategy();
+            savingStrategy = new CustomPathSaving();
         } else {
-            savingStrategy = new NewProjectSavingStrategy();
+            savingStrategy = new NewProjectSaving();
         }
     }
 

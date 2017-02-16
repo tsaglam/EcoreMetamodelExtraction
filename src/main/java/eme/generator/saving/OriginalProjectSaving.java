@@ -4,16 +4,16 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
- * Saving strategy that saves the ecore file in the same project where it was extracted from.
+ * Saving strategy that saves the ecore file in the original project.
  * @author Timur Saglam
  */
-public class SameProjectSavingStrategy extends AbstractSavingStrategy {
+public class OriginalProjectSaving extends AbstractSavingStrategy {
     private String projectName;
 
     /**
      * Basic constructor.
      */
-    public SameProjectSavingStrategy() {
+    public OriginalProjectSaving() {
         super(true); // refresh folder.
     }
 
