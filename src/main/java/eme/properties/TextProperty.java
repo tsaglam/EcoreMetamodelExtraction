@@ -9,6 +9,7 @@ public enum TextProperty {
     DEFAULT_PACKAGE("DefaultPackageName", "DEFAULT"),
     DUMMY_NAME("DummyClassName", "DUMMY"),
     NESTED_TYPE_PACKAGE("NestedTypePackageSuffix", "InnerTypes"),
+    PROJECT_SUFFIX("ProjectSuffix", "Model"),
     SAVING_STRATEGY("SavingStrategy", "NewProject");
 
     private final String defaultValue;

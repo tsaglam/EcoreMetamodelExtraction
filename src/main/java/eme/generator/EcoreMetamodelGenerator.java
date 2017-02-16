@@ -51,7 +51,7 @@ public class EcoreMetamodelGenerator {
         } else if ("CustomPath".equals(strategyName)) {
             savingStrategy = new CustomPathSaving();
         } else if ("CopyProject".equals(strategyName)) {
-            savingStrategy = new CopyProjectSaving("Model"); // TODO (HIGH) use properties for suffix
+            savingStrategy = new CopyProjectSaving(properties.get(TextProperty.PROJECT_SUFFIX));
         } else {
             savingStrategy = new NewProjectSaving();
         }
