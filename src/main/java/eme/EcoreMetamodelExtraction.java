@@ -56,7 +56,7 @@ public class EcoreMetamodelExtraction {
         check(project); // check if valid.
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = parser.buildIntermediateModel(javaProject);
-        return generator.generateMetamodelFrom(model);
+        return generator.generateMetamodel(model);
     }
 
     /**

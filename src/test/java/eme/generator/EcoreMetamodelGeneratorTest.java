@@ -26,7 +26,7 @@ public class EcoreMetamodelGeneratorTest {
     @Test
     public void testPackageStructure() {
         buildMVCPackages();
-        EPackage metamodel = generator.generateMetamodelFrom(model).getRoot();
+        EPackage metamodel = generator.generateMetamodel(model).getRoot();
         assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getName());
         assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getNsPrefix());
         assertEquals(model.getProjectName() + "/", metamodel.getNsURI());
@@ -48,7 +48,7 @@ public class EcoreMetamodelGeneratorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalModel() {
-        generator.generateMetamodelFrom(model); // empty model
+        generator.generateMetamodel(model); // empty model
     }
 
     private void buildMVCPackages() {

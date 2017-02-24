@@ -62,7 +62,7 @@ public class EcoreMetamodelGenerator {
      * @param model is the {@link IntermediateModel} that is the source for the generator.
      * @return the root element of the metamodel, an {@link EPackage}.
      */
-    public GeneratedEcoreMetamodel generateMetamodelFrom(IntermediateModel model) {
+    public GeneratedEcoreMetamodel generateMetamodel(IntermediateModel model) {
         changeSavingStrategy(properties.get(TextProperty.SAVING_STRATEGY)); // set saving strategy
         logger.info("Started generating the metamodel...");
         ExtractedPackage root = model.getRoot(); // get root package.
