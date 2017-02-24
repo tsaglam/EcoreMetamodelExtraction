@@ -97,13 +97,14 @@ public abstract class AbstractSavingStrategy {
     protected abstract void beforeSaving(String projectName);
 
     /**
-     * Returns the project suffix, which basically is a separator character and a suffix, depending on the naming type
-     * of the projects name.
-     * @param projectName is the projects name. determines which identifier is used.
-     * @param suffix is the project name suffix.
-     * @return the project identifier.
+     * Returns the project suffix, which basically is a separator character and a suffix base, depending on the naming
+     * type of the projects name (e.g. "My-Project" and "model" will return "-Model").
+     * @param projectName is the projects name. Determines which separator is used and decides whether there is
+     * capitalization.
+     * @param base is the base string of the suffix.
+     * @return the project suffix.
      */
-    protected String createSuffix(String projectName, String suffix) {
+    protected String createSuffix(String projectName, String base) {
         char[] candidates = { ' ', '.', '-', '_', ':' }; // possible separators
         char separator = Character.MIN_VALUE; // 0000
         int max = 0;
@@ -118,12 +119,12 @@ public abstract class AbstractSavingStrategy {
             }
         }
         if (!projectName.matches(".*[A-Z].*")) { // if has no upper case
-            suffix = suffix.toLowerCase(); // use lower case suffix
+            base = base.toLowerCase(); // use lower case suffix
         }
         if (separator == Character.MIN_VALUE) { // no separator was chosen
-            return suffix; // return suffix without separator
+            return base; // return suffix without separator
         }
-        return separator + suffix; // identifier = separator + suffix
+        return separator + base; // identifier = separator + suffix
     }
 
     /**
