@@ -1,6 +1,7 @@
 package eme.generator.saving;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Container class that contains information about a saved Ecore metamodel.
@@ -19,7 +20,7 @@ public class SavingInformation {
     public SavingInformation(String filePath, String fileName) {
         this.filePath = filePath;
         this.fileName = fileName;
-        String[] segments = filePath.split(File.separator);
+        String[] segments = filePath.split(Pattern.quote(File.separator));
         projectName = segments[segments.length - 2];
     }
 
