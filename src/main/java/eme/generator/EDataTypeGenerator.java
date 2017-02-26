@@ -42,7 +42,7 @@ public class EDataTypeGenerator {
      */
     public EDataTypeGenerator(IntermediateModel model, Map<String, EClassifier> eClassifierMap, ExternalTypeHierarchy typeHierarchy) {
         this.model = model;
-        this.eClassifierMap = eClassifierMap; // set classifier map.
+        this.eClassifierMap = eClassifierMap; // set eClassifier map.
         this.typeHierarchy = typeHierarchy;
         ecoreFactory = EcoreFactory.eINSTANCE; // get ecore factory.
         dataTypeMap = new HashMap<String, EDataType>(); // create type map.
@@ -85,52 +85,52 @@ public class EDataTypeGenerator {
      * arguments add their generic arguments recursively.
      * @param genericType is the generic type of an attribute, a parameter or a method.
      * @param dataType is the extracted data type, an attribute, a parameter or a return type.
-     * @param classifier is the EClassifier which owns the generic type.
+     * @param eClassifier is the EClassifier which owns the generic type.
      */
-    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier classifier) {
+    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier eClassifier) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) { // wildcard argument:
                 addWildcardBound(eArgument, genericArgument);
-            } else if (isTypeParameter(genericArgument, classifier)) { // type parameter argument:
-                eArgument.setETypeParameter(findTypeParameter(genericArgument, classifier));
+            } else if (isTypeParameter(genericArgument, eClassifier)) { // type parameter argument:
+                eArgument.setETypeParameter(findTypeParameter(genericArgument, eClassifier));
             } else { // normal generic argument:
                 eArgument.setEClassifier(generate(genericArgument));
             }
-            addGenericArguments(eArgument, genericArgument, classifier); // recursively add generic arguments
+            addGenericArguments(eArgument, genericArgument, eClassifier); // recursively add generic arguments
             genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
         }
     }
 
     /**
      * Adds all generic type parameters from an {@link ExtractedType} to a {@link EClassifier}.
-     * @param classifier is the classifier.
+     * @param eClassifier is the EClassifier.
      * @param type is the extracted type.
      */
-    public void addTypeParameters(EClassifier classifier, ExtractedType type) {
+    public void addTypeParameters(EClassifier eClassifier, ExtractedType type) {
         ETypeParameter eTypeParameter; // ecore type parameter
         for (ExtractedTypeParameter typeParameter : type.getTypeParameters()) { // for all type parameters
             eTypeParameter = ecoreFactory.createETypeParameter(); // create object
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
-            addBounds(eTypeParameter, typeParameter, classifier);
-            classifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
+            addBounds(eTypeParameter, typeParameter, eClassifier);
+            eClassifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
         }
     }
 
     /**
      * Adds all bounds of an {@link ExtractedTypeParameter} to a {@link ETypeParameter}.
      */
-    private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier classifier) {
+    private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier eClassifier) {
         EGenericType eBound; // ecore type parameter bound
         for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds+
             if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
-                if (isTypeParameter(bound, classifier)) {
-                    eBound.setETypeParameter(findTypeParameter(bound, classifier));
+                if (isTypeParameter(bound, eClassifier)) {
+                    eBound.setETypeParameter(findTypeParameter(bound, eClassifier));
                 } else {
                     eBound.setEClassifier(generate(bound));
                 }
-                addGenericArguments(eBound, bound, classifier); // add generic arguments of bound
+                addGenericArguments(eBound, bound, eClassifier); // add generic arguments of bound
                 eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
             }
         }
@@ -180,14 +180,14 @@ public class EDataTypeGenerator {
     /**
      * Gets an ETypeParameter with a specific name from an specific EClassifier.
      */
-    private ETypeParameter findTypeParameter(ExtractedDataType dataType, EClassifier classifier) {
+    private ETypeParameter findTypeParameter(ExtractedDataType dataType, EClassifier eClassifier) {
         String name = dataType.getFullType();
-        for (ETypeParameter parameter : classifier.getETypeParameters()) {
+        for (ETypeParameter parameter : eClassifier.getETypeParameters()) {
             if (parameter.getName().equals(name)) {
                 return parameter;
             }
         }
-        throw new IllegalArgumentException("There is no ETypeParameter " + name + " in " + classifier.toString());
+        throw new IllegalArgumentException("There is no ETypeParameter " + name + " in " + eClassifier.toString());
     }
 
     /**
@@ -247,9 +247,9 @@ public class EDataTypeGenerator {
     /**
      * Checks whether an {@link ExtractedDataType} is a type parameter in a specific {@link EClassifier}.
      */
-    private boolean isTypeParameter(ExtractedDataType dataType, EClassifier classifier) {
+    private boolean isTypeParameter(ExtractedDataType dataType, EClassifier eClassifier) {
         String dataTypeName = dataType.getFullType();
-        for (ETypeParameter parameter : classifier.getETypeParameters()) {
+        for (ETypeParameter parameter : eClassifier.getETypeParameters()) {
             if (parameter.getName() != null && parameter.getName().equals(dataTypeName)) {
                 return true;
             }
