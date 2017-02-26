@@ -160,7 +160,6 @@ public class IntermediateModel {
         logger.info("   with packages " + packages.toString());
         logger.info("   with types " + types.toString());
         logger.info("   with external types " + externalTypes.toString());
-        // TODO (LOW) keep up to date.
     }
 
     /**
@@ -175,7 +174,6 @@ public class IntermediateModel {
     public String toString() {
         return "IntermediateModel of " + projectName + ": [Packages=" + packages.size() + ", Types=" + types.size() + ", ExternalTypes="
                 + externalTypes.size() + "]";
-        // TODO (LOW) keep up to date.
     }
 
     /**
