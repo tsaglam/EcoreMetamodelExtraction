@@ -24,12 +24,12 @@ public final class JDTUtil {
 
     /**
      * Determines the access level modifier of an {@link IMember} and returns it as {@link AccessLevelModifier}.
-     * @param iMember is the {@link IMember}.
+     * @param member is the {@link IMember}.
      * @return the {@link AccessLevelModifier}.
      * @throws JavaModelException if there is a problem with the JDT API.
      */
-    public static AccessLevelModifier getModifier(IMember iMember) throws JavaModelException {
-        int flags = iMember.getFlags();
+    public static AccessLevelModifier getModifier(IMember member) throws JavaModelException {
+        int flags = member.getFlags();
         if (Flags.isPublic(flags)) {
             return AccessLevelModifier.PUBLIC;
         } else if (Flags.isPrivate(flags)) {
@@ -43,12 +43,12 @@ public final class JDTUtil {
     /**
      * Returns the fully qualified name of an {@link IType}, including qualification for any containing types and
      * packages. The character '.' is used as enclosing type separator.
-     * @param iType is the {@link IType}.
+     * @param type is the {@link IType}.
      * @return the fully qualified name.
      * @see eme.generator.saving.AbstractSavingStrategy#filePath()
      */
-    public static String getName(IType iType) {
-        return iType.getFullyQualifiedName('.');
+    public static String getName(IType type) {
+        return type.getFullyQualifiedName('.');
     }
 
     /**
@@ -96,32 +96,32 @@ public final class JDTUtil {
 
     /**
      * Checks if a {@link IMember} is abstract by checking its flags.
-     * @param iMember is the {@link IMember}.
+     * @param member is the {@link IMember}.
      * @return true if it is.
      * @throws JavaModelException if there is a problem with the JDT API.
      */
-    public static boolean isAbstract(IMember iMember) throws JavaModelException {
-        return Flags.isAbstract(iMember.getFlags());
+    public static boolean isAbstract(IMember member) throws JavaModelException {
+        return Flags.isAbstract(member.getFlags());
     }
 
     /**
      * Checks if a {@link IMember} is an enum by checking its flags.
-     * @param iMember is the {@link IMember}.
+     * @param member is the {@link IMember}.
      * @return true if it is.
      * @throws JavaModelException if there is a problem with the JDT API.
      */
-    public static boolean isEnum(IMember iMember) throws JavaModelException {
-        return Flags.isEnum(iMember.getFlags());
+    public static boolean isEnum(IMember member) throws JavaModelException {
+        return Flags.isEnum(member.getFlags());
     }
 
     /**
      * Checks if a {@link IMember} is final by checking its flags.
-     * @param iMember is the {@link IMember}.
+     * @param member is the {@link IMember}.
      * @return true if it is.
      * @throws JavaModelException if there is a problem with the JDT API.
      */
-    public static boolean isFinal(IMember iMember) throws JavaModelException {
-        return Flags.isFinal(iMember.getFlags());
+    public static boolean isFinal(IMember member) throws JavaModelException {
+        return Flags.isFinal(member.getFlags());
     }
 
     /**
@@ -135,12 +135,12 @@ public final class JDTUtil {
 
     /**
      * Checks if a {@link IMember} is static by checking its flags.
-     * @param iMember is the {@link IMember}.
+     * @param member is the {@link IMember}.
      * @return true if it is.
      * @throws JavaModelException if there is a problem with the JDT API.
      */
-    public static boolean isStatic(IMember iMember) throws JavaModelException {
-        return Flags.isStatic(iMember.getFlags());
+    public static boolean isStatic(IMember member) throws JavaModelException {
+        return Flags.isStatic(member.getFlags());
     }
 
     /**

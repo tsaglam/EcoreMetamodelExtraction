@@ -43,11 +43,11 @@ public class MemberGenerator {
 
     /**
      * Adds the attributes of an {@link ExtractedType} to a specific {@link EClass}.
-     * @param extractedType is the {@link ExtractedType}
+     * @param type is the {@link ExtractedType}
      * @param eClass is the {@link EClass}.
      */
-    public void addAttributes(ExtractedType extractedType, EClass eClass) {
-        for (ExtractedAttribute attribute : extractedType.getAttributes()) { // for every attribute
+    public void addAttributes(ExtractedType type, EClass eClass) {
+        for (ExtractedAttribute attribute : type.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
                 if (isEClass(attribute.getFullType())) { // if type is EClass:
                     EReference reference = ecoreFactory.createEReference();

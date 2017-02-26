@@ -34,15 +34,15 @@ public class JavaMethodExtractor {
 
     /**
      * Parses the {@link IMethod}s from an {@link IType} and adds them to an ExtractedType.
-     * @param iType is the {@link IType} whose methods get parsed.
+     * @param type is the {@link IType} whose methods get parsed.
      * @param extractedType is the extracted type where the extracted methods should be added.
      * @throws JavaModelException if there are problem with the JDT API.
      */
-    public void parseMethods(IType iType, ExtractedType extractedType) throws JavaModelException {
+    public void parseMethods(IType type, ExtractedType extractedType) throws JavaModelException {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
-        for (IMethod method : iType.getMethods()) { // for every method
-            methodName = getName(iType) + "." + method.getElementName(); // build name
+        for (IMethod method : type.getMethods()) { // for every method
+            methodName = getName(type) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
             extractedMethod.setAbstract(isAbstract(method));
             extractedMethod.setStatic(isStatic(method));
@@ -52,7 +52,7 @@ public class JavaMethodExtractor {
                 extractedMethod.addParameter(dataTypeParser.parseParameter(parameter, method));
             }
             for (String exception : method.getExceptionTypes()) { // parse throw declarations:
-                extractedMethod.addThrowsDeclaration(dataTypeParser.parseDataType(exception, iType));
+                extractedMethod.addThrowsDeclaration(dataTypeParser.parseDataType(exception, type));
             }
             extractedType.addMethod(extractedMethod);
         }

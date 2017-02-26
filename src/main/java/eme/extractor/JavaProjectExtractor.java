@@ -64,8 +64,8 @@ public class JavaProjectExtractor {
             currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
             reportProgress(fragments.size());
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
-                for (IType iType : unit.getAllTypes()) { // for all types
-                    currentModel.addTo(typeParser.parseType(iType), currentPackage);
+                for (IType type : unit.getAllTypes()) { // for all types
+                    currentModel.addTo(typeParser.parseType(type), currentPackage);
                 }
             }
         }

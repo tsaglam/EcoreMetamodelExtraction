@@ -74,16 +74,16 @@ public class DataTypeExtractor {
     /**
      * Creates {@link ExtractedAttribute} from a {@link IField} and its {@link IType}.
      * @param field is the field.
-     * @param iType is the type of the field.
+     * @param type is the type of the field.
      * @return the extracted attribute of the field.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedAttribute parseField(IField field, IType iType) throws JavaModelException {
+    public ExtractedAttribute parseField(IField field, IType type) throws JavaModelException {
         String signature = field.getTypeSignature(); // get return type signature
         int arrayCount = Signature.getArrayCount(signature);
         String name = field.getElementName(); // name of the field
-        ExtractedAttribute attribute = new ExtractedAttribute(name, getFullName(signature, iType), arrayCount);
-        attribute.setGenericArguments(parseGenericArguments(signature, iType));
+        ExtractedAttribute attribute = new ExtractedAttribute(name, getFullName(signature, type), arrayCount);
+        attribute.setGenericArguments(parseGenericArguments(signature, type));
         return attribute;
     }
 
@@ -120,18 +120,18 @@ public class DataTypeExtractor {
 
     /**
      * Parses all type parameters of an {@link IType} and adds the to an {@link ExtractedType}.
-     * @param iType is the IType.
+     * @param type is the IType.
      * @param type is the ExtractedType.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public void parseTypeParameters(IType iType, ExtractedType type) throws JavaModelException {
+    public void parseTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
         ExtractedTypeParameter parameter;
-        for (String signature : iType.getTypeParameterSignatures()) { // for every type parameter
+        for (String signature : type.getTypeParameterSignatures()) { // for every type parameter
             parameter = new ExtractedTypeParameter(Signature.getTypeVariable(signature)); // create representation
             for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
-                parameter.add(parseDataType(bound, iType)); // add to representation
+                parameter.add(parseDataType(bound, type)); // add to representation
             }
-            type.addTypeParameter(parameter); // add to extracted type
+            extractedType.addTypeParameter(parameter); // add to extracted type
         }
     }
 
@@ -208,12 +208,12 @@ public class DataTypeExtractor {
     private String resolveInnerType(String innerType, IType declaringType) throws JavaModelException {
         String declaringTypeName = getName(declaringType); // get parent name
         IJavaProject project = declaringType.getPackageFragment().getJavaProject(); // try to resolve locally:
-        IType iType = project.findType(declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')), innerType);
-        if (iType == null) { // if still not resolved
-            iType = resolveFromImports(innerType, declaringType); // try resolving it from import
+        IType type = project.findType(declaringTypeName.substring(0, declaringTypeName.lastIndexOf('.')), innerType);
+        if (type == null) { // if still not resolved
+            type = resolveFromImports(innerType, declaringType); // try resolving it from import
         }
-        if (iType != null) { // if is resolved (one way or another)
-            return getName(iType); // return resolved name
+        if (type != null) { // if is resolved (one way or another)
+            return getName(type); // return resolved name
         } // else:
         return innerType; // return unresolved name
     }
