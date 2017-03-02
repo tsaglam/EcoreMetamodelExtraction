@@ -121,7 +121,7 @@ public class DataTypeExtractor {
     /**
      * Parses all type parameters of an {@link IType} and adds the to an {@link ExtractedType}.
      * @param type is the IType.
-     * @param type is the ExtractedType.
+     * @param extractedType is the ExtractedType.
      * @throws JavaModelException if there are problems with the JDT API.
      */
     public void parseTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
