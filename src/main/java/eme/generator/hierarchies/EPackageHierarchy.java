@@ -18,9 +18,8 @@ import eme.properties.ExtractionProperties;
  * This class allows to build a package structure, a {@link EPackage} hierarchy for {@link EClassifier}s.
  * @author Timur Saglam
  */
-public abstract class EPackageHierarchy {
+public class EPackageHierarchy {
     protected final EPackage basePackage;
-
     protected final ExtractionProperties properties;
 
     /**
@@ -28,7 +27,7 @@ public abstract class EPackageHierarchy {
      * @param basePackage is the base {@link EPackage} of hierarchy.
      * @param properties is the instance of the {@link ExtractionProperties} class.
      */
-    public EPackageHierarchy(EPackage basePackage, ExtractionProperties properties) {
+    protected EPackageHierarchy(EPackage basePackage, ExtractionProperties properties) {
         this.basePackage = basePackage;
         this.properties = properties;
     }

@@ -26,12 +26,17 @@ import org.eclipse.jdt.core.JavaModelException;
 /**
  * Utility class for creating an empty EMF project. For this class the following code snippet was used to design the
  * project creation:
- * architecturware.cvs.sourceforge.net/viewvc/architecturware/oaw_v4/core.plugin/plugin.oaw4/main/src/org/openarchitectureware/wizards/EclipseHelper.java
+ * architecturware.cvs.sourceforge.net/viewvc/architecturware/oaw_v4/core.plugin/plugin.oaw4/main/src/org
+ * /openarchitectureware/wizards/EclipseHelper.java
  * @author Timur Saglam
  */
 public final class EMFProjectGenerator {
     private final static String JAVA_VERSION = "JavaSE-1.8";
     private static final Logger logger = LogManager.getLogger(EMFProjectGenerator.class.getName());
+
+    private EMFProjectGenerator() {
+        // private constructor.
+    }
 
     /**
      * Generate a new empty EMFProjectGeneratorproject with a specified name. If a project with that name already exits

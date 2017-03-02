@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class CopyProjectSaving extends OriginalProjectSaving {
     private static final Logger logger = LogManager.getLogger(CopyProjectSaving.class.getName());
-    private IProject copy;
-    private String projectSuffix;
+    private IProject projectCopy;
+    final private String projectSuffix;
 
     /**
      * Basic constructor.
@@ -81,7 +81,7 @@ public class CopyProjectSaving extends OriginalProjectSaving {
     protected void beforeSaving(String projectName) {
         super.projectName = projectName;
         IProject project = getProject(projectName);
-        copy = copy(project);
+        projectCopy = copy(project);
     }
 
     /*
@@ -90,6 +90,6 @@ public class CopyProjectSaving extends OriginalProjectSaving {
     @Override
     protected String getFilePath() {
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return workspace.getRoot().getLocation().toFile().getPath() + SLASH + copy.getName() + SLASH + "model" + SLASH;
+        return workspace.getRoot().getLocation().toFile().getPath() + SLASH + projectCopy.getName() + SLASH + "model" + SLASH;
     }
 }
