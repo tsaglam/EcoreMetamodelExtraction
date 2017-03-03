@@ -12,9 +12,9 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
 public class EcoreMetamodelGeneratorTest {
-    ExtractionProperties properties;
     EcoreMetamodelGenerator generator;
     IntermediateModel model;
+    ExtractionProperties properties;
 
     @Before
     public void setUp() throws Exception {
@@ -23,16 +23,9 @@ public class EcoreMetamodelGeneratorTest {
         model = new IntermediateModel("UnitTestProject");
     }
 
-    @Test
-    public void testPackageStructure() {
-        buildMVCPackages();
-        EPackage metamodel = generator.generateMetamodel(model).getRoot();
-        assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getName());
-        assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), metamodel.getNsPrefix());
-        assertEquals(model.getProjectName() + "/", metamodel.getNsURI());
-        assertEquals(1, metamodel.getESubpackages().size());
-        EPackage main = metamodel.getESubpackages().get(0);
-        assertEquals(3, main.getESubpackages().size());
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalModel() {
+        generator.generateMetamodel(model); // empty model
     }
 
     @Test(expected = IllegalStateException.class)
@@ -40,21 +33,20 @@ public class EcoreMetamodelGeneratorTest {
         generator.saveMetamodel(); // no metamodel
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullStrategy() {
-        generator.changeSavingStrategy("CustomPath"); // has to pass
-        generator.changeSavingStrategy(null); // throws exception
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIllegalModel() {
-        generator.generateMetamodel(model); // empty model
+    @Test
+    public void testPackageStructure() {
+        buildMVCPackages();
+        EPackage root = generator.generateMetamodel(model).getRoot();
+        assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), root.getName());
+        assertEquals(properties.get(TextProperty.DEFAULT_PACKAGE), root.getNsPrefix());
+        assertEquals(model.getProjectName() + "/", root.getNsURI());
+        assertEquals(2, root.getESubpackages().size());
+        EPackage main = root.getESubpackages().get(1);
+        assertEquals(3, main.getESubpackages().size());
     }
 
     private void buildMVCPackages() {
-        ExtractedPackage extractedPackage = new ExtractedPackage("");
-        extractedPackage.setAsRoot();
-        model.add(extractedPackage);
+        model.add(new ExtractedPackage(""));
         model.add(new ExtractedPackage("main"));
         model.add(new ExtractedPackage("main.model"));
         model.add(new ExtractedPackage("main.view"));

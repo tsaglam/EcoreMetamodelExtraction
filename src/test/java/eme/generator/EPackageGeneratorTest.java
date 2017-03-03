@@ -32,7 +32,7 @@ import eme.model.datatypes.ExtractedParameter;
 import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
-public class EObjectGeneratorTest {
+public class EPackageGeneratorTest {
     EPackageGenerator generator;
     IntermediateModel model;
     ExtractionProperties properties;
@@ -44,7 +44,7 @@ public class EObjectGeneratorTest {
         generator = new EPackageGenerator(properties);
     }
 
-    @Test // TODO (LOW) Update the tests.
+    @Test
     public void testGenerateAbstractClass() {
         ExtractedClass abstractClass = new ExtractedClass("abstractClass", true, false);
         EClass result = (EClass) generateClassifier(abstractClass);

@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import eme.generator.EObjectGeneratorTest;
+import eme.generator.EPackageGeneratorTest;
 import eme.generator.EcoreMetamodelGeneratorTest;
 import eme.model.IntermediateModelTest;
 
@@ -12,9 +12,9 @@ import eme.model.IntermediateModelTest;
 
 @SuiteClasses({
     EcoreMetamodelGeneratorTest.class,
-    EObjectGeneratorTest.class,
+    EPackageGeneratorTest.class,
     IntermediateModelTest.class
 })
 
-public class AllHeadlessTests {
+public class TestSuite {
 }
