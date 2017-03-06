@@ -14,7 +14,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedEnum;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
@@ -103,7 +103,7 @@ public class SelectionHelper {
             allowed &= !((ExtractedClass) type).isThrowable() || properties.get(BinaryProperty.THROWABLES);
         } else if (type instanceof ExtractedInterface) {
             allowed &= properties.get(BinaryProperty.INTERFACES);
-        } else if (type instanceof ExtractedEnumeration) {
+        } else if (type instanceof ExtractedEnum) {
             allowed &= properties.get(BinaryProperty.ENUMS);
         }
         return report(type.getClass().getSimpleName().substring(9).toLowerCase(), allowed); // class, interface, enum

@@ -7,23 +7,23 @@ import java.util.List;
  * Represents an enumeration in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
-public class ExtractedEnumeration extends ExtractedType {
-    private final List<ExtractedEnumeral> enumerals;
+public class ExtractedEnum extends ExtractedType {
+    private final List<ExtractedEnumConstant> enumerals;
 
     /**
      * Basic constructor.
      * @param fullName is the full name, containing name and package name.
      */
-    public ExtractedEnumeration(String fullName) {
+    public ExtractedEnum(String fullName) {
         super(fullName);
-        enumerals = new LinkedList<ExtractedEnumeral>();
+        enumerals = new LinkedList<ExtractedEnumConstant>();
     }
 
     /**
      * Adds a enumeral to the enum
      * @param enumeral is the new value.
      */
-    public void addEnumeral(ExtractedEnumeral enumeral) {
+    public void addEnumeral(ExtractedEnumConstant enumeral) {
         enumerals.add(enumeral);
     }
 
@@ -31,7 +31,7 @@ public class ExtractedEnumeration extends ExtractedType {
      * accessor for the enumerals of the enumeration.
      * @return the enumerals in a List.
      */
-    public List<ExtractedEnumeral> getEnumerals() {
+    public List<ExtractedEnumConstant> getEnumerals() {
         return enumerals;
     }
 }

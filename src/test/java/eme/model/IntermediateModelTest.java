@@ -20,7 +20,7 @@ public class IntermediateModelTest {
         model.add(new ExtractedClass("NormalClass", false, false));
         model.add(new ExtractedClass("main.AbstractClass", true, false));
         model.add(new ExtractedInterface("main.model.Interface"));
-        model.add(new ExtractedEnumeration("main.view.Enumeration"));
+        model.add(new ExtractedEnum("main.view.Enumeration"));
         model.add(new ExtractedClass("main.controller.OuterClass$InnerClass", false, false));
         checkTypeAmount(model.getRoot(), 1);
     }
@@ -39,11 +39,11 @@ public class IntermediateModelTest {
         model.add(new ExtractedClass("DuplicateClass", false, false));
         model.add(new ExtractedInterface("DuplicateInterface"));
         model.add(new ExtractedInterface("DuplicateInterface"));
-        model.add(new ExtractedEnumeration("DuplicateEnum"));
-        model.add(new ExtractedEnumeration("DuplicateEnum"));
+        model.add(new ExtractedEnum("DuplicateEnum"));
+        model.add(new ExtractedEnum("DuplicateEnum"));
         model.add(new ExtractedClass("DuplicateType", true, false));
         model.add(new ExtractedInterface("DuplicateType"));
-        model.add(new ExtractedEnumeration("DuplicateType"));
+        model.add(new ExtractedEnum("DuplicateType"));
         assertEquals(4, model.getRoot().getTypes().size());
     }
 

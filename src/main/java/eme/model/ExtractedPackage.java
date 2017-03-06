@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ExtractedPackage extends ExtractedElement {
     private final List<ExtractedClass> classes;
-    private final List<ExtractedEnumeration> enumerations;
+    private final List<ExtractedEnum> enumerations;
     private final List<ExtractedInterface> interfaces;
     private final List<ExtractedPackage> subpackages;
     protected boolean root;
@@ -24,7 +24,7 @@ public class ExtractedPackage extends ExtractedElement {
         subpackages = new LinkedList<ExtractedPackage>();
         classes = new LinkedList<ExtractedClass>();
         interfaces = new LinkedList<ExtractedInterface>();
-        enumerations = new LinkedList<ExtractedEnumeration>();
+        enumerations = new LinkedList<ExtractedEnum>();
         root = false;
     }
 
@@ -45,8 +45,8 @@ public class ExtractedPackage extends ExtractedElement {
             classes.add((ExtractedClass) type);
         } else if (type.getClass() == ExtractedInterface.class) {
             interfaces.add((ExtractedInterface) type);
-        } else if (type.getClass() == ExtractedEnumeration.class) {
-            enumerations.add((ExtractedEnumeration) type);
+        } else if (type.getClass() == ExtractedEnum.class) {
+            enumerations.add((ExtractedEnum) type);
         }
     }
 
@@ -59,10 +59,10 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the {@link ExtractedEnumeration}s.
+     * accessor for the {@link ExtractedEnum}s.
      * @return the enumerations.
      */
-    public List<ExtractedEnumeration> getEnumerations() {
+    public List<ExtractedEnum> getEnumerations() {
         return enumerations;
     }
 

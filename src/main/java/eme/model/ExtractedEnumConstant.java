@@ -4,14 +4,14 @@ package eme.model;
  * Represents an enumeral in the {@link IntermediateModel}.
  * @author Timur Saglam
  */
-public class ExtractedEnumeral {
+public class ExtractedEnumConstant {
     private final String name;
 
     /**
      * Basic constructor. Sets the name.
      * @param name is the name of the enumeral.
      */
-    public ExtractedEnumeral(String name) {
+    public ExtractedEnumConstant(String name) {
         this.name = name;
     }
 

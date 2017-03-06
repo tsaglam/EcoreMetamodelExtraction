@@ -19,8 +19,8 @@ import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumeral;
-import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedEnumConstant;
+import eme.model.ExtractedEnum;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
@@ -139,11 +139,11 @@ public class JavaTypeExtractor {
     /**
      * Parse an {@link IType} that has been identified as enumeration.
      */
-    private ExtractedEnumeration parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnumeration newEnum = new ExtractedEnumeration(getName(type));
+    private ExtractedEnum parseEnumeration(IType type) throws JavaModelException {
+        ExtractedEnum newEnum = new ExtractedEnum(getName(type));
         for (IField field : type.getFields()) { // for every enumeral
             if (isEnum(field)) {
-                newEnum.addEnumeral(new ExtractedEnumeral(field.getElementName())); // add to enum
+                newEnum.addEnumeral(new ExtractedEnumConstant(field.getElementName())); // add to enum
             }
         }
         return newEnum;

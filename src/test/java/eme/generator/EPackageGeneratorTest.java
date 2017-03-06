@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumeral;
-import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedEnumConstant;
+import eme.model.ExtractedEnum;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedPackage;
@@ -87,9 +87,9 @@ public class EPackageGeneratorTest {
 
     @Test
     public void testGenerateEnum() {
-        ExtractedEnumeration enumeration = new ExtractedEnumeration("Enum");
+        ExtractedEnum enumeration = new ExtractedEnum("Enum");
         for (int i = 0; i < 5; i++) {
-            enumeration.addEnumeral(new ExtractedEnumeral("ENUMERAL_" + i));
+            enumeration.addEnumeral(new ExtractedEnumConstant("ENUMERAL_" + i));
         }
         EEnum result = (EEnum) generateClassifier(enumeration);
         assertEquals("Enum", result.getName());
@@ -158,7 +158,7 @@ public class EPackageGeneratorTest {
         model.add(new ExtractedPackage("model"));
         model.add(new ExtractedPackage("view"));
         model.add(new ExtractedPackage("controller"));
-        model.add(new ExtractedEnumeration("someEnum"));
+        model.add(new ExtractedEnum("someEnum"));
         EPackage result = generator.generate(model);
         assertNotNull(result);
         assertEquals("DEFAULT", result.getName());

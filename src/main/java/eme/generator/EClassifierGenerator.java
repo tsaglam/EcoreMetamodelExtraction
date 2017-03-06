@@ -15,8 +15,8 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.generator.hierarchies.ExternalTypeHierarchy;
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumeral;
-import eme.model.ExtractedEnumeration;
+import eme.model.ExtractedEnumConstant;
+import eme.model.ExtractedEnum;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
@@ -95,8 +95,8 @@ public class EClassifierGenerator {
             EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false);
             addSuperClass((ExtractedClass) type, eClass); // get superclass
             eClassifier = eClass;
-        } else if (type.getClass() == ExtractedEnumeration.class) { // build enum:
-            eClassifier = generateEEnum((ExtractedEnumeration) type);
+        } else if (type.getClass() == ExtractedEnum.class) { // build enum:
+            eClassifier = generateEEnum((ExtractedEnum) type);
         }
         typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
         eClassifier.setName(type.getName()); // set name
@@ -158,9 +158,9 @@ public class EClassifierGenerator {
     /**
      * Generates an EEnum from an ExtractedEnumeration.
      */
-    private EEnum generateEEnum(ExtractedEnumeration extractedEnum) {
+    private EEnum generateEEnum(ExtractedEnum extractedEnum) {
         EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
-        for (ExtractedEnumeral enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
+        for (ExtractedEnumConstant enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
             EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
             literal.setName(enumeral.getName()); // set name.
             literal.setValue(eEnum.getELiterals().size()); // set ordinal.
