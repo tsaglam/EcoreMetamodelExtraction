@@ -93,12 +93,11 @@ public class EClassifierGenerator {
             eClassifier = generateEClass(type, true, true);
         } else if (type.getClass() == ExtractedClass.class) { // build class:
             EClass eClass = generateEClass(type, ((ExtractedClass) type).isAbstract(), false);
-            addSuperClass((ExtractedClass) type, eClass); // get superclass
+            addSuperClass((ExtractedClass) type, eClass); // IMPORTANT: needs to be called after type params are built
             eClassifier = eClass;
         } else if (type.getClass() == ExtractedEnum.class) { // build enum:
             eClassifier = generateEEnum((ExtractedEnum) type);
         }
-        typeGenerator.addTypeParameters(eClassifier, type); // add generic types.
         eClassifier.setName(type.getName()); // set name
         eClassifierMap.put(fullName, eClassifier); // store created classifier
         return eClassifier;
@@ -148,9 +147,10 @@ public class EClassifierGenerator {
      */
     private EClass generateEClass(ExtractedType extractedType, boolean isAbstract, boolean isInterface) {
         EClass eClass = ecoreFactory.createEClass(); // build object
-        eClass.setAbstract(isAbstract); // set abstract or not
-        eClass.setInterface(isInterface); // set interface or not
-        addSuperInterfaces(extractedType, eClass); // add super interfaces
+        eClass.setAbstract(isAbstract);
+        eClass.setInterface(isInterface);
+        typeGenerator.addTypeParameters(eClass, extractedType); // build type parameters
+        addSuperInterfaces(extractedType, eClass); // IMPORTANT: needs to be called after type parameters are built
         bareEClasses.put(eClass, extractedType); // finish building later
         return eClass;
     }
@@ -166,6 +166,7 @@ public class EClassifierGenerator {
             literal.setValue(eEnum.getELiterals().size()); // set ordinal.
             eEnum.getELiterals().add(literal); // add literal to enum.
         }
+        typeGenerator.addTypeParameters(eEnum, extractedEnum); // add generic types.
         return eEnum;
     }
 

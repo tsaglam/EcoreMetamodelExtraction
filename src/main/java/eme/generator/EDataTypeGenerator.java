@@ -122,7 +122,7 @@ public class EDataTypeGenerator {
      */
     private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier eClassifier) {
         EGenericType eBound; // ecore type parameter bound
-        for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds+
+        for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
             if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
                 if (isTypeParameter(bound, eClassifier)) {
@@ -227,7 +227,6 @@ public class EDataTypeGenerator {
             logger.error("Can not resolve type parameters for " + extractedDataType.toString());
         }
         dataTypeMap.put(extractedDataType.getFullType(), eDataType); // store in map for later use
-
         return eDataType;
     }
 
