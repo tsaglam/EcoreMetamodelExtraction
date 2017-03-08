@@ -3,6 +3,8 @@ package eme.extractor;
 import static eme.extractor.JDTUtil.getModifier;
 import static eme.extractor.JDTUtil.getName;
 import static eme.extractor.JDTUtil.isAbstract;
+import static eme.extractor.JDTUtil.isEnum;
+import static eme.extractor.JDTUtil.isFinal;
 import static eme.extractor.JDTUtil.isStatic;
 import static eme.extractor.JDTUtil.isVoid;
 
@@ -15,21 +17,40 @@ import org.eclipse.jdt.core.JavaModelException;
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
 import eme.model.MethodType;
+import eme.model.datatypes.ExtractedField;
 
 /**
- * Parser class for Java Methods (Methods, parameters, return types, throws declarations). Uses the class
- * {@link DataTypeExtractor}.
+ * Extractor class for Java Members (Methods and fields). Uses the class {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
-public class JavaMethodExtractor {
+public class JavaMemberExtractor {
     private final DataTypeExtractor dataTypeParser;
 
     /**
      * Basic constructor.
      * @param dataTypeParser sets the DataTypeParser.
      */
-    public JavaMethodExtractor(DataTypeExtractor dataTypeParser) {
+    public JavaMemberExtractor(DataTypeExtractor dataTypeParser) {
         this.dataTypeParser = dataTypeParser;
+    }
+
+    /**
+     * Parses Fields from an {@link IType} and adds them to an {@link ExtractedType}.
+     * @param type is the {@link IType}.
+     * @param extractedType is the {@link ExtractedType}.
+     * @throws JavaModelException if there are problem with the JDT API.
+     */
+    public void parseFields(IType type, ExtractedType extractedType) throws JavaModelException {
+        ExtractedField extractedField; // TODO (MEDIUM) move to method extractor, make member extractor.
+        for (IField field : type.getFields()) {
+            if (!isEnum(field)) { // if is no enumeral
+                extractedField = dataTypeParser.parseField(field, type);
+                extractedField.setFinal(isFinal(field));
+                extractedField.setStatic(isStatic(field));
+                extractedField.setModifier(getModifier(field));
+                extractedType.addAttribute(extractedField);
+            }
+        }
     }
 
     /**

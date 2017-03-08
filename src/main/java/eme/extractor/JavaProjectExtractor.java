@@ -19,7 +19,7 @@ import eme.model.IntermediateModel;
 
 /**
  * The class analyzes java projects and builds intermediate models with the help of the {@link JavaTypeExtractor},
- * {@link JavaMethodExtractor} and {@link DataTypeExtractor}.
+ * {@link JavaMemberExtractor} and {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
 public class JavaProjectExtractor {

@@ -1,11 +1,8 @@
 package eme.extractor;
 
-import static eme.extractor.JDTUtil.getModifier;
 import static eme.extractor.JDTUtil.getName;
 import static eme.extractor.JDTUtil.isAbstract;
 import static eme.extractor.JDTUtil.isEnum;
-import static eme.extractor.JDTUtil.isFinal;
-import static eme.extractor.JDTUtil.isStatic;
 
 import java.util.Set;
 
@@ -19,22 +16,21 @@ import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumConstant;
 import eme.model.ExtractedEnum;
+import eme.model.ExtractedEnumConstant;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
-import eme.model.datatypes.ExtractedField;
 
 /**
- * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodExtractor} and
- * the {@link DataTypeExtractor}.
+ * Extractor class for Java types (classes, interfaces, enumerations). This class uses the {@link JavaMemberExtractor}
+ * and the {@link DataTypeExtractor}.
  * @author Timur Saglam
  */
 public class JavaTypeExtractor {
     private static final Logger logger = LogManager.getLogger(JavaTypeExtractor.class.getName());
     private final DataTypeExtractor dataTypeParser;
-    private final JavaMethodExtractor methodParser;
+    private final JavaMemberExtractor memberExtractor;
     private final IntermediateModel model;
     private final IJavaProject project;
 
@@ -48,7 +44,7 @@ public class JavaTypeExtractor {
         this.dataTypeParser = dataTypeParser;
         this.model = model;
         this.project = project;
-        methodParser = new JavaMethodExtractor(dataTypeParser);
+        memberExtractor = new JavaMemberExtractor(dataTypeParser);
     }
 
     /**
@@ -86,8 +82,8 @@ public class JavaTypeExtractor {
         }
         parseOuterType(type, extractedType); // parse outer type name
         dataTypeParser.parseTypeParameters(type, extractedType);
-        parseFields(type, extractedType); // parse attribute
-        methodParser.parseMethods(type, extractedType); // parse methods
+        memberExtractor.parseFields(type, extractedType); // parse attribute
+        memberExtractor.parseMethods(type, extractedType); // parse methods
         for (String signature : type.getSuperInterfaceTypeSignatures()) {
             extractedType.addInterface(dataTypeParser.parseDataType(signature, type)); // add interface
         }
@@ -105,22 +101,6 @@ public class JavaTypeExtractor {
             }
         }
         return false; // is false
-    }
-
-    /**
-     * Parses Fields from an {@link IType} and adds them to an {@link ExtractedType}.
-     */
-    private void parseFields(IType type, ExtractedType extractedType) throws JavaModelException {
-        ExtractedField attribute; // TODO (MEDIUM) move to method extractor, make member extractor.
-        for (IField field : type.getFields()) {
-            if (!isEnum(field)) { // if is no enumeral
-                attribute = dataTypeParser.parseField(field, type);
-                attribute.setFinal(isFinal(field));
-                attribute.setStatic(isStatic(field));
-                attribute.setModifier(getModifier(field));
-                extractedType.addAttribute(attribute);
-            }
-        }
     }
 
     /**
