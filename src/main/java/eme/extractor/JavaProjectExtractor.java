@@ -26,9 +26,9 @@ public class JavaProjectExtractor {
     private static final Logger logger = LogManager.getLogger(JavaProjectExtractor.class.getName());
     private IntermediateModel currentModel;
     private ExtractedPackage currentPackage;
-    private DataTypeExtractor dataTypeParser;
+    private DataTypeExtractor dataTypeExtractor;
     private int packageCounter;
-    private JavaTypeExtractor typeParser;
+    private JavaTypeExtractor typeExtractor;
 
     /**
      * Analyzes a {@link IJavaProject} and builds an {@link IntermediateModel}.
@@ -38,8 +38,8 @@ public class JavaProjectExtractor {
     public IntermediateModel buildIntermediateModel(IJavaProject project) {
         setup(project);
         try {
-            parsePackages(project); // parse project
-            typeParser.parseExternalTypes(dataTypeParser.getDataTypes()); // parse potential external
+            extractPackages(project); // parse project
+            typeExtractor.extractExternalTypes(dataTypeExtractor.getDataTypes()); // parse potential external
         } catch (JavaModelException exception) {
             throw new RuntimeException("Error while extracting the model.", exception);
         }
@@ -49,23 +49,16 @@ public class JavaProjectExtractor {
     }
 
     /**
-     * Checks if a {@link IPackageFragment} is a source package.
-     */
-    private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
-        return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
-    }
-
-    /**
      * Extracts all compilation units from a list of package fragments. It then parses all ICompilationUnits while
      * updating the current package.
      */
-    private void parseCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {
+    private void extractCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {
         for (IPackageFragment fragment : fragments) { // for every package fragment
             currentPackage = currentModel.getPackage(fragment.getElementName()); // model package
             reportProgress(fragments.size());
             for (ICompilationUnit unit : fragment.getCompilationUnits()) { // get compilation units
                 for (IType type : unit.getAllTypes()) { // for all types
-                    currentModel.addTo(typeParser.parseType(type), currentPackage);
+                    currentModel.addTo(typeExtractor.extractType(type), currentPackage);
                 }
             }
         }
@@ -76,7 +69,7 @@ public class JavaProjectExtractor {
      * parsing the {@link IPackageFragment}s. The method creates the packages from a set of package names to avoid the
      * problem of duplicate default packages. But all other parsing calls are done with a list of fragments.
      */
-    private void parsePackages(IJavaProject project) throws JavaModelException {
+    private void extractPackages(IJavaProject project) throws JavaModelException {
         SortedSet<String> packageNames = new TreeSet<String>(); // set to avoid duplicates
         List<IPackageFragment> fragments = new LinkedList<IPackageFragment>();
         for (IPackageFragment fragment : project.getPackageFragments()) {
@@ -88,7 +81,14 @@ public class JavaProjectExtractor {
         for (String name : packageNames) {
             currentModel.add(new ExtractedPackage(name)); // build model packages first
         }
-        parseCompilationUnits(fragments); // then continue parsing
+        extractCompilationUnits(fragments); // then continue parsing
+    }
+
+    /**
+     * Checks if a {@link IPackageFragment} is a source package.
+     */
+    private boolean isSourcePackage(IPackageFragment packageFragment) throws JavaModelException {
+        return packageFragment.getKind() == IPackageFragmentRoot.K_SOURCE;
     }
 
     /**
@@ -101,12 +101,12 @@ public class JavaProjectExtractor {
     }
 
     /**
-     * Creates the {@link IntermediateModel} instance and the other parsers.
+     * Creates the {@link IntermediateModel} instance and the other extractors.
      */
     private void setup(IJavaProject project) {
         currentModel = new IntermediateModel(project.getElementName()); // create new model.
-        dataTypeParser = new DataTypeExtractor();
-        typeParser = new JavaTypeExtractor(currentModel, project, dataTypeParser);
+        dataTypeExtractor = new DataTypeExtractor();
+        typeExtractor = new JavaTypeExtractor(currentModel, project, dataTypeExtractor);
         logger.info("Started parsing the project...");
     }
 }

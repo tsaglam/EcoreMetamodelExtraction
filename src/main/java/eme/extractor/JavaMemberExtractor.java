@@ -24,14 +24,14 @@ import eme.model.datatypes.ExtractedField;
  * @author Timur Saglam
  */
 public class JavaMemberExtractor {
-    private final DataTypeExtractor dataTypeParser;
+    private final DataTypeExtractor dataTypeExtractor;
 
     /**
      * Basic constructor.
-     * @param dataTypeParser sets the DataTypeParser.
+     * @param dataTypeExtractor sets the {@link DataTypeExtractor}.
      */
-    public JavaMemberExtractor(DataTypeExtractor dataTypeParser) {
-        this.dataTypeParser = dataTypeParser;
+    public JavaMemberExtractor(DataTypeExtractor dataTypeExtractor) {
+        this.dataTypeExtractor = dataTypeExtractor;
     }
 
     /**
@@ -40,11 +40,11 @@ public class JavaMemberExtractor {
      * @param extractedType is the {@link ExtractedType}.
      * @throws JavaModelException if there are problem with the JDT API.
      */
-    public void parseFields(IType type, ExtractedType extractedType) throws JavaModelException {
+    public void extractFields(IType type, ExtractedType extractedType) throws JavaModelException {
         ExtractedField extractedField; // TODO (MEDIUM) move to method extractor, make member extractor.
         for (IField field : type.getFields()) {
             if (!isEnum(field)) { // if is no enumeral
-                extractedField = dataTypeParser.parseField(field, type);
+                extractedField = dataTypeExtractor.extractField(field, type);
                 extractedField.setFinal(isFinal(field));
                 extractedField.setStatic(isStatic(field));
                 extractedField.setModifier(getModifier(field));
@@ -59,24 +59,40 @@ public class JavaMemberExtractor {
      * @param extractedType is the extracted type where the extracted methods should be added.
      * @throws JavaModelException if there are problem with the JDT API.
      */
-    public void parseMethods(IType type, ExtractedType extractedType) throws JavaModelException {
+    public void extractMethods(IType type, ExtractedType extractedType) throws JavaModelException {
         ExtractedMethod extractedMethod;
         String methodName; // name of the extracted method
         for (IMethod method : type.getMethods()) { // for every method
             methodName = getName(type) + "." + method.getElementName(); // build name
-            extractedMethod = new ExtractedMethod(methodName, dataTypeParser.parseReturnType(method));
+            extractedMethod = new ExtractedMethod(methodName, dataTypeExtractor.extractReturnType(method));
             extractedMethod.setAbstract(isAbstract(method));
             extractedMethod.setStatic(isStatic(method));
-            extractedMethod.setMethodType(parseMethodType(method));
+            extractedMethod.setMethodType(extractMethodType(method));
             extractedMethod.setModifier(getModifier(method));
             for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
-                extractedMethod.addParameter(dataTypeParser.parseParameter(parameter, method));
+                extractedMethod.addParameter(dataTypeExtractor.extractParameter(parameter, method));
             }
             for (String exception : method.getExceptionTypes()) { // parse throw declarations:
-                extractedMethod.addThrowsDeclaration(dataTypeParser.parseDataType(exception, type));
+                extractedMethod.addThrowsDeclaration(dataTypeExtractor.extractDataType(exception, type));
             }
             extractedType.addMethod(extractedMethod);
         }
+    }
+
+    /**
+     * Parses the {@link MethodType} of an {@link IMethod}.
+     */
+    private MethodType extractMethodType(IMethod method) throws JavaModelException {
+        if (method.isConstructor()) {
+            return MethodType.CONSTRUCTOR;
+        } else if (isAccessor(method)) {
+            return MethodType.ACCESSOR;
+        } else if (isMutator(method)) {
+            return MethodType.MUTATOR;
+        } else if (method.isMainMethod()) {
+            return MethodType.MAIN;
+        }
+        return MethodType.NORMAL;
     }
 
     /**
@@ -110,21 +126,5 @@ public class JavaMemberExtractor {
             return method.getNumberOfParameters() == 1 && isVoid(method.getReturnType());
         }
         return false;
-    }
-
-    /**
-     * Parses the {@link MethodType} of an {@link IMethod}.
-     */
-    private MethodType parseMethodType(IMethod method) throws JavaModelException {
-        if (method.isConstructor()) {
-            return MethodType.CONSTRUCTOR;
-        } else if (isAccessor(method)) {
-            return MethodType.ACCESSOR;
-        } else if (isMutator(method)) {
-            return MethodType.MUTATOR;
-        } else if (method.isMainMethod()) {
-            return MethodType.MAIN;
-        }
-        return MethodType.NORMAL;
     }
 }

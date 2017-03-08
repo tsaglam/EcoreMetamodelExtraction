@@ -29,7 +29,7 @@ import eme.model.IntermediateModel;
  */
 public class JavaTypeExtractor {
     private static final Logger logger = LogManager.getLogger(JavaTypeExtractor.class.getName());
-    private final DataTypeExtractor dataTypeParser;
+    private final DataTypeExtractor dataTypeExtractor;
     private final JavaMemberExtractor memberExtractor;
     private final IntermediateModel model;
     private final IJavaProject project;
@@ -38,13 +38,13 @@ public class JavaTypeExtractor {
      * Basic constructor.
      * @param model sets the intermediate model.
      * @param project sets the current project, which is parsed.
-     * @param dataTypeParser sets the DataTypeParser.
+     * @param dataTypeExtractor sets the DataTypeParser.
      */
-    public JavaTypeExtractor(IntermediateModel model, IJavaProject project, DataTypeExtractor dataTypeParser) {
-        this.dataTypeParser = dataTypeParser;
+    public JavaTypeExtractor(IntermediateModel model, IJavaProject project, DataTypeExtractor dataTypeExtractor) {
+        this.dataTypeExtractor = dataTypeExtractor;
         this.model = model;
         this.project = project;
-        memberExtractor = new JavaMemberExtractor(dataTypeParser);
+        memberExtractor = new JavaMemberExtractor(dataTypeExtractor);
     }
 
     /**
@@ -53,13 +53,13 @@ public class JavaTypeExtractor {
      * @param externalTypes is the set of external types to parse.
      * @throws JavaModelException if there are problem with the JDT API.
      */
-    public void parseExternalTypes(Set<String> externalTypes) throws JavaModelException {
+    public void extractExternalTypes(Set<String> externalTypes) throws JavaModelException {
         logger.info("Parsing external types...");
         for (String typeName : externalTypes) { // for every potential external type
             if (!model.contains(typeName)) { // if is not a model type:
                 IType iType = project.findType(typeName); // try to find IType
                 if (iType != null) { // if IType was found:
-                    model.addExternal(parseType(iType));  // add to model.
+                    model.addExternal(extractType(iType));  // add to model.
                 }
             }
         }
@@ -71,23 +71,68 @@ public class JavaTypeExtractor {
      * @return the extracted type.
      * @throws JavaModelException if there are problem with the JDT API.
      */
-    public ExtractedType parseType(IType type) throws JavaModelException {
+    public ExtractedType extractType(IType type) throws JavaModelException {
         ExtractedType extractedType = null;
         if (type.isClass()) {
-            extractedType = parseClass(type); // create class
+            extractedType = extractClass(type); // create class
         } else if (type.isInterface()) {
-            extractedType = parseInterface(type);
+            extractedType = extractInterface(type);
         } else if (type.isEnum()) {
-            extractedType = parseEnumeration(type); // create enum
+            extractedType = extractEnum(type); // create enum
         }
-        parseOuterType(type, extractedType); // parse outer type name
-        dataTypeParser.parseTypeParameters(type, extractedType);
-        memberExtractor.parseFields(type, extractedType); // parse attribute
-        memberExtractor.parseMethods(type, extractedType); // parse methods
+        extractOuterType(type, extractedType); // parse outer type name
+        dataTypeExtractor.extractTypeParameters(type, extractedType);
+        memberExtractor.extractFields(type, extractedType); // parse attribute
+        memberExtractor.extractMethods(type, extractedType); // parse methods
         for (String signature : type.getSuperInterfaceTypeSignatures()) {
-            extractedType.addInterface(dataTypeParser.parseDataType(signature, type)); // add interface
+            extractedType.addInterface(dataTypeExtractor.extractDataType(signature, type)); // add interface
         }
         return extractedType;
+    }
+
+    /**
+     * Parses an {@link IType} that has been identified as class.
+     */
+    private ExtractedClass extractClass(IType type) throws JavaModelException {
+        boolean throwable = inheritsFromThrowable(type);
+        ExtractedClass newClass = new ExtractedClass(getName(type), isAbstract(type), throwable);
+        String signature = type.getSuperclassTypeSignature();
+        if (signature != null) { // get full super type:
+            newClass.setSuperClass(dataTypeExtractor.extractDataType(signature, type)); // set super
+        }
+        return newClass;
+    }
+
+    /**
+     * Parse an {@link IType} that has been identified as enumeration.
+     */
+    private ExtractedEnum extractEnum(IType type) throws JavaModelException {
+        ExtractedEnum newEnum = new ExtractedEnum(getName(type));
+        for (IField field : type.getFields()) { // for every enumeral
+            if (isEnum(field)) {
+                newEnum.addEnumeral(new ExtractedEnumConstant(field.getElementName())); // add to enum
+            }
+        }
+        return newEnum;
+    }
+
+    /**
+     * Parses an {@link IType} that has been identified as interface.
+     */
+    private ExtractedInterface extractInterface(IType type) throws JavaModelException {
+        return new ExtractedInterface(getName(type)); // create interface
+    }
+
+    /**
+     * Parses the outer type name of an {@link IType} if it has one.
+     * @param type is the {@link IType}.
+     * @param extractedType is the {@link ExtractedType} which receives the parsed information.
+     */
+    private void extractOuterType(IType type, ExtractedType extractedType) {
+        IType outerType = type.getDeclaringType();
+        if (outerType != null) { // if is inner type
+            extractedType.setOuterType(getName(outerType)); // add outer type name
+        }
     }
 
     /**
@@ -101,50 +146,5 @@ public class JavaTypeExtractor {
             }
         }
         return false; // is false
-    }
-
-    /**
-     * Parses an {@link IType} that has been identified as class.
-     */
-    private ExtractedClass parseClass(IType type) throws JavaModelException {
-        boolean throwable = inheritsFromThrowable(type);
-        ExtractedClass newClass = new ExtractedClass(getName(type), isAbstract(type), throwable);
-        String signature = type.getSuperclassTypeSignature();
-        if (signature != null) { // get full super type:
-            newClass.setSuperClass(dataTypeParser.parseDataType(signature, type)); // set super
-        }
-        return newClass;
-    }
-
-    /**
-     * Parse an {@link IType} that has been identified as enumeration.
-     */
-    private ExtractedEnum parseEnumeration(IType type) throws JavaModelException {
-        ExtractedEnum newEnum = new ExtractedEnum(getName(type));
-        for (IField field : type.getFields()) { // for every enumeral
-            if (isEnum(field)) {
-                newEnum.addEnumeral(new ExtractedEnumConstant(field.getElementName())); // add to enum
-            }
-        }
-        return newEnum;
-    }
-
-    /**
-     * Parses an {@link IType} that has been identified as interface.
-     */
-    private ExtractedInterface parseInterface(IType type) throws JavaModelException {
-        return new ExtractedInterface(getName(type)); // create interface
-    }
-
-    /**
-     * Parses the outer type name of an {@link IType} if it has one.
-     * @param type is the {@link IType}.
-     * @param extractedType is the {@link ExtractedType} which receives the parsed information.
-     */
-    private void parseOuterType(IType type, ExtractedType extractedType) {
-        IType outerType = type.getDeclaringType();
-        if (outerType != null) { // if is inner type
-            extractedType.setOuterType(getName(outerType)); // add outer type name
-        }
     }
 }

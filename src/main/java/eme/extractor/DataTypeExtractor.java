@@ -49,14 +49,6 @@ public class DataTypeExtractor {
     }
 
     /**
-     * Returns a copy of the set of potential external type names.
-     * @return the new set of type names.
-     */
-    public Set<String> getDataTypes() {
-        return new HashSet<String>(dataTypes);
-    }
-
-    /**
      * Creates {@link ExtractedDataType} from a signature and a declaring {@link IType}. Use this method if the other
      * methods of the class do not fit your needs (e.g. for throws declarations).
      * @param signature is the signature of the data type.
@@ -64,10 +56,10 @@ public class DataTypeExtractor {
      * @return the extracted data type.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedDataType parseDataType(String signature, IType declaringType) throws JavaModelException {
+    public ExtractedDataType extractDataType(String signature, IType declaringType) throws JavaModelException {
         int arrayCount = Signature.getArrayCount(signature);
         ExtractedDataType dataType = new ExtractedDataType(getFullName(signature, declaringType), arrayCount);
-        dataType.setGenericArguments(parseGenericArguments(signature, declaringType));
+        dataType.setGenericArguments(extractGenericArguments(signature, declaringType));
         return dataType;
     }
 
@@ -78,12 +70,12 @@ public class DataTypeExtractor {
      * @return the extracted attribute of the field.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedField parseField(IField field, IType type) throws JavaModelException {
+    public ExtractedField extractField(IField field, IType type) throws JavaModelException {
         String signature = field.getTypeSignature(); // get return type signature
         int arrayCount = Signature.getArrayCount(signature);
         String name = field.getElementName(); // name of the field
         ExtractedField attribute = new ExtractedField(name, getFullName(signature, type), arrayCount);
-        attribute.setGenericArguments(parseGenericArguments(signature, type));
+        attribute.setGenericArguments(extractGenericArguments(signature, type));
         return attribute;
     }
 
@@ -94,13 +86,13 @@ public class DataTypeExtractor {
      * @return the extracted method parameter.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedParameter parseParameter(ILocalVariable variable, IMethod iMethod) throws JavaModelException {
+    public ExtractedParameter extractParameter(ILocalVariable variable, IMethod iMethod) throws JavaModelException {
         String signature = variable.getTypeSignature(); // get return type signature
         String name = variable.getElementName(); // name of the parameter
         IType declaringType = iMethod.getDeclaringType(); // declaring type of the method
         int arrayCount = Signature.getArrayCount(signature); // amount of array dimensions
         ExtractedParameter parameter = new ExtractedParameter(name, getFullName(signature, declaringType), arrayCount);
-        parameter.setGenericArguments(parseGenericArguments(signature, declaringType));
+        parameter.setGenericArguments(extractGenericArguments(signature, declaringType));
         return parameter;
     }
 
@@ -110,12 +102,12 @@ public class DataTypeExtractor {
      * @return the return type, or null if it is void.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedDataType parseReturnType(IMethod iMethod) throws JavaModelException {
+    public ExtractedDataType extractReturnType(IMethod iMethod) throws JavaModelException {
         String signature = iMethod.getReturnType(); // get return type signature
         if (isVoid(signature)) {
             return null; // void signature, no return type.
         }
-        return parseDataType(signature, iMethod.getDeclaringType());
+        return extractDataType(signature, iMethod.getDeclaringType());
     }
 
     /**
@@ -124,15 +116,50 @@ public class DataTypeExtractor {
      * @param extractedType is the ExtractedType.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public void parseTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
+    public void extractTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
         ExtractedTypeParameter parameter;
         for (String signature : type.getTypeParameterSignatures()) { // for every type parameter
             parameter = new ExtractedTypeParameter(Signature.getTypeVariable(signature)); // create representation
             for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
-                parameter.add(parseDataType(bound, type)); // add to representation
+                parameter.add(extractDataType(bound, type)); // add to representation
             }
             extractedType.addTypeParameter(parameter); // add to extracted type
         }
+    }
+
+    /**
+     * Returns a copy of the set of potential external type names.
+     * @return the new set of type names.
+     */
+    public Set<String> getDataTypes() {
+        return new HashSet<String>(dataTypes);
+    }
+
+    /**
+     * Parses generic arguments from signature and returns them in a list.
+     */
+    private List<ExtractedDataType> extractGenericArguments(String signature, IType declaringType) throws JavaModelException {
+        List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
+        for (String argumentSignature : Signature.getTypeArguments(signature)) { // for every argument
+            ExtractedDataType genericArgument = extractDataType(argumentSignature, declaringType);
+            genericArgument.setWildcardStatus(getWildcardStatus(argumentSignature));
+            genericArguments.add(genericArgument); // add generic type argument
+        }
+        return genericArguments;
+    }
+
+    /**
+     * Tries to resolve an unresolved type signature.
+     */
+    private String extractUnresolved(String signature, IType declaringType) throws JavaModelException {
+        String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
+        if (hasGenericArguments(typeName)) {
+            typeName = removeGenericArguments(typeName);
+        }
+        if (isNestedType(typeName)) { // if is inner type
+            typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
+        }
+        return typeName; // return type name
     }
 
     /**
@@ -149,37 +176,10 @@ public class DataTypeExtractor {
         if (resolvedType != null && resolvedType[0] != null) { // if it has full name:
             name = Signature.toQualifiedName(resolvedType[0]); // generate full qualified name
         } else if (isUnresolved(signature)) { // if not resolved
-            name = parseUnresolved(signature, declaringType); // try to resolve manually
+            name = extractUnresolved(signature, declaringType); // try to resolve manually
         }
         dataTypes.add(name); // potential external type
         return name;
-    }
-
-    /**
-     * Parses generic arguments from signature and returns them in a list.
-     */
-    private List<ExtractedDataType> parseGenericArguments(String signature, IType declaringType) throws JavaModelException {
-        List<ExtractedDataType> genericArguments = new LinkedList<ExtractedDataType>();
-        for (String argumentSignature : Signature.getTypeArguments(signature)) { // for every argument
-            ExtractedDataType genericArgument = parseDataType(argumentSignature, declaringType);
-            genericArgument.setWildcardStatus(getWildcardStatus(argumentSignature));
-            genericArguments.add(genericArgument); // add generic type argument
-        }
-        return genericArguments;
-    }
-
-    /**
-     * Tries to resolve an unresolved type signature.
-     */
-    private String parseUnresolved(String signature, IType declaringType) throws JavaModelException {
-        String typeName = signature.substring(1, signature.length() - 1); // cut signature symbols
-        if (hasGenericArguments(typeName)) {
-            typeName = removeGenericArguments(typeName);
-        }
-        if (isNestedType(typeName)) { // if is inner type
-            typeName = resolveInnerType(typeName, declaringType); // try to resolve it manually
-        }
-        return typeName; // return type name
     }
 
     /**
