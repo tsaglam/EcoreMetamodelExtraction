@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import eme.model.ExtractedType;
-import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 import eme.model.datatypes.ExtractedTypeParameter;
@@ -72,17 +72,17 @@ public class DataTypeExtractor {
     }
 
     /**
-     * Creates {@link ExtractedAttribute} from a {@link IField} and its {@link IType}.
+     * Creates {@link ExtractedField} from a {@link IField} and its {@link IType}.
      * @param field is the field.
      * @param type is the type of the field.
      * @return the extracted attribute of the field.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public ExtractedAttribute parseField(IField field, IType type) throws JavaModelException {
+    public ExtractedField parseField(IField field, IType type) throws JavaModelException {
         String signature = field.getTypeSignature(); // get return type signature
         int arrayCount = Signature.getArrayCount(signature);
         String name = field.getElementName(); // name of the field
-        ExtractedAttribute attribute = new ExtractedAttribute(name, getFullName(signature, type), arrayCount);
+        ExtractedField attribute = new ExtractedField(name, getFullName(signature, type), arrayCount);
         attribute.setGenericArguments(parseGenericArguments(signature, type));
         return attribute;
     }

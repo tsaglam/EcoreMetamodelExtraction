@@ -6,7 +6,7 @@ import eme.model.IntermediateModel;
  * Represents an extracted Attribute in {@link IntermediateModel}
  * @author Timur Saglam
  */
-public class ExtractedAttribute extends ExtractedVariable {
+public class ExtractedField extends ExtractedVariable {
     private boolean finalAttribute;
     private AccessLevelModifier modifier;
 
@@ -20,7 +20,7 @@ public class ExtractedAttribute extends ExtractedVariable {
      * "char".
      * @param arrayDimension is the amount of array dimensions, should be 0 if it is not an array.
      */
-    public ExtractedAttribute(String identifier, String fullTypeName, int arrayDimension) {
+    public ExtractedField(String identifier, String fullTypeName, int arrayDimension) {
         super(identifier, fullTypeName, arrayDimension);
         modifier = AccessLevelModifier.NO_MODIFIER;
         staticAttribute = false;

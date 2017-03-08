@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
-import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
 
@@ -47,7 +47,7 @@ public class MemberGenerator {
      * @param eClass is the {@link EClass}.
      */
     public void addAttributes(ExtractedType type, EClass eClass) {
-        for (ExtractedAttribute attribute : type.getAttributes()) { // for every attribute
+        for (ExtractedField attribute : type.getAttributes()) { // for every attribute
             if (selector.allowsGenerating(attribute)) { // if should be generated:
                 if (isEClass(attribute.getFullType())) { // if type is EClass:
                     EReference reference = ecoreFactory.createEReference();
@@ -114,7 +114,7 @@ public class MemberGenerator {
      * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
      * EAttribute or an EReference. If it is a reference, containment has to be set manually.
      */
-    private void addStructuralFeature(EStructuralFeature feature, ExtractedAttribute attribute, EClass eClass) {
+    private void addStructuralFeature(EStructuralFeature feature, ExtractedField attribute, EClass eClass) {
         feature.setName(attribute.getIdentifier()); // set name
         feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
         typeGenerator.addDataType(feature, attribute, eClass); // add type to attribute

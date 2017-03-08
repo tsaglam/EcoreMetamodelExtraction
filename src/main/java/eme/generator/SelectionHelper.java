@@ -21,7 +21,7 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
-import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedField;
 import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
 
@@ -45,11 +45,11 @@ public class SelectionHelper {
     }
 
     /**
-     * Checks whether a {@link ExtractedAttribute} may be generated.
+     * Checks whether a {@link ExtractedField} may be generated.
      * @param attribute is the extracted attribute.
      * @return true if it may be generated.
      */
-    public boolean allowsGenerating(ExtractedAttribute attribute) {
+    public boolean allowsGenerating(ExtractedField attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
         boolean allowed = !attribute.isStatic() || properties.get(BinaryProperty.STATIC_ATTRIBUTES);
         allowed &= modifier != PUBLIC || properties.get(BinaryProperty.PUBLIC_ATTRIBUTES);

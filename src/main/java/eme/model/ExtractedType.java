@@ -3,7 +3,7 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedTypeParameter;
 
@@ -12,7 +12,7 @@ import eme.model.datatypes.ExtractedTypeParameter;
  * @author Timur Saglam
  */
 public abstract class ExtractedType extends ExtractedElement {
-    protected final List<ExtractedAttribute> attributes;
+    protected final List<ExtractedField> attributes;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
     protected ExtractedDataType superClass;
@@ -27,15 +27,15 @@ public abstract class ExtractedType extends ExtractedElement {
         super(fullName);
         superInterfaces = new LinkedList<ExtractedDataType>();
         methods = new LinkedList<ExtractedMethod>();
-        attributes = new LinkedList<ExtractedAttribute>();
+        attributes = new LinkedList<ExtractedField>();
         typeParameters = new LinkedList<ExtractedTypeParameter>();
     }
 
     /**
-     * Adds an {@link ExtractedAttribute} to the type.
-     * @param attribute is the new {@link ExtractedAttribute}.
+     * Adds an {@link ExtractedField} to the type.
+     * @param attribute is the new {@link ExtractedField}.
      */
-    public void addAttribute(ExtractedAttribute attribute) {
+    public void addAttribute(ExtractedField attribute) {
         attributes.add(attribute);
     }
 
@@ -75,10 +75,10 @@ public abstract class ExtractedType extends ExtractedElement {
     }
 
     /**
-     * accessor for the list of {@link ExtractedAttribute}s.
+     * accessor for the list of {@link ExtractedField}s.
      * @return the list of attributes.
      */
-    public List<ExtractedAttribute> getAttributes() {
+    public List<ExtractedField> getAttributes() {
         return attributes;
     }
 

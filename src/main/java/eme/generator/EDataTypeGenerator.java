@@ -128,7 +128,7 @@ public class EDataTypeGenerator {
                 if (isTypeParameter(bound, eClassifier)) {
                     eBound.setETypeParameter(findTypeParameter(bound, eClassifier));
                 } else {
-                    eBound.setEClassifier(generate(bound));
+                    eBound.setEClassifier(generate(bound)); // TODO (HIGH) duplicate code
                 }
                 addGenericArguments(eBound, bound, eClassifier); // add generic arguments of bound
                 eTypeParameter.getEBounds().add(eBound); // add bound to type parameter

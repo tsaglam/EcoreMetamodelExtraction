@@ -24,7 +24,7 @@ import eme.model.ExtractedEnum;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
-import eme.model.datatypes.ExtractedAttribute;
+import eme.model.datatypes.ExtractedField;
 
 /**
  * Parser class for Java types (classes, interfaces, enumerations). The class uses the {@link JavaMethodExtractor} and
@@ -86,7 +86,7 @@ public class JavaTypeExtractor {
         }
         parseOuterType(type, extractedType); // parse outer type name
         dataTypeParser.parseTypeParameters(type, extractedType);
-        parseAttributes(type, extractedType); // parse attribute
+        parseFields(type, extractedType); // parse attribute
         methodParser.parseMethods(type, extractedType); // parse methods
         for (String signature : type.getSuperInterfaceTypeSignatures()) {
             extractedType.addInterface(dataTypeParser.parseDataType(signature, type)); // add interface
@@ -108,10 +108,10 @@ public class JavaTypeExtractor {
     }
 
     /**
-     * Parses Attributes from an {@link IType} and adds them to an {@link ExtractedType}.
+     * Parses Fields from an {@link IType} and adds them to an {@link ExtractedType}.
      */
-    private void parseAttributes(IType type, ExtractedType extractedType) throws JavaModelException {
-        ExtractedAttribute attribute;
+    private void parseFields(IType type, ExtractedType extractedType) throws JavaModelException {
+        ExtractedField attribute; // TODO (MEDIUM) move to method extractor, make member extractor.
         for (IField field : type.getFields()) {
             if (!isEnum(field)) { // if is no enumeral
                 attribute = dataTypeParser.parseField(field, type);
