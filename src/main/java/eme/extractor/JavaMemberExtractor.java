@@ -41,7 +41,7 @@ public class JavaMemberExtractor {
      * @throws JavaModelException if there are problem with the JDT API.
      */
     public void extractFields(IType type, ExtractedType extractedType) throws JavaModelException {
-        ExtractedField extractedField; // TODO (MEDIUM) move to method extractor, make member extractor.
+        ExtractedField extractedField;
         for (IField field : type.getFields()) {
             if (!isEnum(field)) { // if is no enumeral
                 extractedField = dataTypeExtractor.extractField(field, type);
@@ -55,7 +55,7 @@ public class JavaMemberExtractor {
 
     /**
      * Parses the {@link IMethod}s from an {@link IType} and adds them to an ExtractedType.
-     * @param type is the {@link IType} whose methods get parsed.
+     * @param type is the {@link IType} whose methods get extracted.
      * @param extractedType is the extracted type where the extracted methods should be added.
      * @throws JavaModelException if there are problem with the JDT API.
      */
@@ -69,10 +69,10 @@ public class JavaMemberExtractor {
             extractedMethod.setStatic(isStatic(method));
             extractedMethod.setMethodType(extractMethodType(method));
             extractedMethod.setModifier(getModifier(method));
-            for (ILocalVariable parameter : method.getParameters()) { // parse parameters:
+            for (ILocalVariable parameter : method.getParameters()) { // extract parameters:
                 extractedMethod.addParameter(dataTypeExtractor.extractParameter(parameter, method));
             }
-            for (String exception : method.getExceptionTypes()) { // parse throw declarations:
+            for (String exception : method.getExceptionTypes()) { // extract throw declarations:
                 extractedMethod.addThrowsDeclaration(dataTypeExtractor.extractDataType(exception, type));
             }
             extractedType.addMethod(extractedMethod);

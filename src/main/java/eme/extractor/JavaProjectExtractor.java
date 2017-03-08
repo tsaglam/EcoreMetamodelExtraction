@@ -38,8 +38,8 @@ public class JavaProjectExtractor {
     public IntermediateModel buildIntermediateModel(IJavaProject project) {
         setup(project);
         try {
-            extractPackages(project); // parse project
-            typeExtractor.extractExternalTypes(dataTypeExtractor.getDataTypes()); // parse potential external
+            extractPackages(project); // extract from project
+            typeExtractor.extractExternalTypes(dataTypeExtractor.getDataTypes()); // extract potential external
         } catch (JavaModelException exception) {
             throw new RuntimeException("Error while extracting the model.", exception);
         }
@@ -49,7 +49,7 @@ public class JavaProjectExtractor {
     }
 
     /**
-     * Extracts all compilation units from a list of package fragments. It then parses all ICompilationUnits while
+     * Extracts all compilation units from a list of package fragments. It then extracts all ICompilationUnits while
      * updating the current package.
      */
     private void extractCompilationUnits(List<IPackageFragment> fragments) throws JavaModelException {

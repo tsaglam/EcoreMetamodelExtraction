@@ -37,7 +37,7 @@ public class JavaTypeExtractor {
     /**
      * Basic constructor.
      * @param model sets the intermediate model.
-     * @param project sets the current project, which is parsed.
+     * @param project sets the current project, which is extracted.
      * @param dataTypeExtractor sets the DataTypeParser.
      */
     public JavaTypeExtractor(IntermediateModel model, IJavaProject project, DataTypeExtractor dataTypeExtractor) {
@@ -50,7 +50,7 @@ public class JavaTypeExtractor {
     /**
      * Parses a list of potential external types. If the model does not contain the type, and an IType can be found, it
      * will add an external ExtractedType to the model.
-     * @param externalTypes is the set of external types to parse.
+     * @param externalTypes is the set of external types to extract.
      * @throws JavaModelException if there are problem with the JDT API.
      */
     public void extractExternalTypes(Set<String> externalTypes) throws JavaModelException {
@@ -67,7 +67,7 @@ public class JavaTypeExtractor {
 
     /**
      * Parses {@link IType}. Detects whether the type is a (abstract) class, an interface or an enumeration.
-     * @param type is the {@link IType} to parse.
+     * @param type is the {@link IType} to extract.
      * @return the extracted type.
      * @throws JavaModelException if there are problem with the JDT API.
      */
@@ -80,10 +80,10 @@ public class JavaTypeExtractor {
         } else if (type.isEnum()) {
             extractedType = extractEnum(type); // create enum
         }
-        extractOuterType(type, extractedType); // parse outer type name
+        extractOuterType(type, extractedType); // extract outer type name
         dataTypeExtractor.extractTypeParameters(type, extractedType);
-        memberExtractor.extractFields(type, extractedType); // parse attribute
-        memberExtractor.extractMethods(type, extractedType); // parse methods
+        memberExtractor.extractFields(type, extractedType); // extract attribute
+        memberExtractor.extractMethods(type, extractedType); // extract methods
         for (String signature : type.getSuperInterfaceTypeSignatures()) {
             extractedType.addInterface(dataTypeExtractor.extractDataType(signature, type)); // add interface
         }
@@ -126,7 +126,7 @@ public class JavaTypeExtractor {
     /**
      * Parses the outer type name of an {@link IType} if it has one.
      * @param type is the {@link IType}.
-     * @param extractedType is the {@link ExtractedType} which receives the parsed information.
+     * @param extractedType is the {@link ExtractedType} which receives the extracted information.
      */
     private void extractOuterType(IType type, ExtractedType extractedType) {
         IType outerType = type.getDeclaringType();
