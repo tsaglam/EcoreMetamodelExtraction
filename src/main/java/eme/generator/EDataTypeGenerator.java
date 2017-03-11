@@ -26,7 +26,7 @@ import eme.model.datatypes.WildcardStatus;
  * Generator class for the generation of Ecore data types ({@link EDataType})
  * @author Timur Saglam
  */
-public class EDataTypeGenerator {
+public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class to make process more clear
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EDataType> dataTypeMap;
     private final Map<String, EClassifier> eClassifierMap;
@@ -92,10 +92,8 @@ public class EDataTypeGenerator {
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) { // wildcard argument:
                 addWildcardBound(eArgument, genericArgument);
-            } else if (isTypeParameter(genericArgument, eClassifier)) { // type parameter argument:
-                eArgument.setETypeParameter(findTypeParameter(genericArgument, eClassifier));
-            } else { // normal generic argument:
-                eArgument.setEClassifier(generate(genericArgument));
+            } else { // normal argument
+                setType(eArgument, genericArgument, eClassifier);
             }
             addGenericArguments(eArgument, genericArgument, eClassifier); // recursively add generic arguments
             genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
@@ -125,11 +123,7 @@ public class EDataTypeGenerator {
         for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
             if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
-                if (isTypeParameter(bound, eClassifier)) {
-                    eBound.setETypeParameter(findTypeParameter(bound, eClassifier));
-                } else {
-                    eBound.setEClassifier(generate(bound)); // TODO (HIGH) duplicate code
-                }
+                setType(eBound, bound, eClassifier); // set type of bound
                 addGenericArguments(eBound, bound, eClassifier); // add generic arguments of bound
                 eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
             }
@@ -254,5 +248,17 @@ public class EDataTypeGenerator {
             }
         }
         return false;
+    }
+
+    /**
+     * Sets the type of an {@link EGenericType} from an {@link ExtractedDataType}. This is either an
+     * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter or {@link EClassifier}.
+     */
+    private void setType(EGenericType genericType, ExtractedDataType dataType, EClassifier eClassifier) {
+        if (isTypeParameter(dataType, eClassifier)) {
+            genericType.setETypeParameter(findTypeParameter(dataType, eClassifier));
+        } else {
+            genericType.setEClassifier(generate(dataType));
+        }
     }
 }
