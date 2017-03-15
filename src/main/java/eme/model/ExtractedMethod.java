@@ -6,6 +6,7 @@ import java.util.List;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedParameter;
+import eme.model.datatypes.ExtractedTypeParameter;
 
 /**
  * Represents a method of a {@link ExtractedType} in the {@link IntermediateModel}.
@@ -19,6 +20,7 @@ public class ExtractedMethod extends ExtractedElement {
     private AccessLevelModifier modifier;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
+    private final List<ExtractedTypeParameter> typeParameters;
 
     /**
      * Basic constructor. Sets access level modifier to {@link AccessLevelModifier}.NO_MODIFIER, static and abstract to
@@ -31,6 +33,7 @@ public class ExtractedMethod extends ExtractedElement {
         this.returnType = returnType;
         parameters = new LinkedList<ExtractedParameter>();
         exceptions = new LinkedList<ExtractedDataType>();
+        typeParameters = new LinkedList<ExtractedTypeParameter>();
         modifier = AccessLevelModifier.NO_MODIFIER;
         methodType = MethodType.NORMAL;
     }
@@ -49,6 +52,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public void addThrowsDeclaration(ExtractedDataType exception) {
         exceptions.add(exception);
+    }
+    
+    /**
+     * Adds a generic type parameter ({@link ExtractedTypeParameter}) to the type.
+     * @param typeParameter is the new {@link ExtractedTypeParameter}.
+     */
+    public void addTypeParameter(ExtractedTypeParameter typeParameter) {
+        typeParameters.add(typeParameter);
     }
 
     /**
@@ -74,7 +85,7 @@ public class ExtractedMethod extends ExtractedElement {
     public List<ExtractedParameter> getParameters() {
         return parameters;
     }
-
+    
     /**
      * accessor for the return type;
      * @return the returnType
@@ -89,6 +100,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public List<ExtractedDataType> getThrowsDeclarations() {
         return exceptions;
+    }
+
+    /**
+     * accessor for the list of generic type parameters ({@link ExtractedTypeParameter}).
+     * @return the list of generic type parameters.
+     */
+    public List<ExtractedTypeParameter> getTypeParameters() {
+        return typeParameters;
     }
 
     /**
