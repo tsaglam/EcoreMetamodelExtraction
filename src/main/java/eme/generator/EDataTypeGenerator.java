@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
@@ -16,6 +15,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import eme.generator.hierarchies.ExternalTypeHierarchy;
+import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
 import eme.model.datatypes.ExtractedDataType;
@@ -54,15 +54,15 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * {@link ExtractedDataType}.
      * @param element is the {@link ETypedElement}.
      * @param dataType is the {@link EDataType}.
-     * @param eClass is the {@link EClass} the contains the {@link ETypedElement}.
+     * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
      */
-    public void addDataType(ETypedElement element, ExtractedDataType dataType, EClass eClass) {
-        if (isTypeParameter(dataType, eClass)) {
-            element.setEGenericType(generateGeneric(dataType, eClass));
+    public void addDataType(ETypedElement element, ExtractedDataType dataType, TypeParameterSource source) {
+        if (source.containsTypeParameter(dataType)) {
+            element.setEGenericType(generateGeneric(dataType, source));
         } else {
             element.setEType(generate(dataType)); // generate data type
         }
-        addGenericArguments(element.getEGenericType(), dataType, eClass); // add generic
+        addGenericArguments(element.getEGenericType(), dataType, source); // add generic
     }
 
     /**
@@ -70,11 +70,11 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * {@link ExtractedDataType}.
      * @param operation is the {@link EOperation}.
      * @param exception is the {@link ExtractedDataType}.
-     * @param eClass is the {@link EClass} the contains the {@link EOperation}.
+     * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
      */
-    public void addException(EOperation operation, ExtractedDataType exception, EClass eClass) {
-        if (isTypeParameter(exception, eClass)) {
-            operation.getEGenericExceptions().add(generateGeneric(exception, eClass));
+    public void addException(EOperation operation, ExtractedDataType exception, TypeParameterSource source) {
+        if (source.containsTypeParameter(exception)) {
+            operation.getEGenericExceptions().add(generateGeneric(exception, source));
         } else {
             operation.getEExceptions().add(generate(exception)); // generate data type
         }
@@ -85,17 +85,17 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * arguments add their generic arguments recursively.
      * @param genericType is the generic type of an attribute, a parameter or a method.
      * @param dataType is the extracted data type, an attribute, a parameter or a return type.
-     * @param eClassifier is the EClassifier which owns the generic type.
+     * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
      */
-    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, EClassifier eClassifier) {
+    public void addGenericArguments(EGenericType genericType, ExtractedDataType dataType, TypeParameterSource source) {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) { // wildcard argument:
                 addWildcardBound(eArgument, genericArgument);
             } else { // normal argument
-                setType(eArgument, genericArgument, eClassifier);
+                setBoundType(eArgument, genericArgument, source);
             }
-            addGenericArguments(eArgument, genericArgument, eClassifier); // recursively add generic arguments
+            addGenericArguments(eArgument, genericArgument, source); // recursively add generic arguments
             genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
         }
     }
@@ -105,26 +105,41 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * @param eClassifier is the EClassifier.
      * @param type is the extracted type.
      */
-    public void addTypeParameters(EClassifier eClassifier, ExtractedType type) {
+    public void addTypeParameters(EClassifier eClassifier, ExtractedType type) { // TODO (CRITICAL) cyclic problem
         ETypeParameter eTypeParameter; // ecore type parameter
         for (ExtractedTypeParameter typeParameter : type.getTypeParameters()) { // for all type parameters
             eTypeParameter = ecoreFactory.createETypeParameter(); // create object
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
-            addBounds(eTypeParameter, typeParameter, eClassifier);
+            addBounds(eTypeParameter, typeParameter, new TypeParameterSource(eClassifier));
             eClassifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
+        }
+    }
+
+    /**
+     * Adds all generic type parameters from an {@link ExtractedMethod} to a {@link EOperation}.
+     * @param eOperation is the {@link EOperation}.
+     * @param method is the {@link ExtractedMethod}.
+     */ // TODO (CRITICAL) cyclic problem
+    public void addTypeParameters(EOperation eOperation, ExtractedMethod method) {
+        ETypeParameter eTypeParameter; // ecore type parameter // TODO (MEDIUM) duplicate code
+        for (ExtractedTypeParameter typeParameter : method.getTypeParameters()) { // for all type parameters
+            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
+            eTypeParameter.setName(typeParameter.getIdentifier()); // set name
+            addBounds(eTypeParameter, typeParameter, new TypeParameterSource(eOperation));
+            eOperation.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
         }
     }
 
     /**
      * Adds all bounds of an {@link ExtractedTypeParameter} to a {@link ETypeParameter}.
      */
-    private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, EClassifier eClassifier) {
+    private void addBounds(ETypeParameter eTypeParameter, ExtractedTypeParameter typeParameter, TypeParameterSource source) {
         EGenericType eBound; // ecore type parameter bound
         for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
             if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
-                setType(eBound, bound, eClassifier); // set type of bound
-                addGenericArguments(eBound, bound, eClassifier); // add generic arguments of bound
+                setBoundType(eBound, bound, source); // set type of bound
+                addGenericArguments(eBound, bound, source); // add generic arguments of bound
                 eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
             }
         }
@@ -172,19 +187,6 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
     }
 
     /**
-     * Gets an ETypeParameter with a specific name from an specific EClassifier.
-     */
-    private ETypeParameter findTypeParameter(ExtractedDataType dataType, EClassifier eClassifier) {
-        String name = dataType.getFullType();
-        for (ETypeParameter parameter : eClassifier.getETypeParameters()) {
-            if (parameter.getName().equals(name)) {
-                return parameter;
-            }
-        }
-        throw new IllegalArgumentException("There is no ETypeParameter " + name + " in " + eClassifier.toString());
-    }
-
-    /**
      * Returns an {@link EClassifier} for an {@link ExtractedDataType} that can be used as data type for methods and
      * attributes. The {@link EClassifier} is either (1.) a custom class from the model, or (2.) or an external class
      * that has to be created as data type, or (3.) an already known data type (Basic type or already created)
@@ -228,35 +230,22 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * Returns an generic type parameter, which is an {@link EGenericType}, for an {@link ExtractedDataType} that can be
      * used as generic argument for methods and attributes.
      */
-    private EGenericType generateGeneric(ExtractedDataType dataType, EClass eClass) {
-        if (isTypeParameter(dataType, eClass)) {
+    private EGenericType generateGeneric(ExtractedDataType dataType, TypeParameterSource source) {
+        if (source.containsTypeParameter(dataType)) {
             EGenericType genericType = ecoreFactory.createEGenericType();
-            genericType.setETypeParameter(findTypeParameter(dataType, eClass));
+            genericType.setETypeParameter(source.getTypeParameter(dataType));
             return genericType;
         }
         throw new IllegalArgumentException("The data type is not an type parameter: " + dataType.toString());
     }
 
     /**
-     * Checks whether an {@link ExtractedDataType} is a type parameter in a specific {@link EClassifier}.
-     */
-    private boolean isTypeParameter(ExtractedDataType dataType, EClassifier eClassifier) {
-        String dataTypeName = dataType.getFullType();
-        for (ETypeParameter parameter : eClassifier.getETypeParameters()) {
-            if (parameter.getName() != null && parameter.getName().equals(dataTypeName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Sets the type of an {@link EGenericType} from an {@link ExtractedDataType}. This is either an
      * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter or {@link EClassifier}.
      */
-    private void setType(EGenericType genericType, ExtractedDataType dataType, EClassifier eClassifier) {
-        if (isTypeParameter(dataType, eClassifier)) {
-            genericType.setETypeParameter(findTypeParameter(dataType, eClassifier));
+    private void setBoundType(EGenericType genericType, ExtractedDataType dataType, TypeParameterSource source) {
+        if (source.containsTypeParameter(dataType)) {
+            genericType.setETypeParameter(source.getTypeParameter(dataType));
         } else {
             genericType.setEClassifier(generate(dataType));
         }

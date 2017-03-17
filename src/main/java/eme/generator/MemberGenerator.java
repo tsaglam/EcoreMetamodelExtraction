@@ -14,8 +14,8 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
-import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedParameter;
 
 /**
@@ -71,10 +71,12 @@ public class MemberGenerator {
             if (selector.allowsGenerating(method)) { // if should be generated.
                 operation = ecoreFactory.createEOperation(); // create object
                 operation.setName(method.getName()); // set name
-                addReturnType(operation, method.getReturnType(), eClass); // add return type
-                addExceptions(operation, method, eClass); // add throws declarations
-                addParameters(method, operation.getEParameters(), eClass); // add parameters
                 eClass.getEOperations().add(operation);
+                typeGenerator.addTypeParameters(operation, method);
+                TypeParameterSource source = new TypeParameterSource(operation); // source of type parameters
+                addReturnType(operation, method.getReturnType(), source); // add return type
+                addExceptions(operation, method, source); // add throws declarations
+                addParameters(method, operation.getEParameters(), source); // add parameters
             }
         }
     }
@@ -82,21 +84,21 @@ public class MemberGenerator {
     /**
      * Adds the declared exceptions of an {@link ExtractedMethod} to an {@link EOperation}.
      */
-    private void addExceptions(EOperation operation, ExtractedMethod method, EClass eClass) {
+    private void addExceptions(EOperation operation, ExtractedMethod method, TypeParameterSource source) {
         for (ExtractedDataType exception : method.getThrowsDeclarations()) {
-            typeGenerator.addException(operation, exception, eClass);
+            typeGenerator.addException(operation, exception, source);
         }
     }
 
     /**
      * Adds the parameters of an {@link ExtractedMethod} to a specific List of {@link EParameter}s.
      */
-    private void addParameters(ExtractedMethod method, List<EParameter> list, EClass eClass) {
+    private void addParameters(ExtractedMethod method, List<EParameter> list, TypeParameterSource source) {
         EParameter eParameter;
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
             eParameter = ecoreFactory.createEParameter();
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            typeGenerator.addDataType(eParameter, parameter, eClass); // add type type to EParameter
+            typeGenerator.addDataType(eParameter, parameter, source); // add type type to EParameter
             list.add(eParameter);
         }
     }
@@ -104,9 +106,9 @@ public class MemberGenerator {
     /**
      * Adds the return type of an {@link ExtractedMethod} to an {@link EOperation}.
      */
-    private void addReturnType(EOperation operation, ExtractedDataType returnType, EClass eClass) {
+    private void addReturnType(EOperation operation, ExtractedDataType returnType, TypeParameterSource source) {
         if (returnType != null) { // if return type is not void
-            typeGenerator.addDataType(operation, returnType, eClass); // add type to return type
+            typeGenerator.addDataType(operation, returnType, source); // add type to return type
         }
     }
 
@@ -117,7 +119,7 @@ public class MemberGenerator {
     private void addStructuralFeature(EStructuralFeature feature, ExtractedField attribute, EClass eClass) {
         feature.setName(attribute.getIdentifier()); // set name
         feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
-        typeGenerator.addDataType(feature, attribute, eClass); // add type to attribute
+        typeGenerator.addDataType(feature, attribute, new TypeParameterSource(eClass)); // add type to attribute
         eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
 

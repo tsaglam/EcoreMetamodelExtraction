@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * @author Timur Saglam
  */
 public final class EMFProjectGenerator {
-    private final static String JAVA_VERSION = "JavaSE-1.8";
+    private static final String JAVA_VERSION = "JavaSE-1.8";
     private static final Logger logger = LogManager.getLogger(EMFProjectGenerator.class.getName());
 
     private EMFProjectGenerator() {

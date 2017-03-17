@@ -15,8 +15,8 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 import eme.generator.hierarchies.ExternalTypeHierarchy;
 import eme.model.ExtractedClass;
-import eme.model.ExtractedEnumConstant;
 import eme.model.ExtractedEnum;
+import eme.model.ExtractedEnumConstant;
 import eme.model.ExtractedInterface;
 import eme.model.ExtractedType;
 import eme.model.IntermediateModel;
@@ -178,7 +178,7 @@ public class EClassifierGenerator {
         subType.getESuperTypes().add(superType); // add inheritance relation.
         for (EGenericType genericType : subType.getEGenericSuperTypes()) {
             if (genericType.getEClassifier().equals(superType)) { // find related EGenericType
-                typeGenerator.addGenericArguments(genericType, dataType, subType); // add arguments
+                typeGenerator.addGenericArguments(genericType, dataType, new TypeParameterSource(subType));
             }
         }
     }

@@ -7,27 +7,19 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.ETypeParameter;
-import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.emf.ecore.impl.EOperationImpl;
 
 import eme.model.datatypes.ExtractedDataType;
 
 /**
- * This class serves as source for {@link ETypeParameter}s. Both the class {@link EClassifier} and {@link EOperation}
- * can own {@link ETypeParameter}s. Both of them have a method to access them. But despite the identical signature of
- * the method, this method is not inherited by a common super class or defined in a common interface. This class
- * bypasses this problem by defining one class that can return {@link ETypeParameter}s from both an {@link EOperation}
- * and an {@link EClassifier}.
+ * This class serves as source for {@link ETypeParameter}s. It contains an {@link EClassifier} and sometimes an
+ * {@link EOperation}. Both the class {@link EClassifier} and {@link EOperation} can own {@link ETypeParameter}s. Both
+ * of them have a method to access them. But despite the identical signature of the method, this method is not inherited
+ * by a common super class or defined in a common interface. This class bypasses this problem by defining one class that
+ * can return {@link ETypeParameter}s from both an {@link EOperation} and an {@link EClassifier}.
  * @author Timur Saglam
  */
 public class TypeParameterSource {
-    private class NullClassifier extends EClassImpl {
-        @Override
-        public EList<ETypeParameter> getETypeParameters() {
-            return new BasicEList<ETypeParameter>();
-        }
-    }
-
     private class NullOperation extends EOperationImpl {
         @Override
         public EList<ETypeParameter> getETypeParameters() {
@@ -35,13 +27,12 @@ public class TypeParameterSource {
         }
     }
 
-    private EClassifier classifier;
-
+    private final EClassifier classifier;
     private EOperation operation;
 
     /**
-     * Creates new type parameter source.
-     * @param classifier is an {@link EClassifier} as source.
+     * Creates new type parameter source from an {@link EClassifier}.
+     * @param classifier is the source {@link EClassifier}.
      */
     public TypeParameterSource(EClassifier classifier) {
         this(classifier, null); // no operation
@@ -49,14 +40,11 @@ public class TypeParameterSource {
     }
 
     /**
-     * Creates new type parameter source.
-     * @param operation is an {@link EOperation} as source.
+     * Creates new type parameter source from an {@link EOperation}.
+     * @param operation is the source {@link EOperation}. It has to be contained in an {@link EClassifier}.
      */
     public TypeParameterSource(EOperation operation) {
-        this(operation.getEContainingClass(), operation); // no classifier specified
-        if (operation.getEContainingClass() == null) { // if operation is not contained
-            classifier = new NullClassifier(); // use null classifier
-        }
+        this(operation.getEContainingClass(), operation); // implicit EClassifier
     }
 
     /**
