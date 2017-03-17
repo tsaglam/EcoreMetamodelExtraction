@@ -24,9 +24,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import eme.handlers.ExtractAndSaveHandler;
+import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
 import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
@@ -111,18 +114,31 @@ public class DataTypeExtractor {
     }
 
     /**
+     * Parses all type parameters of an {@link IMethod} and adds the to an {@link ExtractedMethod}.
+     * @param method is the {@link IMethod}.
+     * @param extractedMethod is the {@link ExtractedMethod}.
+     * @throws JavaModelException if there are problems with the JDT API.
+     */
+    public void extractTypeParameters(IMethod method, ExtractedMethod extractedMethod) throws JavaModelException {
+        ExtractedTypeParameter parameter;
+        for (ITypeParameter typeParameter : method.getTypeParameters()) { // for every type parameter
+            parameter = new ExtractedTypeParameter(typeParameter.getElementName()); // create representation
+            extractBounds(parameter, typeParameter.getBoundsSignatures(), method.getDeclaringType());
+            extractedMethod.addTypeParameter(parameter); // add to extracted type
+        }
+    }
+
+    /**
      * Parses all type parameters of an {@link IType} and adds the to an {@link ExtractedType}.
      * @param type is the IType.
      * @param extractedType is the ExtractedType.
      * @throws JavaModelException if there are problems with the JDT API.
      */
     public void extractTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
-        ExtractedTypeParameter parameter;
+        ExtractedTypeParameter parameter; // TODO (MEDIUM) use objects instead of signatures.
         for (String signature : type.getTypeParameterSignatures()) { // for every type parameter
             parameter = new ExtractedTypeParameter(Signature.getTypeVariable(signature)); // create representation
-            for (String bound : Signature.getTypeParameterBounds(signature)) { // if has bound:
-                parameter.add(extractDataType(bound, type)); // add to representation
-            }
+            extractBounds(parameter, Signature.getTypeParameterBounds(signature), type);
             extractedType.addTypeParameter(parameter); // add to extracted type
         }
     }
@@ -133,6 +149,17 @@ public class DataTypeExtractor {
      */
     public Set<String> getDataTypes() {
         return new HashSet<String>(dataTypes);
+    }
+
+    /**
+     * Extracts {@link ExtractAndSaveHandler} bounds for an {@link ExtractedTypeParameter} from an array of bound
+     * signatures. Needs an declaring type, which is the {@link IType} itself or the declaring type of an
+     * {@link IMethod}.
+     */
+    private void extractBounds(ExtractedTypeParameter parameter, String[] signatures, IType declaringType) throws JavaModelException {
+        for (String bound : signatures) { // if has bound:
+            parameter.add(extractDataType(bound, declaringType)); // add to type parameter
+        }
     }
 
     /**

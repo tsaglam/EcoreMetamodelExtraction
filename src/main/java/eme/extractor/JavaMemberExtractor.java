@@ -65,10 +65,8 @@ public class JavaMemberExtractor {
         for (IMethod method : type.getMethods()) { // for every method
             methodName = getName(type) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeExtractor.extractReturnType(method));
-            extractedMethod.setAbstract(isAbstract(method));
-            extractedMethod.setStatic(isStatic(method));
-            extractedMethod.setMethodType(extractMethodType(method));
-            extractedMethod.setModifier(getModifier(method));
+            extractModifiers(method, extractedMethod);
+            dataTypeExtractor.extractTypeParameters(method, extractedMethod);
             for (ILocalVariable parameter : method.getParameters()) { // extract parameters:
                 extractedMethod.addParameter(dataTypeExtractor.extractParameter(parameter, method));
             }
@@ -77,6 +75,16 @@ public class JavaMemberExtractor {
             }
             extractedType.addMethod(extractedMethod);
         }
+    }
+
+    /**
+     * Extracts modifiers from an {@link IMethod} and adds them to an {@link ExtractedMethod}.
+     */
+    private void extractModifiers(IMethod method, ExtractedMethod extractedMethod) throws JavaModelException {
+        extractedMethod.setAbstract(isAbstract(method));
+        extractedMethod.setStatic(isStatic(method));
+        extractedMethod.setMethodType(extractMethodType(method));
+        extractedMethod.setModifier(getModifier(method));
     }
 
     /**
