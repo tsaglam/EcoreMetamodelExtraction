@@ -20,7 +20,7 @@ public class ExtractedMethod extends ExtractedElement {
     private AccessLevelModifier modifier;
     private final List<ExtractedParameter> parameters;
     private final ExtractedDataType returnType;
-    private final List<ExtractedTypeParameter> typeParameters;
+    private List<ExtractedTypeParameter> typeParameters;
 
     /**
      * Basic constructor. Sets access level modifier to {@link AccessLevelModifier}.NO_MODIFIER, static and abstract to
@@ -53,14 +53,6 @@ public class ExtractedMethod extends ExtractedElement {
     public void addThrowsDeclaration(ExtractedDataType exception) {
         exceptions.add(exception);
     }
-    
-    /**
-     * Adds a generic type parameter ({@link ExtractedTypeParameter}) to the type.
-     * @param typeParameter is the new {@link ExtractedTypeParameter}.
-     */
-    public void addTypeParameter(ExtractedTypeParameter typeParameter) {
-        typeParameters.add(typeParameter);
-    }
 
     /**
      * Accessor for the method type ({@link MethodType}).
@@ -85,7 +77,7 @@ public class ExtractedMethod extends ExtractedElement {
     public List<ExtractedParameter> getParameters() {
         return parameters;
     }
-    
+
     /**
      * accessor for the return type;
      * @return the returnType
@@ -156,6 +148,14 @@ public class ExtractedMethod extends ExtractedElement {
      */
     public void setStatic(boolean isStatic) {
         this.isStatic = isStatic;
+    }
+
+    /**
+     * Sets the generic type parameters.
+     * @param typeParameters is the list of {@link ExtractedTypeParameter}s.
+     */
+    public void setTypeParameters(List<ExtractedTypeParameter> typeParameters) {
+        this.typeParameters = typeParameters;
     }
 
     @Override

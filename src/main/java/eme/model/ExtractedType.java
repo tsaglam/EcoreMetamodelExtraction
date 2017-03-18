@@ -3,8 +3,8 @@ package eme.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedTypeParameter;
 
 /**
@@ -17,7 +17,7 @@ public abstract class ExtractedType extends ExtractedElement {
     protected String outerType;
     protected ExtractedDataType superClass;
     protected final List<ExtractedDataType> superInterfaces;
-    protected final List<ExtractedTypeParameter> typeParameters;
+    protected List<ExtractedTypeParameter> typeParameters;
 
     /**
      * Basic constructor.
@@ -53,14 +53,6 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public void addMethod(ExtractedMethod method) {
         methods.add(method);
-    }
-
-    /**
-     * Adds a generic type parameter ({@link ExtractedTypeParameter}) to the type.
-     * @param typeParameter is the new {@link ExtractedTypeParameter}.
-     */
-    public void addTypeParameter(ExtractedTypeParameter typeParameter) {
-        typeParameters.add(typeParameter);
     }
 
     /**
@@ -139,5 +131,13 @@ public abstract class ExtractedType extends ExtractedElement {
      */
     public void setOuterType(String outerType) {
         this.outerType = outerType;
+    }
+
+    /**
+     * Sets the generic type parameters.
+     * @param typeParameters is the list of {@link ExtractedTypeParameter}s.
+     */
+    public void setTypeParameters(List<ExtractedTypeParameter> typeParameters) {
+        this.typeParameters = typeParameters;
     }
 }

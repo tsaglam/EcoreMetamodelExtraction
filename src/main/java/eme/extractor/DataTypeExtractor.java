@@ -29,10 +29,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import eme.handlers.ExtractAndSaveHandler;
-import eme.model.ExtractedMethod;
-import eme.model.ExtractedType;
-import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedDataType;
+import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedParameter;
 import eme.model.datatypes.ExtractedTypeParameter;
 
@@ -114,33 +112,23 @@ public class DataTypeExtractor {
     }
 
     /**
-     * Parses all type parameters of an {@link IMethod} and adds the to an {@link ExtractedMethod}.
-     * @param method is the {@link IMethod}.
-     * @param extractedMethod is the {@link ExtractedMethod}.
+     * Generates a list of {@link ExtractedTypeParameter}s from an array of {@link ITypeParameter}s and the declaring
+     * {@link IType}. This method exists because {@link IMethod} and {@link IType} do not have a common super type for
+     * getTypeParameters()
+     * @param typeParameters is the array of {@link ITypeParameter}s.
+     * @param declaringType is either the {@link IType} that owns the {@link ITypeParameter}s or the declaring type of
+     * the {@link IMethod} that owns the {@link ITypeParameter}s.
+     * @return list of {@link ExtractedTypeParameter}s.
      * @throws JavaModelException if there are problems with the JDT API.
      */
-    public void extractTypeParameters(IMethod method, ExtractedMethod extractedMethod) throws JavaModelException {
-        ExtractedTypeParameter parameter;
-        for (ITypeParameter typeParameter : method.getTypeParameters()) { // for every type parameter
-            parameter = new ExtractedTypeParameter(typeParameter.getElementName()); // create representation
-            extractBounds(parameter, typeParameter.getBoundsSignatures(), method.getDeclaringType());
-            extractedMethod.addTypeParameter(parameter); // add to extracted type
+    public List<ExtractedTypeParameter> extractTypeParameters(ITypeParameter[] typeParameters, IType declaringType) throws JavaModelException {
+        List<ExtractedTypeParameter> parameterList = new LinkedList<ExtractedTypeParameter>();
+        for (ITypeParameter typeParameter : typeParameters) { // for every type parameter
+            ExtractedTypeParameter parameter = new ExtractedTypeParameter(typeParameter.getElementName());
+            extractBounds(parameter, typeParameter.getBoundsSignatures(), declaringType);
+            parameterList.add(parameter); // add to extracted type
         }
-    }
-
-    /**
-     * Parses all type parameters of an {@link IType} and adds the to an {@link ExtractedType}.
-     * @param type is the IType.
-     * @param extractedType is the ExtractedType.
-     * @throws JavaModelException if there are problems with the JDT API.
-     */
-    public void extractTypeParameters(IType type, ExtractedType extractedType) throws JavaModelException {
-        ExtractedTypeParameter parameter; // TODO (MEDIUM) use objects instead of signatures.
-        for (String signature : type.getTypeParameterSignatures()) { // for every type parameter
-            parameter = new ExtractedTypeParameter(Signature.getTypeVariable(signature)); // create representation
-            extractBounds(parameter, Signature.getTypeParameterBounds(signature), type);
-            extractedType.addTypeParameter(parameter); // add to extracted type
-        }
+        return parameterList;
     }
 
     /**

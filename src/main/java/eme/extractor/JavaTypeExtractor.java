@@ -81,7 +81,7 @@ public class JavaTypeExtractor {
             extractedType = extractEnum(type); // create enum
         }
         extractOuterType(type, extractedType); // extract outer type name
-        dataTypeExtractor.extractTypeParameters(type, extractedType);
+        dataTypeExtractor.extractTypeParameters(type.getTypeParameters(), type);
         memberExtractor.extractFields(type, extractedType); // extract attribute
         memberExtractor.extractMethods(type, extractedType); // extract methods
         for (String signature : type.getSuperInterfaceTypeSignatures()) {

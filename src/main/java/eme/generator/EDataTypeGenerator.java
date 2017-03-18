@@ -1,6 +1,9 @@
 package eme.generator;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
@@ -105,29 +108,19 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * @param eClassifier is the EClassifier.
      * @param type is the extracted type.
      */
-    public void addTypeParameters(EClassifier eClassifier, ExtractedType type) { // TODO (CRITICAL) cyclic problem
-        ETypeParameter eTypeParameter; // ecore type parameter
-        for (ExtractedTypeParameter typeParameter : type.getTypeParameters()) { // for all type parameters
-            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
-            eTypeParameter.setName(typeParameter.getIdentifier()); // set name
-            addBounds(eTypeParameter, typeParameter, new TypeParameterSource(eClassifier));
-            eClassifier.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
-        }
+    public void addTypeParameters(EClassifier eClassifier, ExtractedType type) {
+        eClassifier.getETypeParameters().addAll(generateETypeParameters(type.getTypeParameters()));
+        finishTypeParameters(eClassifier.getETypeParameters(), type.getTypeParameters(), new TypeParameterSource(eClassifier));
     }
 
     /**
      * Adds all generic type parameters from an {@link ExtractedMethod} to a {@link EOperation}.
      * @param eOperation is the {@link EOperation}.
      * @param method is the {@link ExtractedMethod}.
-     */ // TODO (CRITICAL) cyclic problem
+     */
     public void addTypeParameters(EOperation eOperation, ExtractedMethod method) {
-        ETypeParameter eTypeParameter; // ecore type parameter // TODO (MEDIUM) duplicate code
-        for (ExtractedTypeParameter typeParameter : method.getTypeParameters()) { // for all type parameters
-            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
-            eTypeParameter.setName(typeParameter.getIdentifier()); // set name
-            addBounds(eTypeParameter, typeParameter, new TypeParameterSource(eOperation));
-            eOperation.getETypeParameters().add(eTypeParameter); // add type parameter to EClassifier
-        }
+        eOperation.getETypeParameters().addAll(generateETypeParameters(method.getTypeParameters()));
+        finishTypeParameters(eOperation.getETypeParameters(), method.getTypeParameters(), new TypeParameterSource(eOperation));
     }
 
     /**
@@ -187,6 +180,17 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
     }
 
     /**
+     * Adds all bounds for every {@link ETypeParameter} of an {@link EClassifier}.
+     */
+    private void finishTypeParameters(List<ETypeParameter> eTypeParameters, List<ExtractedTypeParameter> typeParameters, TypeParameterSource source) {
+        Iterator<ExtractedTypeParameter> iterator1 = typeParameters.iterator();
+        Iterator<ETypeParameter> iterator2 = eTypeParameters.iterator();
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            addBounds(iterator2.next(), iterator1.next(), source);
+        }
+    }
+
+    /**
      * Returns an {@link EClassifier} for an {@link ExtractedDataType} that can be used as data type for methods and
      * attributes. The {@link EClassifier} is either (1.) a custom class from the model, or (2.) or an external class
      * that has to be created as data type, or (3.) an already known data type (Basic type or already created)
@@ -203,6 +207,20 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
             typeHierarchy.add(eDataType);
             return eDataType;
         }
+    }
+
+    /**
+     * Generates list of {@link ETypeParameter}s from list of {@link ExtractedTypeParameter}s.
+     */
+    private List<ETypeParameter> generateETypeParameters(List<ExtractedTypeParameter> typeParameters) {
+        ETypeParameter eTypeParameter; // ecore type parameter
+        List<ETypeParameter> eTypeParameters = new LinkedList<ETypeParameter>();
+        for (ExtractedTypeParameter typeParameter : typeParameters) { // for all type parameters
+            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
+            eTypeParameter.setName(typeParameter.getIdentifier()); // set name
+            eTypeParameters.add(eTypeParameter);
+        }
+        return eTypeParameters;
     }
 
     /**
