@@ -80,16 +80,6 @@ public class JavaMemberExtractor {
     }
 
     /**
-     * Extracts modifiers from an {@link IMethod} and adds them to an {@link ExtractedMethod}.
-     */
-    private void extractModifiers(IMethod method, ExtractedMethod extractedMethod) throws JavaModelException {
-        extractedMethod.setAbstract(isAbstract(method));
-        extractedMethod.setStatic(isStatic(method));
-        extractedMethod.setMethodType(extractMethodType(method));
-        extractedMethod.setModifier(getModifier(method));
-    }
-
-    /**
      * Parses the {@link MethodType} of an {@link IMethod}.
      */
     private MethodType extractMethodType(IMethod method) throws JavaModelException {
@@ -103,6 +93,16 @@ public class JavaMemberExtractor {
             return MethodType.MAIN;
         }
         return MethodType.NORMAL;
+    }
+
+    /**
+     * Extracts modifiers from an {@link IMethod} and adds them to an {@link ExtractedMethod}.
+     */
+    private void extractModifiers(IMethod method, ExtractedMethod extractedMethod) throws JavaModelException {
+        extractedMethod.setAbstract(isAbstract(method));
+        extractedMethod.setStatic(isStatic(method));
+        extractedMethod.setMethodType(extractMethodType(method));
+        extractedMethod.setModifier(getModifier(method));
     }
 
     /**

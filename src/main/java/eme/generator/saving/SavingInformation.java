@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
  * @author Timur Saglam
  */
 public class SavingInformation {
-    final private String fileName;
-    final private String filePath;
-    final private String projectName;
+    private final String fileName;
+    private final String filePath;
+    private final String projectName;
 
     /**
      * Basic constructor that sets the information.

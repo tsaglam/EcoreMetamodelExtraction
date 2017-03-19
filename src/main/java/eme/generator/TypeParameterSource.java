@@ -58,20 +58,6 @@ public class TypeParameterSource {
     }
 
     /**
-     * Finds an {@link ETypeParameter} in this {@link ETypeParameter} source which matches an {@link ExtractedDataType}.
-     * @param dataType is the {@link ExtractedDataType} whose name is used to search the {@link ETypeParameter}.
-     * @return the {@link ETypeParameter} or null if there is no matching {@link ETypeParameter}.
-     */
-    public ETypeParameter getTypeParameter(ExtractedDataType dataType) {
-        String name = dataType.getFullType();
-        ETypeParameter parameter = find(name, operation.getETypeParameters());
-        if (parameter == null) {
-            return find(name, classifier.getETypeParameters());
-        }
-        return parameter;
-    }
-
-    /**
      * Checks whether an {@link ETypeParameter} in this {@link ETypeParameter} source matches an
      * {@link ExtractedDataType}.
      * @param dataType is the {@link ExtractedDataType} whose name is used to find a matching {@link ETypeParameter}.
@@ -85,6 +71,20 @@ public class TypeParameterSource {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Finds an {@link ETypeParameter} in this {@link ETypeParameter} source which matches an {@link ExtractedDataType}.
+     * @param dataType is the {@link ExtractedDataType} whose name is used to search the {@link ETypeParameter}.
+     * @return the {@link ETypeParameter} or null if there is no matching {@link ETypeParameter}.
+     */
+    public ETypeParameter getTypeParameter(ExtractedDataType dataType) {
+        String name = dataType.getFullType();
+        ETypeParameter parameter = find(name, operation.getETypeParameters());
+        if (parameter == null) {
+            return find(name, classifier.getETypeParameters());
+        }
+        return parameter;
     }
 
     /**

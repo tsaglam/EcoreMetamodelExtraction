@@ -29,7 +29,7 @@ import eme.model.datatypes.WildcardStatus;
  * Generator class for the generation of Ecore data types ({@link EDataType})
  * @author Timur Saglam
  */
-public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class to make process more clear
+public class EDataTypeGenerator {
     private static final Logger logger = LogManager.getLogger(EDataTypeGenerator.class.getName());
     private final Map<String, EDataType> dataTypeMap;
     private final Map<String, EClassifier> eClassifierMap;
@@ -95,8 +95,8 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) { // wildcard argument:
                 addWildcardBound(eArgument, genericArgument);
-            } else { // normal argument
-                setBoundType(eArgument, genericArgument, source);
+            } else { // normal argument or type parameter
+                generateBoundType(eArgument, genericArgument, source);
             }
             addGenericArguments(eArgument, genericArgument, source); // recursively add generic arguments
             genericType.getETypeArguments().add(eArgument); // add ETypeArgument to original generic type
@@ -131,7 +131,7 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
         for (ExtractedDataType bound : typeParameter.getBounds()) { // for all bounds
             if (!Object.class.getName().equals(bound.getFullType())) { // ignore object bound
                 eBound = ecoreFactory.createEGenericType(); // create object
-                setBoundType(eBound, bound, source); // set type of bound
+                generateBoundType(eBound, bound, source); // set type of bound
                 addGenericArguments(eBound, bound, source); // add generic arguments of bound
                 eTypeParameter.getEBounds().add(eBound); // add bound to type parameter
             }
@@ -183,10 +183,10 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * Adds all bounds for every {@link ETypeParameter} of an {@link EClassifier}.
      */
     private void finishTypeParameters(List<ETypeParameter> eTypeParameters, List<ExtractedTypeParameter> typeParameters, TypeParameterSource source) {
-        Iterator<ExtractedTypeParameter> iterator1 = typeParameters.iterator();
-        Iterator<ETypeParameter> iterator2 = eTypeParameters.iterator();
-        while (iterator1.hasNext() && iterator2.hasNext()) {
-            addBounds(iterator2.next(), iterator1.next(), source);
+        Iterator<ExtractedTypeParameter> iterator = typeParameters.iterator();
+        Iterator<ETypeParameter> ecoreIterator = eTypeParameters.iterator();
+        while (iterator.hasNext() && ecoreIterator.hasNext()) {
+            addBounds(ecoreIterator.next(), iterator.next(), source);
         }
     }
 
@@ -203,9 +203,21 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
         } else if (dataTypeMap.containsKey(fullName)) { // if is basic type or already known
             return dataTypeMap.get(fullName); // access EDataType
         } else { // if its an external type
-            eDataType = generateExternal(extractedDataType); // create new EDataType
+            eDataType = generateExternalType(extractedDataType); // create new EDataType
             typeHierarchy.add(eDataType);
             return eDataType;
+        }
+    }
+
+    /**
+     * Sets the type of an {@link EGenericType} from an bound {@link ExtractedDataType}. This is either an
+     * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter or {@link EClassifier}.
+     */
+    private void generateBoundType(EGenericType genericType, ExtractedDataType boundType, TypeParameterSource source) {
+        if (source.containsTypeParameter(boundType)) {
+            genericType.setETypeParameter(source.getTypeParameter(boundType));
+        } else {
+            genericType.setEClassifier(generate(boundType));
         }
     }
 
@@ -227,15 +239,15 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
      * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map or
      * array type map.
      */
-    private EDataType generateExternal(ExtractedDataType extractedDataType) {
+    private EDataType generateExternalType(ExtractedDataType extractedDataType) {
         if (dataTypeMap.containsKey(extractedDataType.getFullType())) { // if already created:
             throw new IllegalArgumentException("Can't create an already created data type."); // throw exception
         }
-        EDataType eDataType = ecoreFactory.createEDataType(); // new data type.
-        eDataType.setName(extractedDataType.getType()); // set name
+        EDataType eDataType = ecoreFactory.createEDataType();
+        eDataType.setName(extractedDataType.getType());
         eDataType.setInstanceTypeName(extractedDataType.getFullType()); // set full name
         String dataTypeName = extractedDataType.getFullType(); // get type name
-        if (model.containsExternal(dataTypeName)) { // if has external type in model
+        if (model.containsExternal(dataTypeName)) {
             addTypeParameters(eDataType, model.getExternalType(dataTypeName)); // add parameters from external type
         } else if (!extractedDataType.getGenericArguments().isEmpty()) { // if external type is unknown
             logger.error("Can not resolve type parameters for " + extractedDataType.toString());
@@ -255,17 +267,5 @@ public class EDataTypeGenerator { // TODO (MEDIUM) rename methods of this class 
             return genericType;
         }
         throw new IllegalArgumentException("The data type is not an type parameter: " + dataType.toString());
-    }
-
-    /**
-     * Sets the type of an {@link EGenericType} from an {@link ExtractedDataType}. This is either an
-     * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter or {@link EClassifier}.
-     */
-    private void setBoundType(EGenericType genericType, ExtractedDataType dataType, TypeParameterSource source) {
-        if (source.containsTypeParameter(dataType)) {
-            genericType.setETypeParameter(source.getTypeParameter(dataType));
-        } else {
-            genericType.setEClassifier(generate(dataType));
-        }
     }
 }

@@ -29,8 +29,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 public abstract class AbstractSavingStrategy {
     private static final Logger logger = LogManager.getLogger(AbstractSavingStrategy.class.getName());
     private final boolean saveInProject;
-    protected final char SLASH = File.separatorChar;
-
+    protected static final char SLASH = File.separatorChar;
     /**
      * Basic constructor. Takes the name of the project.
      * @param saveInProject determines whether the folder where the file is saved should be refreshed in the Eclipse
@@ -141,6 +140,8 @@ public abstract class AbstractSavingStrategy {
 
     /**
      * Check whether the output project exists.
+     * @param name is the name of the project.
+     * @return true if it exists.
      */
     protected boolean projectExists(String name) {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

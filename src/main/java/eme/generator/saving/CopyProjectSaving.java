@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Path;
 public class CopyProjectSaving extends OriginalProjectSaving {
     private static final Logger logger = LogManager.getLogger(CopyProjectSaving.class.getName());
     private IProject projectCopy;
-    final private String projectSuffix;
+    private final String projectSuffix;
 
     /**
      * Basic constructor.
