@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
 
 import eme.model.ExtractedMethod;
@@ -66,7 +67,8 @@ public class JavaMemberExtractor {
             methodName = getName(type) + "." + method.getElementName(); // build name
             extractedMethod = new ExtractedMethod(methodName, dataTypeExtractor.extractReturnType(method));
             extractModifiers(method, extractedMethod);
-            dataTypeExtractor.extractTypeParameters(method.getTypeParameters(), method.getDeclaringType());
+            ITypeParameter[] typeParameters = method.getTypeParameters();
+            extractedMethod.setTypeParameters(dataTypeExtractor.extractTypeParameters(typeParameters, type));
             for (ILocalVariable parameter : method.getParameters()) { // extract parameters:
                 extractedMethod.addParameter(dataTypeExtractor.extractParameter(parameter, method));
             }
