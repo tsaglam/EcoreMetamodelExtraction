@@ -8,7 +8,7 @@ import java.util.List;
  * @author Timur Saglam
  */
 public class ExtractedEnum extends ExtractedType {
-    private final List<ExtractedEnumConstant> enumerals;
+    private final List<ExtractedEnumConstant> constants;
 
     /**
      * Basic constructor.
@@ -16,7 +16,7 @@ public class ExtractedEnum extends ExtractedType {
      */
     public ExtractedEnum(String fullName) {
         super(fullName);
-        enumerals = new LinkedList<ExtractedEnumConstant>();
+        constants = new LinkedList<ExtractedEnumConstant>();
     }
 
     /**
@@ -24,7 +24,7 @@ public class ExtractedEnum extends ExtractedType {
      * @param enumeral is the new value.
      */
     public void addEnumeral(ExtractedEnumConstant enumeral) {
-        enumerals.add(enumeral);
+        constants.add(enumeral);
     }
 
     /**
@@ -32,6 +32,6 @@ public class ExtractedEnum extends ExtractedType {
      * @return the enumerals in a List.
      */
     public List<ExtractedEnumConstant> getEnumerals() {
-        return enumerals;
+        return constants;
     }
 }
