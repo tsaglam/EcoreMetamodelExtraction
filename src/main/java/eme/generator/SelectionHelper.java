@@ -51,11 +51,11 @@ public class SelectionHelper {
      */
     public boolean allowsGenerating(ExtractedField attribute) {
         AccessLevelModifier modifier = attribute.getModifier();
-        boolean allowed = !attribute.isStatic() || properties.get(BinaryProperty.STATIC_ATTRIBUTES);
-        allowed &= modifier != PUBLIC || properties.get(BinaryProperty.PUBLIC_ATTRIBUTES);
-        allowed &= modifier != NO_MODIFIER || properties.get(BinaryProperty.DEFAULT_ATTRIBUTES);
-        allowed &= modifier != PROTECTED || properties.get(BinaryProperty.PROTECTED_ATTRIBUTES);
-        allowed &= modifier != PRIVATE || properties.get(BinaryProperty.PRIVATE_ATTRIBUTES);
+        boolean allowed = !attribute.isStatic() || properties.get(BinaryProperty.STATIC_FIELDS);
+        allowed &= modifier != PUBLIC || properties.get(BinaryProperty.PUBLIC_FIELDS);
+        allowed &= modifier != NO_MODIFIER || properties.get(BinaryProperty.DEFAULT_FIELDS);
+        allowed &= modifier != PROTECTED || properties.get(BinaryProperty.PROTECTED_FIELDS);
+        allowed &= modifier != PRIVATE || properties.get(BinaryProperty.PRIVATE_FIELDS);
         return report("attribute", allowed);
     }
 
