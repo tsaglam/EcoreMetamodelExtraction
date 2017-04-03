@@ -110,7 +110,7 @@ public class JavaTypeExtractor {
         ExtractedEnum newEnum = new ExtractedEnum(getName(type));
         for (IField field : type.getFields()) { // for every enumeral
             if (isEnum(field)) {
-                newEnum.addEnumeral(new ExtractedEnumConstant(field.getElementName())); // add to enum
+                newEnum.addConstant(new ExtractedEnumConstant(field.getElementName())); // add to enum
             }
         }
         return newEnum;

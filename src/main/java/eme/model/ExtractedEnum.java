@@ -21,17 +21,17 @@ public class ExtractedEnum extends ExtractedType {
 
     /**
      * Adds a enumeral to the enum
-     * @param enumeral is the new value.
+     * @param constant is the new value.
      */
-    public void addEnumeral(ExtractedEnumConstant enumeral) {
-        constants.add(enumeral);
+    public void addConstant(ExtractedEnumConstant constant) {
+        constants.add(constant);
     }
 
     /**
      * accessor for the enumerals of the enumeration.
      * @return the enumerals in a List.
      */
-    public List<ExtractedEnumConstant> getEnumerals() {
+    public List<ExtractedEnumConstant> getConstants() {
         return constants;
     }
 }

@@ -160,7 +160,7 @@ public class EClassifierGenerator {
      */
     private EEnum generateEEnum(ExtractedEnum extractedEnum) {
         EEnum eEnum = ecoreFactory.createEEnum(); // create EEnum
-        for (ExtractedEnumConstant enumeral : extractedEnum.getEnumerals()) { // for very Enumeral
+        for (ExtractedEnumConstant enumeral : extractedEnum.getConstants()) { // for very Enumeral
             EEnumLiteral literal = ecoreFactory.createEEnumLiteral(); // create literal
             literal.setName(enumeral.getName()); // set name.
             literal.setValue(eEnum.getELiterals().size()); // set ordinal.

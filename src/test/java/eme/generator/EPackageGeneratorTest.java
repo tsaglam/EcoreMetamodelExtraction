@@ -89,7 +89,7 @@ public class EPackageGeneratorTest {
     public void testGenerateEnum() {
         ExtractedEnum enumeration = new ExtractedEnum("Enum");
         for (int i = 0; i < 5; i++) {
-            enumeration.addEnumeral(new ExtractedEnumConstant("ENUMERAL_" + i));
+            enumeration.addConstant(new ExtractedEnumConstant("ENUMERAL_" + i));
         }
         EEnum result = (EEnum) generateClassifier(enumeration);
         assertEquals("Enum", result.getName());
