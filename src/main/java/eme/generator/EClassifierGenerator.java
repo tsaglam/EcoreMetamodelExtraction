@@ -60,7 +60,7 @@ public class EClassifierGenerator {
      */
     public void completeEClassifiers() {
         for (EClass eClass : bareEClasses.keySet()) { // for every generated EClass
-            memberGenerator.addAttributes(bareEClasses.get(eClass), eClass); // add attributes
+            memberGenerator.addFields(bareEClasses.get(eClass), eClass); // add attributes
             memberGenerator.addOperations(bareEClasses.get(eClass), eClass); // add methods
         }
         externalTypes.sort();

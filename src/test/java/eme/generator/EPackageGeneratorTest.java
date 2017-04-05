@@ -56,7 +56,7 @@ public class EPackageGeneratorTest {
     @Test
     public void testGenerateAttribute() {
         ExtractedClass testClass = new ExtractedClass("TestClass", false, false);
-        testClass.addAttribute(new ExtractedField("testAttribute", "java.lang.String", 0));
+        testClass.addField(new ExtractedField("testAttribute", "java.lang.String", 0));
         EClass result = (EClass) generateClassifier(testClass);
 
         assertEquals(1, result.getEAttributes().size());
@@ -77,7 +77,7 @@ public class EPackageGeneratorTest {
     @Test
     public void testGenerateCustomClassAttribute() {
         ExtractedClass testClass = new ExtractedClass("TestClass", false, false);
-        testClass.addAttribute(new ExtractedField("testAttribute", "TestClass2", 0));
+        testClass.addField(new ExtractedField("testAttribute", "TestClass2", 0));
         EClass result = (EClass) generateClassifier(testClass);
         assertEquals(1, result.getEAttributes().size());
         EAttribute eAttribute = result.getEAttributes().get(0);
@@ -104,7 +104,7 @@ public class EPackageGeneratorTest {
         root.setAsRoot();
         model.add(root);
         ExtractedClass testClass = new ExtractedClass("TestClass", false, false);
-        testClass.addAttribute(new ExtractedField("testAttribute", "main.view.External", 0));
+        testClass.addField(new ExtractedField("testAttribute", "main.view.External", 0));
         EClass result = (EClass) generateClassifier(testClass);
         assertEquals(1, result.getEAttributes().size());
         EAttribute eAttribute = result.getEAttributes().get(0);

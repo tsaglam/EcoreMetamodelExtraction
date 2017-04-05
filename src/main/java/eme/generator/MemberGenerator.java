@@ -42,19 +42,19 @@ public class MemberGenerator {
     }
 
     /**
-     * Adds the attributes of an {@link ExtractedType} to a specific {@link EClass}.
+     * Adds the fields of an {@link ExtractedType} to a specific {@link EClass}.
      * @param type is the {@link ExtractedType}
      * @param eClass is the {@link EClass}.
      */
-    public void addAttributes(ExtractedType type, EClass eClass) {
-        for (ExtractedField attribute : type.getAttributes()) { // for every attribute
-            if (selector.allowsGenerating(attribute)) { // if should be generated:
-                if (isEClass(attribute.getFullType())) { // if type is EClass:
+    public void addFields(ExtractedType type, EClass eClass) {
+        for (ExtractedField field : type.getFields()) { // for every attribute
+            if (selector.allowsGenerating(field)) { // if should be generated:
+                if (isEClass(field.getFullType())) { // if type is EClass:
                     EReference reference = ecoreFactory.createEReference();
                     reference.setContainment(true); // has to be contained
-                    addStructuralFeature(reference, attribute, eClass); // build reference
+                    addStructuralFeature(reference, field, eClass); // build reference
                 } else { // if it is EDataType:
-                    addStructuralFeature(ecoreFactory.createEAttribute(), attribute, eClass); // build attribute
+                    addStructuralFeature(ecoreFactory.createEAttribute(), field, eClass); // build attribute
                 }
             }
         }

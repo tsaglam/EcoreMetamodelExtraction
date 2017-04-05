@@ -12,7 +12,7 @@ import eme.model.datatypes.ExtractedTypeParameter;
  * @author Timur Saglam
  */
 public abstract class ExtractedType extends ExtractedElement {
-    protected final List<ExtractedField> attributes;
+    protected final List<ExtractedField> fields;
     protected final List<ExtractedMethod> methods;
     protected String outerType;
     protected ExtractedDataType superClass;
@@ -27,16 +27,16 @@ public abstract class ExtractedType extends ExtractedElement {
         super(fullName);
         superInterfaces = new LinkedList<ExtractedDataType>();
         methods = new LinkedList<ExtractedMethod>();
-        attributes = new LinkedList<ExtractedField>();
+        fields = new LinkedList<ExtractedField>();
         typeParameters = new LinkedList<ExtractedTypeParameter>();
     }
 
     /**
      * Adds an {@link ExtractedField} to the type.
-     * @param attribute is the new {@link ExtractedField}.
+     * @param field is the new {@link ExtractedField}.
      */
-    public void addAttribute(ExtractedField attribute) {
-        attributes.add(attribute);
+    public void addField(ExtractedField field) {
+        fields.add(field);
     }
 
     /**
@@ -70,8 +70,8 @@ public abstract class ExtractedType extends ExtractedElement {
      * accessor for the list of {@link ExtractedField}s.
      * @return the list of attributes.
      */
-    public List<ExtractedField> getAttributes() {
-        return attributes;
+    public List<ExtractedField> getFields() {
+        return fields;
     }
 
     /**

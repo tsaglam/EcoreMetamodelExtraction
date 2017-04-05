@@ -49,7 +49,7 @@ public class JavaMemberExtractor {
                 extractedField.setFinal(isFinal(field));
                 extractedField.setStatic(isStatic(field));
                 extractedField.setModifier(getModifier(field));
-                extractedType.addAttribute(extractedField);
+                extractedType.addField(extractedField);
             }
         }
     }
