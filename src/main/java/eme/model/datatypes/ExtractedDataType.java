@@ -38,6 +38,17 @@ public class ExtractedDataType {
     }
 
     /**
+     * accessor for the full array type name, which includes the packages but NOT array brackets.
+     * @return the full type name.
+     */
+    public String getFullArrayType() { // TODO (MEDIUM) remove this and move [] naming to generator.
+        if (isArray()) {
+            return fullTypeName.substring(0, fullTypeName.length() - 2 * arrayDimension);
+        }
+        return fullTypeName;
+    }
+
+    /**
      * accessor for the full type name, which includes the packages and the array brackets.
      * @return the full type name.
      */
@@ -54,7 +65,8 @@ public class ExtractedDataType {
     }
 
     /**
-     * accessor for the simple type name, which is the basic name.
+     * accessor for the simple type name, which is the basic name. If it is an array it is the special array name which
+     * does not match the Java code (e.g. intArray2D).
      * @return the simple type name or, if it is an array type, the array type name.
      */
     public String getType() {

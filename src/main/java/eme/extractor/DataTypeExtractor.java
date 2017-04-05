@@ -75,9 +75,9 @@ public class DataTypeExtractor {
         String signature = field.getTypeSignature(); // get return type signature
         int arrayCount = Signature.getArrayCount(signature);
         String name = field.getElementName(); // name of the field
-        ExtractedField attribute = new ExtractedField(name, getFullName(signature, type), arrayCount);
-        attribute.setGenericArguments(extractGenericArguments(signature, type));
-        return attribute;
+        ExtractedField extractedField = new ExtractedField(name, getFullName(signature, type), arrayCount);
+        extractedField.setGenericArguments(extractGenericArguments(signature, type));
+        return extractedField;
     }
 
     /**

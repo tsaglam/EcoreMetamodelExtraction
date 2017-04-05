@@ -246,7 +246,7 @@ public class EDataTypeGenerator {
         EDataType eDataType = ecoreFactory.createEDataType();
         eDataType.setName(extractedDataType.getType());
         eDataType.setInstanceTypeName(extractedDataType.getFullType()); // set full name
-        String dataTypeName = extractedDataType.getFullType(); // get type name
+        String dataTypeName = extractedDataType.getFullArrayType(); // get type name without array brackets.
         if (model.containsExternal(dataTypeName)) {
             addTypeParameters(eDataType, model.getExternalType(dataTypeName)); // add parameters from external type
         } else if (!extractedDataType.getGenericArguments().isEmpty()) { // if external type is unknown

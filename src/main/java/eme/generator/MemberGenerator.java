@@ -116,10 +116,10 @@ public class MemberGenerator {
      * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
      * EAttribute or an EReference. If it is a reference, containment has to be set manually.
      */
-    private void addStructuralFeature(EStructuralFeature feature, ExtractedField attribute, EClass eClass) {
-        feature.setName(attribute.getIdentifier()); // set name
-        feature.setChangeable(!attribute.isFinal()); // make unchangeable if final
-        typeGenerator.addDataType(feature, attribute, new TypeParameterSource(eClass)); // add type to attribute
+    private void addStructuralFeature(EStructuralFeature feature, ExtractedField field, EClass eClass) {
+        feature.setName(field.getIdentifier()); // set name
+        feature.setChangeable(!field.isFinal()); // make unchangeable if final
+        typeGenerator.addDataType(feature, field, new TypeParameterSource(eClass)); // add type to attribute
         eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
 
