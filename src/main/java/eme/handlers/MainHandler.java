@@ -1,6 +1,6 @@
 package eme.handlers;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
@@ -24,19 +24,19 @@ import eme.EcoreMetamodelExtraction;
  * @author Timur Saglam
  */
 public abstract class MainHandler extends AbstractHandler {
-    private static boolean configured;
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
+
+    static {
+        Logger rootLogger = Logger.getRootLogger();
+        rootLogger.setLevel(Level.INFO);
+    }
 
     /**
      * Simple constructor that initializes the logger.
      */
     public MainHandler() {
         super();
-        if (!configured) {
-            BasicConfigurator.configure();
-            configured = true;
-        }
     }
 
     /**
