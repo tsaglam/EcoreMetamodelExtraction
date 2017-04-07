@@ -57,9 +57,11 @@ public class JavaTypeExtractor {
         logger.info("Parsing external types...");
         for (String typeName : externalTypes) { // for every potential external type
             if (!model.contains(typeName)) { // if is not a model type:
-                IType iType = project.findType(typeName); // try to find IType
-                if (iType != null) { // if IType was found:
-                    model.addExternal(extractType(iType));  // add to model.
+                IType type = project.findType(typeName); // try to find IType
+                if (type != null) { // if IType was found:
+                    ExtractedType extractedType = extractType(type);
+                    logger.info("Resolved external " + extractedType.toString());
+                    model.addExternal(extractedType);  // add to model.
                 }
             }
         }
