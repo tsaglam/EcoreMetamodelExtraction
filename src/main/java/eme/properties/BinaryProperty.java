@@ -4,7 +4,7 @@ package eme.properties;
  * Enumeration for the extraction properties that can be interpreted as boolean values.
  * @author Timur Saglam
  */
-public enum BinaryProperty {
+public enum BinaryProperty implements IBinaryProperty {
     ABSTRACT_METHODS("ExtractAbstractMethods", true),
     ACCESS_METHODS("ExtractAccessMethods", false),
     CLASSES("ExtractClasses", true),
@@ -39,18 +39,12 @@ public enum BinaryProperty {
         this.defaultValue = defaultValue;
     }
 
-    /**
-     * Accessor for the default value.
-     * @return the default value.
-     */
+    @Override
     public boolean getDefaultValue() {
         return defaultValue;
     }
 
-    /**
-     * Accessor for the key String.
-     * @return the key.
-     */
+    @Override
     public String getKey() {
         return key;
     }

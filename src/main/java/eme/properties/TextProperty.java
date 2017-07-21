@@ -4,7 +4,7 @@ package eme.properties;
  * Enumeration for the extraction properties that are interpreted as Strings.
  * @author Timur Saglam
  */
-public enum TextProperty {
+public enum TextProperty implements ITextProperty {
     DATATYPE_PACKAGE("DataTypePackageName", "DATATYPES"),
     DEFAULT_PACKAGE("DefaultPackageName", "DEFAULT"),
     DUMMY_NAME("DummyClassName", "DUMMY"),
@@ -25,18 +25,12 @@ public enum TextProperty {
         this.defaultValue = defaultValue;
     }
 
-    /**
-     * Accessor for the default value String.
-     * @return the default value.
-     */
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }
 
-    /**
-     * Accessor for the key String.
-     * @return the key.
-     */
+    @Override
     public String getKey() {
         return key;
     }
