@@ -35,6 +35,10 @@ public class AbstractProperties<T extends ITextProperty, B extends IBinaryProper
     public AbstractProperties(String fileName, String fileComment, String bundleName) {
         this.fileComment = fileComment;
         Bundle bundle = Platform.getBundle(bundleName);
+        if (bundle == null) {
+            throw new IllegalArgumentException(
+                    getClass().getSimpleName() + " could not be initialized because the bundle " + bundleName + " was not found");
+        }
         Path path = new Path(fileName);
         try {
             fileURL = FileLocator.find(bundle, path, null);
