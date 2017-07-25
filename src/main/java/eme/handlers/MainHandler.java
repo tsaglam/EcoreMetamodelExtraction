@@ -27,7 +27,7 @@ public abstract class MainHandler extends AbstractHandler {
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
 
-    static {
+    static { // Set logging level.
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.setLevel(Level.INFO);
     }

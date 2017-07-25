@@ -33,6 +33,9 @@ public class GeneratedEcoreMetamodel {
      * @return the savingInformation
      */
     public SavingInformation getSavingInformation() {
+        if (savingInformation == null) {
+            throw new IllegalStateException("Generated Ecore Metamodel is not saved. There is no saving information available.");
+        }
         return savingInformation;
     }
 
