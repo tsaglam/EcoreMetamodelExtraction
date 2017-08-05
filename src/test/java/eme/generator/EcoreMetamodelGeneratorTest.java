@@ -12,9 +12,9 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
 public class EcoreMetamodelGeneratorTest {
-    EcoreMetamodelGenerator generator;
-    IntermediateModel model;
-    ExtractionProperties properties;
+    private EcoreMetamodelGenerator generator;
+    private IntermediateModel model;
+    private ExtractionProperties properties;
 
     @Before
     public void setUp() throws Exception {

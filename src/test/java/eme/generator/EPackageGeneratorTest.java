@@ -33,9 +33,9 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
 public class EPackageGeneratorTest {
-    EPackageGenerator generator;
-    IntermediateModel model;
-    ExtractionProperties properties;
+    private EPackageGenerator generator;
+    private IntermediateModel model;
+    private ExtractionProperties properties;
 
     @Before
     public void setUp() throws Exception {

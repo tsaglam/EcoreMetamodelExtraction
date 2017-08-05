@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class IntermediateModelTest {
 
-    IntermediateModel model;
+    private IntermediateModel model;
 
     @Before
     public void setUp() throws Exception {
