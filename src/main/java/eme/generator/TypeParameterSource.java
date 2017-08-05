@@ -20,16 +20,9 @@ import eme.model.datatypes.ExtractedDataType;
  * @author Timur Saglam
  */
 public class TypeParameterSource {
-    private class NullOperation extends EOperationImpl {
-        @Override
-        public EList<ETypeParameter> getETypeParameters() {
-            return new BasicEList<ETypeParameter>();
-        }
-    }
-
     private final EClassifier classifier;
     private EOperation operation;
-
+    
     /**
      * Creates new type parameter source from an {@link EClassifier}.
      * @param classifier is the source {@link EClassifier}.
@@ -97,5 +90,12 @@ public class TypeParameterSource {
             }
         }
         return null;
+    }
+
+    private class NullOperation extends EOperationImpl {
+        @Override
+        public EList<ETypeParameter> getETypeParameters() {
+            return new BasicEList<ETypeParameter>();
+        }
     }
 }
