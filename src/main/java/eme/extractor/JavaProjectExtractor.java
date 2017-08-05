@@ -41,7 +41,7 @@ public class JavaProjectExtractor {
             extractPackages(project); // extract from project
             typeExtractor.extractExternalTypes(dataTypeExtractor.getDataTypes()); // extract potential external
         } catch (JavaModelException exception) {
-            throw new RuntimeException("Error while extracting the model.", exception);
+            throw new ExtractionException("Error while extracting the model.", exception);
         }
         currentModel.sort(); // sort model content
         currentModel.print(); // print intermediate model.
