@@ -30,6 +30,7 @@ public abstract class AbstractSavingStrategy {
     private static final Logger logger = LogManager.getLogger(AbstractSavingStrategy.class.getName());
     private final boolean saveInProject;
     protected static final char SLASH = File.separatorChar;
+
     /**
      * Basic constructor. Takes the name of the project.
      * @param saveInProject determines whether the folder where the file is saved should be refreshed in the Eclipse
@@ -100,20 +101,21 @@ public abstract class AbstractSavingStrategy {
      * type of the projects name (e.g. "My-Project" and "model" will return "-Model").
      * @param projectName is the projects name. Determines which separator is used and decides whether there is
      * capitalization.
-     * @param base is the base string of the suffix.
+     * @param suffixBase is the base string of the suffix.
      * @return the project suffix.
      */
-    protected String createSuffix(String projectName, String base) {
+    protected String createSuffix(String projectName, String suffixBase) {
         char[] candidates = { ' ', '.', '-', '_', ':' }; // possible separators
         char separator = Character.MIN_VALUE; // 0000
-        int max = 0;
+        int mostFrequent = 0;
+        String base = suffixBase;
         for (char candidate : candidates) { // for every candidate
-            int ctr = 0; // count occurrences in project name:
+            int occurrences = 0; // count occurrences in project name:
             for (int i = 0; i < projectName.length(); i++) {
-                ctr = (candidate == projectName.charAt(i)) ? (ctr + 1) : ctr;
+                occurrences = (candidate == projectName.charAt(i)) ? (occurrences + 1) : occurrences;
             }
-            if (ctr > max) { // if candidate is new most used candidate
-                max = ctr; // set as new preferred separator
+            if (occurrences > mostFrequent) { // if candidate is new most used candidate
+                mostFrequent = occurrences; // set as new preferred separator
                 separator = candidate;
             }
         }
