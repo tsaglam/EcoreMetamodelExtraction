@@ -33,13 +33,6 @@ public abstract class MainHandler extends AbstractHandler {
     }
 
     /**
-     * Simple constructor that initializes the logger.
-     */
-    public MainHandler() {
-        super();
-    }
-
-    /**
      * Accesses all the projects in the workspace and lets the user choose a project with a simple dialog.
      * @return the chosen project.
      */
