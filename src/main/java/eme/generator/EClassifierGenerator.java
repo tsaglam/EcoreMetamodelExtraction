@@ -67,7 +67,7 @@ public class EClassifierGenerator {
     }
 
     /**
-     * Generates a dummy {@link EClassifier}
+     * Generates a dummy {@link EClassifier}, which is a simple {@link EClass}.
      * @param name is the name of the dummy.
      * @return the dummy {@link EClassifier}, which is an empty {@link EClass}.
      */

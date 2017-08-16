@@ -22,7 +22,7 @@ import eme.model.datatypes.ExtractedDataType;
 public class TypeParameterSource {
     private final EClassifier classifier;
     private EOperation operation;
-    
+
     /**
      * Creates new type parameter source from an {@link EClassifier}.
      * @param classifier is the source {@link EClassifier}.
