@@ -8,6 +8,7 @@ public enum TextProperty implements ITextProperty {
     DATATYPE_PACKAGE("DataTypePackageName", "DATATYPES"),
     DEFAULT_PACKAGE("DefaultPackageName", "DEFAULT"),
     DUMMY_NAME("DummyClassName", "DUMMY"),
+    ROOT_NAME("RootContainerName", "ROOT"),
     NESTED_TYPE_PACKAGE("NestedTypePackageSuffix", "InnerTypes"),
     PROJECT_SUFFIX("ProjectSuffix", "Model"),
     SAVING_STRATEGY("SavingStrategy", "NewProject");

@@ -12,6 +12,7 @@ public enum BinaryProperty implements IBinaryProperty {
     DEFAULT_FIELDS("ExtractDefaultFields", true),
     DEFAULT_METHODS("ExtractDefaultMethods", true),
     DUMMY_CLASS("GenerateDummyClass", false),
+    ROOT_CONTAINER("GenerateRootContainer", true),
     EMPTY_PACKAGES("ExtractEmptyPackages", true),
     ENUMS("ExtractEnumerations", true),
     INTERFACES("ExtractInterfaces", true),
