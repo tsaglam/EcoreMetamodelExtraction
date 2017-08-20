@@ -26,10 +26,26 @@ import eme.EcoreMetamodelExtraction;
 public abstract class MainHandler extends AbstractHandler {
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
     private IWorkbenchWindow window;
+    protected String title;
 
     static { // Set logging level.
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.setLevel(Level.INFO);
+    }
+
+    /**
+     * Basic constructor with default title.
+     */
+    public MainHandler() {
+        title = "EcoreMetamodelExtraction";
+    }
+
+    /**
+     * Constructor for setting a custom title;
+     * @param title is the custom title.
+     */
+    public MainHandler(String title) {
+        this.title = title;
     }
 
     /**
@@ -64,7 +80,6 @@ public abstract class MainHandler extends AbstractHandler {
      * @return true if the project is chosen.
      */
     private boolean isChoosen(IProject project) {
-        String title = "EcoreMetamodellExtraction";
         String message = "Choose " + project.getName() + "?";
         return MessageDialog.openQuestion(window.getShell(), title, message);
     }
