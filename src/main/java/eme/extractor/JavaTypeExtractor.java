@@ -143,7 +143,7 @@ public class JavaTypeExtractor {
     private boolean inheritsFromThrowable(IType type) throws JavaModelException {
         ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
         for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
-            if ("java.lang.Throwable".equals(superType)) { // if is called throwable
+            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName())) { // if is called throwable
                 return true; // is true
             }
         }
