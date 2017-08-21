@@ -6,11 +6,13 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
 
 import eme.model.ExtractedMethod;
 import eme.model.ExtractedType;
@@ -79,6 +81,20 @@ public class MemberGenerator {
                 addParameters(method, operation.getEParameters(), source); // add parameters
             }
         }
+    }
+
+    /**
+     * Adds a root container {@link EReference} to an root container {@link EClass}. The root container
+     * {@link EReference} is a one-to-many reference to {@link EObject}.
+     * @param rootContainer is the root container {@link EClass}.
+     */
+    public void addRootContainerReference(EClass rootContainer) {
+        EReference reference = ecoreFactory.createEReference();
+        // reference.setContainment(true); // TODO (HIGH) is this needed?
+        reference.setName("containedElements");
+        reference.setUpperBound(-1); // one to many relation
+        reference.setEType(EcorePackage.eINSTANCE.getEObject());
+        rootContainer.getEStructuralFeatures().add(reference);
     }
 
     /**

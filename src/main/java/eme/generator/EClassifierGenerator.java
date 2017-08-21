@@ -71,10 +71,10 @@ public class EClassifierGenerator {
      * @param name is the name of the dummy.
      * @return the dummy {@link EClassifier}, which is an empty {@link EClass}.
      */
-    public EClassifier generateDummy(String name) {
-        EClass eClass = ecoreFactory.createEClass();
-        eClass.setName(name);
-        return eClass;
+    public EClass generateDummy(String name) {
+        EClass dummy = ecoreFactory.createEClass();
+        dummy.setName(name);
+        return dummy;
     }
 
     /**
@@ -101,6 +101,18 @@ public class EClassifierGenerator {
         eClassifier.setName(type.getName()); // set name
         eClassifierMap.put(fullName, eClassifier); // store created classifier
         return eClassifier;
+    }
+
+    /**
+     * Generates a root container {@link EClassifier}, which is a simple {@link EClass} with a root container
+     * containment reference.
+     * @param name is the name of the root container.
+     * @return the root container {@link EClassifier}.
+     */
+    public EClass generateRootContainer(String name) {
+        EClass rootContainer = generateDummy(name);
+        memberGenerator.addRootContainerReference(rootContainer);
+        return rootContainer;
     }
 
     /**

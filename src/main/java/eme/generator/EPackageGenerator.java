@@ -106,19 +106,20 @@ public class EPackageGenerator {
         root.setName(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default name
         root.setNsPrefix(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default prefix
         classGenerator = new EClassifierGenerator(model, root, selector);
-        if (properties.get(ROOT_CONTAINER)) {
-            generateRootClass(properties.get(ROOT_NAME), root);
-        }
-        if (properties.get(DUMMY_CLASS) && !properties.get(DUMMY_NAME).equals(properties.get(ROOT_NAME))) {
-            generateRootClass(properties.get(DUMMY_NAME), root);
-        }
+        generateRootElement(root);
         return root;
     }
 
     /**
-     * Generates a root {@link EClass} in the root {@link EPackage}.
+     * Generates the root element which is either a root container or a dummy class.
      */
-    private void generateRootClass(String name, EPackage rootPackage) {
-        rootPackage.getEClassifiers().add(classGenerator.generateDummy(name));
+    private void generateRootElement(EPackage root) {
+        EClass rootElement = null;
+        if (properties.get(ROOT_CONTAINER)) { // chose root container if both are enabled.
+            rootElement = classGenerator.generateRootContainer(properties.get(ROOT_NAME));
+        } else if (properties.get(DUMMY_CLASS)) {
+            rootElement = classGenerator.generateDummy(properties.get(DUMMY_NAME));
+        }
+        root.getEClassifiers().add(rootElement);
     }
 }
