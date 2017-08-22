@@ -90,7 +90,7 @@ public class MemberGenerator {
      */
     public void addRootContainerReference(EClass rootContainer) {
         EReference reference = ecoreFactory.createEReference();
-        // reference.setContainment(true); // TODO (HIGH) is this needed?
+        reference.setContainment(true); // TODO (HIGH) is this needed?
         reference.setName("containedElements");
         reference.setUpperBound(-1); // one to many relation
         reference.setEType(EcorePackage.eINSTANCE.getEObject());

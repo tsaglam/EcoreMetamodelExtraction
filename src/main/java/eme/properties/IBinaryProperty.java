@@ -9,11 +9,11 @@ public interface IBinaryProperty {
      * Accessor for the default value.
      * @return the default value.
      */
-    public boolean getDefaultValue();
+    boolean getDefaultValue();
 
     /**
      * Accessor for the key String.
      * @return the key.
      */
-    public String getKey();
+    String getKey();
 }
