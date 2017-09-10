@@ -110,6 +110,14 @@ public class SelectionHelper {
     }
 
     /**
+     * Checks whether final fields are represented through unchangeable EStructuralFeatures.
+     * @return true if they are.
+     */
+    public boolean allowUnchangeable() {
+        return properties.get(BinaryProperty.FINAL_AS_UNCHANGEABLE);
+    }
+
+    /**
      * Generates a report about the ungenerated elements. The report counts for the different elements of the
      * intermediate models how many of them were not generated due to selection or properties.
      */

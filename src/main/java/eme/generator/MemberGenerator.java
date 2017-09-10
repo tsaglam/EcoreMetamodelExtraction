@@ -133,7 +133,7 @@ public class MemberGenerator {
      */
     private void addStructuralFeature(EStructuralFeature feature, ExtractedField field, EClass eClass) {
         feature.setName(field.getIdentifier()); // set name
-        feature.setChangeable(!field.isFinal()); // make unchangeable if final
+        feature.setChangeable(!(field.isFinal() && selector.allowUnchangeable())); // make unchangeable if final
         typeGenerator.addDataType(feature, field, new TypeParameterSource(eClass)); // add type to attribute
         eClass.getEStructuralFeatures().add(feature); // add feature to EClass
     }
