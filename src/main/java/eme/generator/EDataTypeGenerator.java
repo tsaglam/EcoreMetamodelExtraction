@@ -143,10 +143,10 @@ public class EDataTypeGenerator {
      */
     private void addWildcardBound(EGenericType eArgument, ExtractedDataType genericArgument) {
         WildcardStatus status = genericArgument.getWildcardStatus(); // get wild card status
-        if (status != WildcardStatus.WILDCARD) { // if has bounds:
+        if (status != WildcardStatus.UNBOUND) { // if has bounds:
             EGenericType bound = ecoreFactory.createEGenericType(); // create bound
             bound.setEClassifier(generate(genericArgument)); // generate bound type
-            if (status == WildcardStatus.WILDCARD_LOWER_BOUND) {
+            if (status == WildcardStatus.LOWER_BOUND) {
                 eArgument.setELowerBound(bound); // add lower bound
             } else {
                 eArgument.setEUpperBound(bound); // add upper bound

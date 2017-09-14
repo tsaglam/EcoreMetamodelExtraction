@@ -12,15 +12,15 @@ public enum WildcardStatus {
     /**
      * Is a basic wild card data type like <code>?</code>
      */
-    WILDCARD,
+    UNBOUND,
 
     /**
      * Is a wild card data type with lower bound like <code>? super SomeClass/<code>
      */
-    WILDCARD_LOWER_BOUND,
+    LOWER_BOUND,
 
     /**
      * Is a wild card data type with upper bound like <code>? extends SomeClass/<code>
      */
-    WILDCARD_UPPER_BOUND;
+    UPPER_BOUND;
 }

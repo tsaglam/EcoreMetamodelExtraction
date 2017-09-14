@@ -58,11 +58,11 @@ public final class JDTUtil {
      */
     public static WildcardStatus getWildcardStatus(String signature) {
         if (signature.contains(Character.toString(Signature.C_STAR))) {
-            return WildcardStatus.WILDCARD; // is unbound wildcard
+            return WildcardStatus.UNBOUND; // is unbound wildcard
         } else if (signature.contains(Character.toString(Signature.C_EXTENDS))) {
-            return WildcardStatus.WILDCARD_UPPER_BOUND; // is upper bound wildcard
+            return WildcardStatus.UPPER_BOUND; // is upper bound wildcard
         } else if (signature.contains(Character.toString(Signature.C_SUPER))) {
-            return WildcardStatus.WILDCARD_LOWER_BOUND; // is lower bound wildcard
+            return WildcardStatus.LOWER_BOUND; // is lower bound wildcard
         } // else:
         return WildcardStatus.NO_WILDCARD; // is no wildcard
     }
