@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.ETypeParameter;
@@ -16,7 +17,9 @@ import eme.model.datatypes.ExtractedDataType;
  * {@link EOperation}. Both the class {@link EClassifier} and {@link EOperation} can own {@link ETypeParameter}s. Both
  * of them have a method to access them. But despite the identical signature of the method, this method is not inherited
  * by a common super class or defined in a common interface. This class bypasses this problem by defining one class that
- * can return {@link ETypeParameter}s from both an {@link EOperation} and an {@link EClassifier}.
+ * can return {@link ETypeParameter}s from both an {@link EOperation} and an {@link EClassifier}. Additionally, when
+ * created from an {@link EOperation}, it can be used to locate {@link ETypeParameter} from the {@link EOperation} and
+ * the containing {@link EClass} of the {@link EOperation} at the same time.
  * @author Timur Saglam
  */
 public class TypeParameterSource {
@@ -57,13 +60,7 @@ public class TypeParameterSource {
      * @return true if it found a matching {@link ETypeParameter}.
      */
     public boolean containsTypeParameter(ExtractedDataType dataType) {
-        String name = dataType.getFullType();
-        if (find(name, operation.getETypeParameters()) != null) {
-            return true;
-        } else if (find(name, classifier.getETypeParameters()) != null) {
-            return true;
-        }
-        return false;
+        return getTypeParameter(dataType) != null;
     }
 
     /**
