@@ -71,7 +71,7 @@ public class EcoreMetamodelGenerator {
         }
         projectName = model.getProjectName(); // store project name.
         EPackage eRoot = ePackageGenerator.generate(model); // generate model model.
-        metamodel = new GeneratedEcoreMetamodel(eRoot);
+        metamodel = new GeneratedEcoreMetamodel(eRoot, model);
         return metamodel;
     }
 

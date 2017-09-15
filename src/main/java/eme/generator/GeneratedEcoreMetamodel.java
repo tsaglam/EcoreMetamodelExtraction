@@ -3,21 +3,34 @@ package eme.generator;
 import org.eclipse.emf.ecore.EPackage;
 
 import eme.generator.saving.SavingInformation;
+import eme.model.IntermediateModel;
 
 /**
- * This is a container class for generated Ecore metamodels.
+ * This is a container class for generated Ecore metamodels. It contains a reference to the metamodels root element and
+ * the metamodels intermediate model. Additionally, it can contain saving information.
  * @author Timur Saglam
  */
 public class GeneratedEcoreMetamodel {
+    private final IntermediateModel intermediateModel;
     private final EPackage root;
     private SavingInformation savingInformation;
 
     /**
      * Basic constructor.
      * @param root is the root {@link EPackage} of the generated Ecore metamodel.
+     * @param intermediateModel is the {@link IntermediateModel} which was used to generate the Ecore metamodel.
      */
-    public GeneratedEcoreMetamodel(EPackage root) {
+    public GeneratedEcoreMetamodel(EPackage root, IntermediateModel intermediateModel) {
         this.root = root;
+        this.intermediateModel = intermediateModel;
+    }
+
+    /**
+     * Returns the the {@link IntermediateModel} which was used to generate the Ecore metamodel.
+     * @return the {@link IntermediateModel} instance.
+     */
+    public IntermediateModel getIntermediateModel() {
+        return intermediateModel;
     }
 
     /**
@@ -34,7 +47,7 @@ public class GeneratedEcoreMetamodel {
      */
     public SavingInformation getSavingInformation() {
         if (savingInformation == null) {
-            throw new IllegalStateException("Generated Ecore Metamodel is not saved. There is no saving information available.");
+            throw new IllegalStateException("Generated Ecore Metamodel was not saved. There is no saving information available.");
         }
         return savingInformation;
     }
