@@ -4,6 +4,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EPackage;
 
+import eme.MetamodelAnalyzer;
 import eme.generator.saving.AbstractSavingStrategy;
 import eme.generator.saving.CopyProjectSaving;
 import eme.generator.saving.CustomPathSaving;
@@ -72,6 +73,7 @@ public class EcoreMetamodelGenerator {
         projectName = model.getProjectName(); // store project name.
         EPackage eRoot = ePackageGenerator.generate(model); // generate model model.
         metamodel = new GeneratedEcoreMetamodel(eRoot, model);
+        MetamodelAnalyzer.analyze(eRoot);
         return metamodel;
     }
 
