@@ -89,7 +89,7 @@ public abstract class MainHandler extends AbstractHandler {
      * @param project is the project to test.
      * @return true if it is a Java project, false if it isn't or an exception arises.
      */
-    private boolean isJavaProject(IProject project) {
+    protected boolean isJavaProject(IProject project) {
         try {
             return project.isOpen() && project.isNatureEnabled("org.eclipse.jdt.core.javanature");
         } catch (CoreException exception) {
