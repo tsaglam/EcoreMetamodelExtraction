@@ -28,8 +28,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  */
 public abstract class AbstractSavingStrategy {
     private static final Logger logger = LogManager.getLogger(AbstractSavingStrategy.class.getName());
-    private final boolean saveInProject;
     protected static final char SLASH = File.separatorChar;
+    private final boolean saveInProject;
 
     /**
      * Basic constructor. Takes the name of the project.
@@ -38,6 +38,14 @@ public abstract class AbstractSavingStrategy {
      */
     public AbstractSavingStrategy(boolean saveInProject) {
         this.saveInProject = saveInProject;
+    }
+
+    /**
+     * Returns the name of the saving strategy. For example "FooBar" for a strategy called "FooBarSaving".
+     * @return the name.
+     */
+    public String getName() {
+        return getClass().getSimpleName().replace("Saving", "");
     }
 
     /**

@@ -44,15 +44,18 @@ public class EcoreMetamodelGenerator {
      * @param strategyName is the name of the new saving strategy.
      */
     public final void changeSavingStrategy(String strategyName) { // Add custom strategies here
-        if ("ExistingProject".equals(strategyName)) {
+        if (isStrategy(ExistingProjectSaving.class, strategyName)) {
             savingStrategy = new ExistingProjectSaving(OUTPUT_PROJECT);
-        } else if ("OriginalProject".equals(strategyName)) {
+        } else if (isStrategy(OriginalProjectSaving.class, strategyName)) {
             savingStrategy = new OriginalProjectSaving();
-        } else if ("CustomPath".equals(strategyName)) {
+        } else if (isStrategy(CustomPathSaving.class, strategyName)) {
             savingStrategy = new CustomPathSaving();
-        } else if ("CopyProject".equals(strategyName)) {
+        } else if (isStrategy(CopyProjectSaving.class, strategyName)) {
             savingStrategy = new CopyProjectSaving(properties.get(TextProperty.PROJECT_SUFFIX));
+        } else if (isStrategy(NewProjectSaving.class, strategyName)) {
+            savingStrategy = new NewProjectSaving();
         } else {
+            logger.error("Unknown saving strategy: " + strategyName);
             savingStrategy = new NewProjectSaving();
         }
     }
@@ -87,5 +90,12 @@ public class EcoreMetamodelGenerator {
         SavingInformation savingInformation = savingStrategy.save(metamodel.getRoot(), projectName);
         metamodel.setSavingInformation(savingInformation);
         return savingInformation;
+    }
+
+    /**
+     * Checks whether a strategy class fits to a strategy name.
+     */
+    private boolean isStrategy(Class<? extends AbstractSavingStrategy> strategy, String strategyName) {
+        return strategy.getSimpleName().startsWith(strategyName);
     }
 }
