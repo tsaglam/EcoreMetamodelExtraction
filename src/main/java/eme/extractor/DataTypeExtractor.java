@@ -28,7 +28,6 @@ import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
-import eme.handlers.ExtractAndSaveHandler;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedField;
 import eme.model.datatypes.ExtractedParameter;
@@ -140,7 +139,7 @@ public class DataTypeExtractor {
     }
 
     /**
-     * Extracts {@link ExtractAndSaveHandler} bounds for an {@link ExtractedTypeParameter} from an array of bound
+     * Extracts bounds for an {@link ExtractedTypeParameter} from an array of bound
      * signatures. Needs an declaring type, which is the {@link IType} itself or the declaring type of an
      * {@link IMethod}.
      */

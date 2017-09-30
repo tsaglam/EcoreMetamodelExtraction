@@ -14,10 +14,25 @@ import eme.EcoreMetamodelExtraction;
 import eme.properties.ExtractionProperties;
 
 /**
- * Handler for the Ecore metamodel extraction of specific project. Should be used
+ * Handler for the Ecore metamodel extraction of specific project.
  * @author Timur Saglam
  */
 public class ProjectHandler extends MainHandler {
+
+    /**
+     * Base constructor.
+     */
+    public ProjectHandler() {
+        super();
+    }
+
+    /**
+     * Constructor that sets the title.
+     * @param title is the title.
+     */
+    public ProjectHandler(String title) {
+        super(title);
+    }
 
     /**
      * Accesses the project form the selection and starts the extraction.
@@ -49,7 +64,7 @@ public class ProjectHandler extends MainHandler {
     private void projectMessage(ExecutionEvent event) throws ExecutionException {
         String message = "This project is not a Java project. Therefore, a metamodel cannot be extracted.";
         IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-        MessageDialog.openInformation(window.getShell(), "Ecore Metamodel Extraction", message);
+        MessageDialog.openInformation(window.getShell(), title, message);
     }
 
     /**
@@ -61,12 +76,12 @@ public class ProjectHandler extends MainHandler {
     }
 
     /**
-     * @see eme.handlers.MainHandler#startExtraction(org.eclipse.core.resources.IProject)
+     * Starts the extraction by calling an extraction method from the class {@link EcoreMetamodelExtraction}.
+     * @param project is the parameter for the methods that is called.
      */
-    @Override
     protected void startExtraction(IProject project) {
         EcoreMetamodelExtraction extraction = new EcoreMetamodelExtraction(); // EME instance
         configure(extraction.getProperties()); // configure extraction
-        extraction.extractAndSaveFrom(project); // start
+        extraction.extract(project); // start
     }
 }
