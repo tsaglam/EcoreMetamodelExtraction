@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -15,8 +14,13 @@
       </command>
       <command
             categoryId="EME.commands.category"
-            id="EME.commands.extractProjectCommand"
+            id="EME.commands.extractCommand"
             name="Extract Ecore Metamodel">
+      </command>
+      <command
+            categoryId="EME.commands.category"
+            id="EME.commands.extractCustomCommand"
+            name="Extract Ecore Metamodel (Custom Saving)">
       </command>
    </extension>
    <extension
@@ -27,7 +31,7 @@
       </handler>
       <handler
             class="eme.handlers.ProjectHandler"
-            commandId="EME.commands.extractProjectCommand">
+            commandId="EME.commands.extractCommand">
       </handler>
    </extension>
    <extension
@@ -47,24 +51,21 @@
       <menuContribution
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <menu
-               label="Extract Ecore Metamodel...">
+               icon="src/main/resources/eme.gif"
+               label="EME">
             <command
-                  commandId="EME.commands.extractProjectCommand"
-                  id="EME.menus.extractProjectCommand"
-                  label="...as new Project"
+                  commandId="EME.commands.extractCommand"
+                  id="EME.menus.extractCommand"
+                  label="Extract Ecore Metamodel..."
                   mnemonic="S"
-                  tooltip="Extract Ecore metamodel from the selected Project.">
-               <visibleWhen>
-                  <with
-                        variable="activeMenuSelection">
-                     <iterate
-                           ifEmpty="false">
-                        <adapt
-                              type="org.eclipse.core.resources.IProject">
-                        </adapt>
-                     </iterate>
-                  </with>
-               </visibleWhen>
+                  tooltip="Extract Ecore metamodel from the selected project.">
+            </command>
+            <command
+                  commandId="EME.commands.extractCommand"
+                  id="EME.menus.extractCommand"
+                  label="Extract Ecore Metamodel... (Custom Saving)"
+                  mnemonic="S"
+                  tooltip="Extract Ecore metamodel from the selected project with custom saving.">
             </command>
          </menu>
       </menuContribution>
