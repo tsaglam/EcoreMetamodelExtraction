@@ -91,20 +91,22 @@ public class EPackageGenerator {
             ePackage = ecoreFactory.createEPackage();
             ePackage.setName(extractedPackage.getName());
             ePackage.setNsPrefix(extractedPackage.getName());
+            ePackage.setNsURI(getURI(extractedPackage));
         }
-        ePackage.setNsURI(model.getProjectName() + "/" + extractedPackage.getFullName()); // Set URI
         addSubpackages(ePackage, extractedPackage);
         addTypes(ePackage, extractedPackage);
         return ePackage;
     }
 
     /**
-     * Generates empty root package from the {@link IntermediateModel}. URI is not set.
+     * Generates empty root package from the {@link IntermediateModel}.
      */
     private EPackage generateRoot() {
         EPackage root = ecoreFactory.createEPackage(); // create object
-        root.setName(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default name
-        root.setNsPrefix(properties.get(TextProperty.DEFAULT_PACKAGE)); // set default prefix
+        String name = properties.get(TextProperty.DEFAULT_PACKAGE);
+        root.setName(name); // set default name
+        root.setNsPrefix(name); // set default prefix
+        root.setNsURI(getRootURI());
         classGenerator = new EClassifierGenerator(model, root, selector);
         generateRootElement(root);
         return root;
@@ -121,5 +123,22 @@ public class EPackageGenerator {
             rootElement = classGenerator.generateDummy(properties.get(DUMMY_NAME));
         }
         root.getEClassifiers().add(rootElement);
+    }
+
+    /**
+     * Builds the URI of an root {@link EPackage} from an {@link ExtractedPackage}. The URI contains the project name
+     * and the default package name (optionally).
+     */
+    private String getRootURI() {
+        System.err.println("DEF PKG: " + TextProperty.DEFAULT_PACKAGE);
+        return model.getProjectName() + "/" + properties.get(TextProperty.DEFAULT_PACKAGE);
+    }
+
+    /**
+     * Builds the URI of an {@link EPackage} from an {@link ExtractedPackage}. The URI contains the project name, the
+     * default package name (optionally), and the full package name.
+     */
+    private String getURI(ExtractedPackage extractedPackage) {
+        return getRootURI() + "." + extractedPackage.getFullName();
     }
 }
