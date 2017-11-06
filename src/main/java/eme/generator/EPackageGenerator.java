@@ -18,7 +18,7 @@ import eme.properties.ExtractionProperties;
 import eme.properties.TextProperty;
 
 /**
- * Generator class for Ecore packages ({@link EPackage}s).
+ * Generator class for Ecore packages ({@link EPackage}).
  * @author Timur Saglam
  */
 public class EPackageGenerator {
@@ -130,7 +130,6 @@ public class EPackageGenerator {
      * and the default package name (optionally).
      */
     private String getRootURI() {
-        System.err.println("DEF PKG: " + TextProperty.DEFAULT_PACKAGE);
         return model.getProjectName() + "/" + properties.get(TextProperty.DEFAULT_PACKAGE);
     }
 
