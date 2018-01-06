@@ -32,7 +32,7 @@ public class EClassifierGenerator {
     private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final ExternalTypeHierarchy externalTypes;
-    private final MemberGenerator memberGenerator;
+    private final EMemberGenerator memberGenerator;
     private final IntermediateModel model;
     private final SelectionHelper selector;
     private final EDataTypeGenerator typeGenerator;
@@ -51,7 +51,7 @@ public class EClassifierGenerator {
         bareEClasses = new HashMap<EClass, ExtractedType>();
         externalTypes = new ExternalTypeHierarchy(root, selector.getProperties());
         typeGenerator = new EDataTypeGenerator(model, eClassifierMap, externalTypes);
-        memberGenerator = new MemberGenerator(typeGenerator, selector, eClassifierMap);
+        memberGenerator = new EMemberGenerator(typeGenerator, selector, eClassifierMap);
     }
 
     /**

@@ -24,7 +24,7 @@ import eme.model.datatypes.ExtractedParameter;
  * Generator class for Ecore members ({@link EOperation}s and {@link EStructuralFeature}s).
  * @author Timur Saglam
  */
-public class MemberGenerator {
+public class EMemberGenerator {
     private final Map<String, EClassifier> eClassifierMap;
     private final EcoreFactory ecoreFactory;
     private final SelectionHelper selector;
@@ -36,7 +36,7 @@ public class MemberGenerator {
      * @param selector is the {@link SelectionHelper} instance.
      * @param eClassifierMap is the map of already generated {@link EClassifier}s.
      */
-    public MemberGenerator(EDataTypeGenerator typeGenerator, SelectionHelper selector, Map<String, EClassifier> eClassifierMap) {
+    public EMemberGenerator(EDataTypeGenerator typeGenerator, SelectionHelper selector, Map<String, EClassifier> eClassifierMap) {
         this.typeGenerator = typeGenerator;
         this.selector = selector;
         this.eClassifierMap = eClassifierMap;
