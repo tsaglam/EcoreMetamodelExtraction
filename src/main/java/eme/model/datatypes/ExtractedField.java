@@ -9,7 +9,6 @@ import eme.model.IntermediateModel;
 public class ExtractedField extends ExtractedVariable {
     private boolean finalAttribute;
     private AccessLevelModifier modifier;
-
     private boolean staticAttribute;
 
     /**

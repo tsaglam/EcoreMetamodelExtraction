@@ -139,9 +139,8 @@ public class DataTypeExtractor {
     }
 
     /**
-     * Extracts bounds for an {@link ExtractedTypeParameter} from an array of bound
-     * signatures. Needs an declaring type, which is the {@link IType} itself or the declaring type of an
-     * {@link IMethod}.
+     * Extracts bounds for an {@link ExtractedTypeParameter} from an array of bound signatures. Needs an declaring type,
+     * which is the {@link IType} itself or the declaring type of an {@link IMethod}.
      */
     private void extractBounds(ExtractedTypeParameter parameter, String[] signatures, IType declaringType) throws JavaModelException {
         for (String bound : signatures) { // if has bound:

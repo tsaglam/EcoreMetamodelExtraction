@@ -93,10 +93,23 @@ public class JavaTypeExtractor {
     }
 
     /**
+     * Checks whether an {@link IType} inherits from the class {@link java.lang.Throwable}
+     */
+    private boolean extendsThrowable(IType type) throws JavaModelException {
+        ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
+        for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
+            if (Throwable.class.getName().equals(superType.getFullyQualifiedName())) { // if is called throwable
+                return true; // is true
+            }
+        }
+        return false; // is false
+    }
+
+    /**
      * Parses an {@link IType} that has been identified as class.
      */
     private ExtractedClass extractClass(IType type) throws JavaModelException {
-        boolean throwable = inheritsFromThrowable(type);
+        boolean throwable = extendsThrowable(type);
         ExtractedClass newClass = new ExtractedClass(getName(type), isAbstract(type), throwable);
         String signature = type.getSuperclassTypeSignature();
         if (signature != null) { // get full super type:
@@ -135,18 +148,5 @@ public class JavaTypeExtractor {
         if (outerType != null) { // if is inner type
             extractedType.setOuterType(getName(outerType)); // add outer type name
         }
-    }
-
-    /**
-     * Checks whether an {@link IType} inherits from the class {@link java.lang.Throwable}
-     */
-    private boolean inheritsFromThrowable(IType type) throws JavaModelException {
-        ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor()); // get super type hierarchy
-        for (IType superType : hierarchy.getAllSuperclasses(type)) { // for every super type
-            if ("java.lang.Throwable".equals(superType.getFullyQualifiedName())) { // if is called throwable
-                return true; // is true
-            }
-        }
-        return false; // is false
     }
 }
