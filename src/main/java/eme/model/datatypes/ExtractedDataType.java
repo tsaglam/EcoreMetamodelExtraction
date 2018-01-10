@@ -98,6 +98,14 @@ public class ExtractedDataType {
     }
 
     /**
+     * Checks whether the data type is a list type, which means it is of type {@link List}.
+     * @return true if it is.
+     */
+    public boolean isListType() {
+        return List.class.getName().equals(fullTypeName) && genericArguments.size() == 1;
+    }
+
+    /**
      * Checks whether the data type is an wild card.
      * @return true if it is an wild card.
      */
