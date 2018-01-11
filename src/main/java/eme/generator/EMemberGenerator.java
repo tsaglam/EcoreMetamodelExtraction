@@ -133,8 +133,8 @@ public class EMemberGenerator {
      */
     private void addStructuralFeature(EStructuralFeature feature, ExtractedField field, EClass eClass) {
         feature.setName(field.getIdentifier()); // set name
-        feature.setChangeable(!(field.isFinal() && selector.allowUnchangeable())); // make unchangeable if final
-        if (field.isListType()) {
+        feature.setChangeable(!(field.isFinal() && selector.allowsUnchangeable())); // make unchangeable if final
+        if (field.isListType() && selector.allowsMultiplicities()) { // if one-to-many multiplicities are enabled
             feature.setUpperBound(-1); // can be many
             ExtractedDataType listType = field.getGenericArguments().get(0); // get generic argument of list type
             typeGenerator.addDataType(feature, listType, new TypeParameterSource(eClass)); // add list type to attribute

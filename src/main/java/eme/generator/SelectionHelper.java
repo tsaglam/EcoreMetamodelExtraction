@@ -8,6 +8,7 @@ import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
@@ -110,10 +111,18 @@ public class SelectionHelper {
     }
 
     /**
+     * Checks whether {@link List} types should be represented through one-to-many multiplicities.
+     * @return true if they should.
+     */
+    public boolean allowsMultiplicities() {
+        return properties.get(BinaryProperty.USE_MULTIPLICITIES);
+    }
+    
+    /**
      * Checks whether final fields are represented through unchangeable EStructuralFeatures.
      * @return true if they are.
      */
-    public boolean allowUnchangeable() {
+    public boolean allowsUnchangeable() {
         return properties.get(BinaryProperty.FINAL_AS_UNCHANGEABLE);
     }
 
