@@ -3,6 +3,7 @@ package eme.generator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -44,20 +45,14 @@ public class EMemberGenerator {
     }
 
     /**
-     * Adds the fields of an {@link ExtractedType} to a specific {@link EClass}.
+     * Adds all the fields of an {@link ExtractedType} to a specific {@link EClass}.
      * @param type is the {@link ExtractedType}
      * @param eClass is the {@link EClass}.
      */
     public void addFields(ExtractedType type, EClass eClass) {
-        for (ExtractedField field : type.getFields()) { // for every attribute
-            if (selector.allowsGenerating(field)) { // if should be generated:
-                if (isEClass(field.getFullType())) { // if type is EClass:
-                    EReference reference = ecoreFactory.createEReference();
-                    reference.setContainment(true); // has to be contained
-                    addStructuralFeature(reference, field, eClass); // build reference
-                } else { // if it is EDataType:
-                    addStructuralFeature(ecoreFactory.createEAttribute(), field, eClass); // build attribute
-                }
+        for (ExtractedField field : type.getFields()) { // for every field
+            if (selector.allowsGenerating(field)) { // if it is selected
+                addField(field, eClass); // add to EClass by creating an Ecore representation
             }
         }
     }
@@ -106,6 +101,20 @@ public class EMemberGenerator {
     }
 
     /**
+     * Adds a field to a {@link EClass} by creating a {@link EStructuralFeature} as Ecore representation, which is
+     * either a {@link EReference} or an {@link EAttribute}. List types are represented by an {@link EStructuralFeature}
+     * with an undefined upper bound property, which represents an one-to-many reference.
+     */
+    private void addField(ExtractedField field, EClass eClass) {
+        ExtractedDataType dataType = field;
+        if (field.isListType() && selector.allowsMultiplicities()) { // only if one-to-many multiplicities are enabled
+            dataType = field.getGenericArguments().get(0); // get type of generic argument: List<String> => String
+        }
+        EStructuralFeature representation = getRepresentation(dataType);
+        addStructuralFeature(representation, dataType, field, eClass); // build reference
+    }
+
+    /**
      * Adds the parameters of an {@link ExtractedMethod} to a specific List of {@link EParameter}s.
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list, TypeParameterSource source) {
@@ -131,23 +140,32 @@ public class EMemberGenerator {
      * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
      * EAttribute or an EReference. If it is a reference, containment has to be set manually.
      */
-    private void addStructuralFeature(EStructuralFeature feature, ExtractedField field, EClass eClass) {
+    private void addStructuralFeature(EStructuralFeature feature, ExtractedDataType dataType, ExtractedField field, EClass eClass) {
         feature.setName(field.getIdentifier()); // set name
         feature.setChangeable(!(field.isFinal() && selector.allowsUnchangeable())); // make unchangeable if final
-        if (field.isListType() && selector.allowsMultiplicities()) { // if one-to-many multiplicities are enabled
-            feature.setUpperBound(-1); // can be many
-            ExtractedDataType listType = field.getGenericArguments().get(0); // get generic argument of list type
-            typeGenerator.addDataType(feature, listType, new TypeParameterSource(eClass)); // add list type to attribute
-        } else {
-            typeGenerator.addDataType(feature, field, new TypeParameterSource(eClass)); // add type to attribute
+        if (!dataType.equals(field)) { // if is list type
+            feature.setUpperBound(-1); // no upper bound
         }
+        typeGenerator.addDataType(feature, dataType, new TypeParameterSource(eClass)); // add type to attribute
         eClass.getEStructuralFeatures().add(feature); // add feature to EClass
+    }
+
+    /**
+     * Factory method for the Ecore representations of any {@link ExtractedDataType}.
+     */
+    private EStructuralFeature getRepresentation(ExtractedDataType dataType) {
+        if (isEClass(dataType)) { // if type is EClass:
+            return ecoreFactory.createEReference();
+        } else { // if it is EDataType:
+            return ecoreFactory.createEAttribute();
+        }
     }
 
     /**
      * Checks whether a specific type name is an already created EClass.
      */
-    private boolean isEClass(String typeName) {
+    private boolean isEClass(ExtractedDataType dataType) {
+        String typeName = dataType.getFullType();
         return eClassifierMap.containsKey(typeName) && !(eClassifierMap.get(typeName) instanceof EEnum);
     }
 }
