@@ -167,7 +167,7 @@ public class EMemberGenerator {
      * Map<String, String>.
      */
     private ExtractedDataType getRelevantDataType(ExtractedDataType dataType) {
-        if (dataType.isListType() && selector.allowsMultiplicities()) { // if one-to-many multiplicities are enabled
+        if (dataType.isListType() && selector.allowsMultiplicities(dataType)) {
             return dataType.getGenericArguments().get(0); // get type of generic argument: List<String> => String
         }
         return dataType; // base case: return data type itself
@@ -186,7 +186,7 @@ public class EMemberGenerator {
      * a list type and whether one-to-many multiplicities are allowed.
      */
     private void setUpperBound(ETypedElement typedElement, ExtractedDataType dataType) {
-        if (dataType.isListType() && selector.allowsMultiplicities()) {
+        if (dataType.isListType() && selector.allowsMultiplicities(dataType)) {
             typedElement.setUpperBound(-1); // set to one-to-many multiplicity
         }
     }

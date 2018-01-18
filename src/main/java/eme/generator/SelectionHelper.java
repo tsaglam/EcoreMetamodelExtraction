@@ -22,6 +22,7 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
+import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedField;
 import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
@@ -111,13 +112,20 @@ public class SelectionHelper {
     }
 
     /**
-     * Checks whether {@link List} types should be represented through one-to-many multiplicities.
+     * Checks a {@link ExtractedDataType} that is a {@link List} type should be represented through one-to-many
+     * multiplicities.
+     * @param dataType is the {@link ExtractedDataType}.
      * @return true if they should.
+     * @see ExtractedDataType#isListType()
      */
-    public boolean allowsMultiplicities() {
-        return properties.get(BinaryProperty.USE_MULTIPLICITIES);
+    public boolean allowsMultiplicities(ExtractedDataType dataType) {
+        if (dataType instanceof ExtractedField) {
+            return properties.get(BinaryProperty.FIELD_MULTIPLICITIES);
+        } else {
+            return properties.get(BinaryProperty.METHOD_MULTIPLICITIES);
+        }
     }
-    
+
     /**
      * Checks whether final fields are represented through unchangeable EStructuralFeatures.
      * @return true if they are.
