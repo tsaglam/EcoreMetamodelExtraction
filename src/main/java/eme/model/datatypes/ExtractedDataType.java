@@ -131,7 +131,23 @@ public class ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + fullTypeName + ")";
+        return getClass().getSimpleName() + "(" + typeString() + ")";
+    }
+
+    /**
+     * Generates a type string for this {@link ExtractedDataType}. For example "Map<String, Object>".
+     * @return the type string.
+     */
+    protected String typeString() {
+        String result = fullTypeName;
+        if (!genericArguments.isEmpty()) {
+            result += '<';
+            for (ExtractedDataType argument : genericArguments) {
+                result += argument.getFullType() + ", ";
+            }
+            result = result.substring(0, result.length() - 2) + '>';
+        }
+        return result;
     }
 
     /**
