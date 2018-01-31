@@ -24,6 +24,7 @@ import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
 import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedField;
+import eme.model.datatypes.ExtractedParameter;
 import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
 
@@ -113,7 +114,7 @@ public class SelectionHelper {
 
     /**
      * Checks a {@link ExtractedDataType} that is a {@link List} type should be represented through one-to-many
-     * multiplicities.
+     * multiplicities depending on the actual type of the {@link ExtractedDataType}.
      * @param dataType is the {@link ExtractedDataType}.
      * @return true if they should.
      * @see ExtractedDataType#isListType()
@@ -121,8 +122,10 @@ public class SelectionHelper {
     public boolean allowsMultiplicities(ExtractedDataType dataType) {
         if (dataType instanceof ExtractedField) {
             return properties.get(BinaryProperty.FIELD_MULTIPLICITIES);
+        } else if (dataType instanceof ExtractedParameter) {
+            return properties.get(BinaryProperty.PARAMETER_MULTIPLICITIES);
         } else {
-            return properties.get(BinaryProperty.METHOD_MULTIPLICITIES);
+            return properties.get(BinaryProperty.RETURN_TYPE_MULTIPLICITIES);
         }
     }
 
