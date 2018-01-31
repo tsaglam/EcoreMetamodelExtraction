@@ -57,11 +57,11 @@ public final class JDTUtil {
      * @return the {@link WildcardStatus}.
      */
     public static WildcardStatus getWildcardStatus(String signature) {
-        if (signature.contains(Character.toString(Signature.C_STAR))) {
+        if (signature.startsWith(Character.toString(Signature.C_STAR))) {
             return WildcardStatus.UNBOUND; // is unbound wildcard
-        } else if (signature.contains(Character.toString(Signature.C_EXTENDS))) {
+        } else if (signature.startsWith(Character.toString(Signature.C_EXTENDS))) {
             return WildcardStatus.UPPER_BOUND; // is upper bound wildcard
-        } else if (signature.contains(Character.toString(Signature.C_SUPER))) {
+        } else if (signature.startsWith(Character.toString(Signature.C_SUPER))) {
             return WildcardStatus.LOWER_BOUND; // is lower bound wildcard
         } // else:
         return WildcardStatus.NO_WILDCARD; // is no wildcard
