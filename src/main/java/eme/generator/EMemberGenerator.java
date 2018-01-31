@@ -167,7 +167,7 @@ public class EMemberGenerator {
      * Map<String, String>.
      */
     private ExtractedDataType getRelevantDataType(ExtractedDataType dataType) {
-        if (dataType.isListType() && selector.allowsMultiplicities(dataType)) {
+        if (isMultiplicityRepresentable(dataType)) {
             return dataType.getGenericArguments().get(0); // get type of generic argument: List<String> => String
         }
         return dataType; // base case: return data type itself
@@ -182,11 +182,20 @@ public class EMemberGenerator {
     }
 
     /**
+     * Checks whether a {@link ExtractedDataType} can be represented in the Ecore metamodel by using multiplicities.
+     * This depends on three conditions: The data type is a list type (@see {@link ExtractedDataType#isListType()}), the
+     * list is not a list of wild card types, and the user allowed the use of multiplicities in the settings.
+     */
+    private boolean isMultiplicityRepresentable(ExtractedDataType dataType) {
+        return dataType.isListType() && !dataType.getGenericArguments().get(0).isWildcard() && selector.allowsMultiplicities(dataType);
+    }
+
+    /**
      * Sets the upper bound of a {@link ETypedElement} depending on whether the {@link ExtractedDataType} represents is
      * a list type and whether one-to-many multiplicities are allowed.
      */
     private void setUpperBound(ETypedElement typedElement, ExtractedDataType dataType) {
-        if (dataType.isListType() && selector.allowsMultiplicities(dataType)) {
+        if (isMultiplicityRepresentable(dataType)) {
             typedElement.setUpperBound(-1); // set to one-to-many multiplicity
         }
     }
