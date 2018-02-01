@@ -76,6 +76,6 @@ public class ExtractedField extends ExtractedVariable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + modifier + " " + getFullType() + " " + getIdentifier() + ")";
+        return getClass().getSimpleName() + "(" + modifier + " " + typeString() + " " + getIdentifier() + ")";
     }
 }

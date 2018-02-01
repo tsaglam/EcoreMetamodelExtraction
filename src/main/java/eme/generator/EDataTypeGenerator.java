@@ -94,7 +94,7 @@ public class EDataTypeGenerator {
         for (ExtractedDataType genericArgument : dataType.getGenericArguments()) { // for every generic argument
             EGenericType eArgument = ecoreFactory.createEGenericType(); // create ETypeArgument as EGenericType
             if (genericArgument.isWildcard()) { // wildcard argument:
-                addWildcardBound(eArgument, genericArgument);
+                addWildcardBound(eArgument, genericArgument, source);
             } else { // normal argument or type parameter
                 generateBoundType(eArgument, genericArgument, source);
             }
@@ -141,11 +141,11 @@ public class EDataTypeGenerator {
     /**
      * Adds a bound to an wild card argument if it has one.
      */
-    private void addWildcardBound(EGenericType eArgument, ExtractedDataType genericArgument) {
+    private void addWildcardBound(EGenericType eArgument, ExtractedDataType genericArgument, TypeParameterSource source) {
         WildcardStatus status = genericArgument.getWildcardStatus(); // get wild card status
         if (status != WildcardStatus.UNBOUND) { // if has bounds:
             EGenericType bound = ecoreFactory.createEGenericType(); // create bound
-            bound.setEClassifier(generate(genericArgument)); // generate bound type
+            generateBoundType(bound, genericArgument, source); // generate bound type
             if (status == WildcardStatus.LOWER_BOUND) {
                 eArgument.setELowerBound(bound); // add lower bound
             } else {
@@ -210,8 +210,9 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Sets the type of an {@link EGenericType} from an bound {@link ExtractedDataType}. This is either an
-     * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter or {@link EClassifier}.
+     * Sets the type of an {@link EGenericType} from a bound {@link ExtractedDataType}. This is either an
+     * {@link ETypeParameter} if the {@link ExtractedDataType} is a type parameter in the {@link TypeParameterSource} or
+     * {@link EClassifier} if not.
      */
     private void generateBoundType(EGenericType genericType, ExtractedDataType boundType, TypeParameterSource source) {
         if (source.containsTypeParameter(boundType)) {

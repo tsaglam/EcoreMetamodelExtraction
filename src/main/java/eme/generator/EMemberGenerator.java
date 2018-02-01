@@ -3,6 +3,7 @@ package eme.generator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -11,6 +12,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -44,41 +46,27 @@ public class EMemberGenerator {
     }
 
     /**
-     * Adds the fields of an {@link ExtractedType} to a specific {@link EClass}.
+     * Adds any {@link ExtractedField} of an {@link ExtractedType} to a specific {@link EClass}.
      * @param type is the {@link ExtractedType}
      * @param eClass is the {@link EClass}.
      */
     public void addFields(ExtractedType type, EClass eClass) {
-        for (ExtractedField field : type.getFields()) { // for every attribute
-            if (selector.allowsGenerating(field)) { // if should be generated:
-                if (isEClass(field.getFullType())) { // if type is EClass:
-                    EReference reference = ecoreFactory.createEReference();
-                    reference.setContainment(true); // has to be contained
-                    addStructuralFeature(reference, field, eClass); // build reference
-                } else { // if it is EDataType:
-                    addStructuralFeature(ecoreFactory.createEAttribute(), field, eClass); // build attribute
-                }
+        for (ExtractedField field : type.getFields()) { // for every field
+            if (selector.allowsGenerating(field)) { // if it is selected
+                addField(field, eClass); // add to EClass by creating an Ecore representation
             }
         }
     }
 
     /**
-     * Adds the operations of an {@link ExtractedType} to an {@link EClass}.
+     * Adds any {@link ExtractedMethod} of an {@link ExtractedType} to an {@link EClass}.
      * @param type is the {@link ExtractedType}.
      * @param eClass is the {@link EClass}.
      */
     public void addOperations(ExtractedType type, EClass eClass) {
-        EOperation operation;
         for (ExtractedMethod method : type.getMethods()) { // for every method
             if (selector.allowsGenerating(method)) { // if should be generated.
-                operation = ecoreFactory.createEOperation(); // create object
-                operation.setName(method.getName()); // set name
-                eClass.getEOperations().add(operation);
-                typeGenerator.addTypeParameters(operation, method);
-                TypeParameterSource source = new TypeParameterSource(operation); // source of type parameters
-                addReturnType(operation, method.getReturnType(), source); // add return type
-                addExceptions(operation, method, source); // add throws declarations
-                addParameters(method, operation.getEParameters(), source); // add parameters
+                addOperation(method, eClass);
             }
         }
     }
@@ -106,6 +94,37 @@ public class EMemberGenerator {
     }
 
     /**
+     * Adds a field to a {@link EClass} by creating a {@link EStructuralFeature} as Ecore representation, which is
+     * either a {@link EReference} or an {@link EAttribute}. List types are represented by an {@link EStructuralFeature}
+     * with an undefined upper bound property, which represents an one-to-many reference. If it is a reference,
+     * containment has to be set manually.
+     */
+    private void addField(ExtractedField field, EClass eClass) {
+        ExtractedDataType dataType = getRelevantDataType(field);
+        EStructuralFeature representation = createFieldRepresentation(dataType);
+        representation.setName(field.getIdentifier()); // set name
+        representation.setChangeable(!(field.isFinal() && selector.allowsUnchangeable())); // make unchangeable if final
+        setUpperBound(representation, field);
+        typeGenerator.addDataType(representation, dataType, new TypeParameterSource(eClass)); // add type to attribute
+        eClass.getEStructuralFeatures().add(representation); // add feature to EClass
+    }
+
+    /**
+     * Adds a single {@link ExtractedMethod} to a {@link EClass} by creating a {@link EOperation} as Ecore
+     * representation.
+     */
+    private void addOperation(ExtractedMethod method, EClass eClass) {
+        EOperation operation = ecoreFactory.createEOperation(); // create object
+        operation.setName(method.getName()); // set name
+        eClass.getEOperations().add(operation);
+        typeGenerator.addTypeParameters(operation, method);
+        TypeParameterSource source = new TypeParameterSource(operation); // source of type parameters
+        addReturnType(operation, method.getReturnType(), source); // add return type
+        addExceptions(operation, method, source); // add throws declarations
+        addParameters(method, operation.getEParameters(), source); // add parameters
+    }
+
+    /**
      * Adds the parameters of an {@link ExtractedMethod} to a specific List of {@link EParameter}s.
      */
     private void addParameters(ExtractedMethod method, List<EParameter> list, TypeParameterSource source) {
@@ -113,7 +132,8 @@ public class EMemberGenerator {
         for (ExtractedParameter parameter : method.getParameters()) { // for every parameter
             eParameter = ecoreFactory.createEParameter();
             eParameter.setName(parameter.getIdentifier()); // set identifier
-            typeGenerator.addDataType(eParameter, parameter, source); // add type type to EParameter
+            setUpperBound(eParameter, parameter);
+            typeGenerator.addDataType(eParameter, getRelevantDataType(parameter), source); // add type to EParameter
             list.add(eParameter);
         }
     }
@@ -123,25 +143,60 @@ public class EMemberGenerator {
      */
     private void addReturnType(EOperation operation, ExtractedDataType returnType, TypeParameterSource source) {
         if (returnType != null) { // if return type is not void
-            typeGenerator.addDataType(operation, returnType, source); // add type to return type
+            setUpperBound(operation, returnType);
+            typeGenerator.addDataType(operation, getRelevantDataType(returnType), source); // add type to return type
         }
     }
 
     /**
-     * Builds a structural feature from an extracted attribute and adds it to an EClass. A structural feature can be an
-     * EAttribute or an EReference. If it is a reference, containment has to be set manually.
+     * Factory method for the Ecore representations of any {@link ExtractedDataType}.
      */
-    private void addStructuralFeature(EStructuralFeature feature, ExtractedField field, EClass eClass) {
-        feature.setName(field.getIdentifier()); // set name
-        feature.setChangeable(!(field.isFinal() && selector.allowUnchangeable())); // make unchangeable if final
-        typeGenerator.addDataType(feature, field, new TypeParameterSource(eClass)); // add type to attribute
-        eClass.getEStructuralFeatures().add(feature); // add feature to EClass
+    private EStructuralFeature createFieldRepresentation(ExtractedDataType dataType) {
+        if (isEClass(dataType)) { // if type is EClass:
+            return ecoreFactory.createEReference();
+        } else { // if it is EDataType:
+            return ecoreFactory.createEAttribute();
+        }
     }
 
     /**
-     * Checks whether a specific type name is an already created EClass.
+     * This method returns the list data type of any {@link ExtractedDataType} which is of type {@link List} when
+     * one-to-many multiplicities are allowed or the {@link ExtractedDataType} itself for any other case. This ensures
+     * that always the right data type is used for the Ecore representation of an {@link ExtractedDataType}. For
+     * example, a data type List<String> will return the data type String, but Map<String, String> will return
+     * Map<String, String>.
      */
-    private boolean isEClass(String typeName) {
+    private ExtractedDataType getRelevantDataType(ExtractedDataType dataType) {
+        if (isMultiplicityRepresentable(dataType)) {
+            return dataType.getGenericArguments().get(0); // get type of generic argument: List<String> => String
+        }
+        return dataType; // base case: return data type itself
+    }
+
+    /**
+     * Checks whether a specific {@link ExtractedDataType} is an already created EClass.
+     */
+    private boolean isEClass(ExtractedDataType dataType) {
+        String typeName = dataType.getFullType();
         return eClassifierMap.containsKey(typeName) && !(eClassifierMap.get(typeName) instanceof EEnum);
+    }
+
+    /**
+     * Checks whether a {@link ExtractedDataType} can be represented in the Ecore metamodel by using multiplicities.
+     * This depends on three conditions: The data type is a list type (@see {@link ExtractedDataType#isListType()}), the
+     * list is not a list of wild card types, and the user allowed the use of multiplicities in the settings.
+     */
+    private boolean isMultiplicityRepresentable(ExtractedDataType dataType) {
+        return dataType.isListType() && !dataType.getGenericArguments().get(0).isWildcard() && selector.allowsMultiplicities(dataType);
+    }
+
+    /**
+     * Sets the upper bound of a {@link ETypedElement} depending on whether the {@link ExtractedDataType} represents is
+     * a list type and whether one-to-many multiplicities are allowed.
+     */
+    private void setUpperBound(ETypedElement typedElement, ExtractedDataType dataType) {
+        if (isMultiplicityRepresentable(dataType)) {
+            typedElement.setUpperBound(-1); // set to one-to-many multiplicity
+        }
     }
 }

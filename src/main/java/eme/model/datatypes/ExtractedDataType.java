@@ -98,6 +98,14 @@ public class ExtractedDataType {
     }
 
     /**
+     * Checks whether the data type is a list type, which means it is of type {@link List}.
+     * @return true if it is.
+     */
+    public boolean isListType() {
+        return List.class.getName().equals(fullTypeName) && genericArguments.size() == 1;
+    }
+
+    /**
      * Checks whether the data type is an wild card.
      * @return true if it is an wild card.
      */
@@ -123,7 +131,23 @@ public class ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + fullTypeName + ")";
+        return getClass().getSimpleName() + "(" + typeString() + ")";
+    }
+
+    /**
+     * Generates a type string for this {@link ExtractedDataType}. For example "Map<String, Object>".
+     * @return the type string.
+     */
+    protected String typeString() {
+        String result = fullTypeName;
+        if (!genericArguments.isEmpty()) {
+            result += '<';
+            for (ExtractedDataType argument : genericArguments) {
+                result += argument.getFullType() + ", ";
+            }
+            result = result.substring(0, result.length() - 2) + '>';
+        }
+        return result;
     }
 
     /**

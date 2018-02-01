@@ -8,6 +8,7 @@ import static eme.model.datatypes.AccessLevelModifier.PUBLIC;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.LogManager;
@@ -21,7 +22,9 @@ import eme.model.ExtractedPackage;
 import eme.model.ExtractedType;
 import eme.model.MethodType;
 import eme.model.datatypes.AccessLevelModifier;
+import eme.model.datatypes.ExtractedDataType;
 import eme.model.datatypes.ExtractedField;
+import eme.model.datatypes.ExtractedParameter;
 import eme.properties.BinaryProperty;
 import eme.properties.ExtractionProperties;
 
@@ -110,10 +113,27 @@ public class SelectionHelper {
     }
 
     /**
+     * Checks a {@link ExtractedDataType} that is a {@link List} type should be represented through one-to-many
+     * multiplicities depending on the actual type of the {@link ExtractedDataType}.
+     * @param dataType is the {@link ExtractedDataType}.
+     * @return true if they should.
+     * @see ExtractedDataType#isListType()
+     */
+    public boolean allowsMultiplicities(ExtractedDataType dataType) {
+        if (dataType instanceof ExtractedField) {
+            return properties.get(BinaryProperty.FIELD_MULTIPLICITIES);
+        } else if (dataType instanceof ExtractedParameter) {
+            return properties.get(BinaryProperty.PARAMETER_MULTIPLICITIES);
+        } else {
+            return properties.get(BinaryProperty.RETURN_TYPE_MULTIPLICITIES);
+        }
+    }
+
+    /**
      * Checks whether final fields are represented through unchangeable EStructuralFeatures.
      * @return true if they are.
      */
-    public boolean allowUnchangeable() {
+    public boolean allowsUnchangeable() {
         return properties.get(BinaryProperty.FINAL_AS_UNCHANGEABLE);
     }
 
