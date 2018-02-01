@@ -8,5 +8,5 @@ Open Java projects in the Eclipse IDE can be selected to extract an Ecore Metamo
 2. Import as existing project into the Eclipse IDE
 3. You need the Eclipse Modeling Framework and the Eclipse Java Development Tools, make sure that both are installed.
 4. Run the project as Eclipse Application.
-5. You can start the extraction from the EME menu in the menubar or from the toolbar (provisional UI).
+5. You can start the extraction from the context menu of a Java project or from the toolbar (provisional UI).
 6. Extracting metamodels from projects with errors can cause problems while resolving types (or other problems). It is recommended to use code for the reverse engineering of Ecore metamodels that compiles without problems.
