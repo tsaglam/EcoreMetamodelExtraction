@@ -1,5 +1,6 @@
 package eme.handlers;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -17,6 +18,7 @@ public abstract class MainHandler extends AbstractHandler {
     private static final Logger logger = LogManager.getLogger(MainHandler.class.getName());
 
     static { // Set logging level.
+        BasicConfigurator.configure();
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.setLevel(Level.INFO);
     }
