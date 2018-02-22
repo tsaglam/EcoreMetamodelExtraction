@@ -48,21 +48,20 @@ public class JavaTypeExtractor {
     }
 
     /**
-     * Parses a list of potential external types. If the model does not contain the type, and an IType can be found, it
-     * will add an external ExtractedType to the model.
+     * Parses a list of potential external types. If the model is a external type, and an IType can be found, it will be
+     * added as an external ExtractedType to the model. An external type is either not part of the intermediate model or
+     * it is part of the intermediate model and is a inner type, which means he can be treated as a external type in the
+     * case that external types are not supposed to be extracted.
      * @param externalTypes is the set of external types to extract.
      * @throws JavaModelException if there are problem with the JDT API.
      */
     public void extractExternalTypes(Set<String> externalTypes) throws JavaModelException {
         logger.info("Parsing external types...");
         for (String typeName : externalTypes) { // for every potential external type
-            if (!model.contains(typeName)) { // if is not a model type:
-                IType type = project.findType(typeName); // try to find IType
-                if (type != null) { // if IType was found:
-                    ExtractedType extractedType = extractType(type);
-                    logger.info("Resolved external " + extractedType.toString());
-                    model.addExternal(extractedType);  // add to model.
-                }
+            if (model.contains(typeName)) { // if is a true external type
+                extractPseudoExternal(typeName);
+            } else {
+                extractExternal(typeName);
             }
         }
     }
@@ -132,6 +131,18 @@ public class JavaTypeExtractor {
     }
 
     /**
+     * Extracts a external type if it can be found with {@link IJavaProject#findType(String)}.
+     */
+    private void extractExternal(String typeName) throws JavaModelException {
+        IType type = project.findType(typeName); // try to find IType
+        if (type != null) { // if IType was found:
+            ExtractedType extractedType = extractType(type);
+            logger.info("Resolved external " + extractedType);
+            model.addExternal(extractedType);  // add to model.
+        }
+    }
+
+    /**
      * Parses an {@link IType} that has been identified as interface.
      */
     private ExtractedInterface extractInterface(IType type) throws JavaModelException {
@@ -147,6 +158,17 @@ public class JavaTypeExtractor {
         IType outerType = type.getDeclaringType();
         if (outerType != null) { // if is inner type
             extractedType.setOuterType(getName(outerType)); // add outer type name
+        }
+    }
+
+    /**
+     * Adds a inner type which is a pseudo external type to the {@link IntermediateModel}.
+     */
+    private void extractPseudoExternal(String typeName) {
+        ExtractedType type = model.getType(typeName);
+        if (type.isInnerType()) {
+            model.addExternal(type);
+            logger.info("Resolved pseudo external " + type);
         }
     }
 }
