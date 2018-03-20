@@ -81,6 +81,7 @@ public class EMemberGenerator {
         reference.setName("containedElements");
         reference.setUpperBound(-1); // one to many relation
         reference.setEType(EcorePackage.eINSTANCE.getEObject());
+        reference.setContainment(true);
         rootContainer.getEStructuralFeatures().add(reference);
     }
 
