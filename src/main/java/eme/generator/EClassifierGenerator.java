@@ -56,12 +56,15 @@ public class EClassifierGenerator {
 
     /**
      * Completes the generation of the {@link EClassifier} objects. Adds methods and attributes to {@link EClass}
-     * objects and sorts the external types.
+     * objects, adds type parameters and super interfaces and sorts the external types.
      */
     public void completeEClassifiers() {
         for (EClass eClass : bareEClasses.keySet()) { // for every generated EClass
-            memberGenerator.addFields(bareEClasses.get(eClass), eClass); // add attributes
-            memberGenerator.addOperations(bareEClasses.get(eClass), eClass); // add methods
+            ExtractedType extractedType = bareEClasses.get(eClass);
+            memberGenerator.addFields(extractedType, eClass); // add attributes
+            memberGenerator.addOperations(extractedType, eClass); // add methods
+            typeGenerator.addTypeParameters(eClass, extractedType); // IMPORTANT: call after EClassifiers are created.
+            addSuperInterfaces(extractedType, eClass); // IMPORTANT: needs to be called after type parameters are built
         }
         externalTypes.sort();
     }
@@ -161,8 +164,6 @@ public class EClassifierGenerator {
         EClass eClass = ecoreFactory.createEClass(); // build object
         eClass.setAbstract(isAbstract);
         eClass.setInterface(isInterface);
-        typeGenerator.addTypeParameters(eClass, extractedType); // build type parameters
-        addSuperInterfaces(extractedType, eClass); // IMPORTANT: needs to be called after type parameters are built
         bareEClasses.put(eClass, extractedType); // finish building later
         return eClass;
     }
