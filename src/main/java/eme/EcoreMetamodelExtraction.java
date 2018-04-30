@@ -19,7 +19,7 @@ import eme.properties.ExtractionProperties;
 public class EcoreMetamodelExtraction {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelExtraction.class.getName());
     private final EcoreMetamodelGenerator generator;
-    private final JavaProjectExtractor parser;
+    private final JavaProjectExtractor extractor;
     private final ExtractionProperties properties;
 
     /**
@@ -29,7 +29,7 @@ public class EcoreMetamodelExtraction {
     public EcoreMetamodelExtraction() {
         logger.info("Started EME...");
         properties = new ExtractionProperties();
-        parser = new JavaProjectExtractor();
+        extractor = new JavaProjectExtractor();
         generator = new EcoreMetamodelGenerator(properties);
     }
 
@@ -43,7 +43,7 @@ public class EcoreMetamodelExtraction {
         logger.info("Started extraction of project " + project.getName());
         check(project); // check if valid.
         IJavaProject javaProject = JavaCore.create(project); // create java project
-        IntermediateModel model = parser.buildIntermediateModel(javaProject);
+        IntermediateModel model = extractor.buildIntermediateModel(javaProject);
         GeneratedEcoreMetamodel metamodel = generator.generateMetamodel(model);
         generator.saveMetamodel(); // save metamodel
         return metamodel;
