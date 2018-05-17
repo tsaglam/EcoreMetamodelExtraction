@@ -61,9 +61,9 @@ public class EClassifierGenerator {
     public void completeEClassifiers() {
         for (EClass eClass : bareEClasses.keySet()) { // for every generated EClass
             ExtractedType extractedType = bareEClasses.get(eClass);
+            typeGenerator.addTypeParameters(eClass, extractedType); // IMPORTANT: call after EClassifiers are created.
             memberGenerator.addFields(extractedType, eClass); // add attributes
             memberGenerator.addOperations(extractedType, eClass); // add methods
-            typeGenerator.addTypeParameters(eClass, extractedType); // IMPORTANT: call after EClassifiers are created.
             addSuperInterfaces(extractedType, eClass); // IMPORTANT: needs to be called after type parameters are built
         }
         externalTypes.sort();

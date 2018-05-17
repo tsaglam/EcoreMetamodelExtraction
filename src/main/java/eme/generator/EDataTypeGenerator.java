@@ -53,14 +53,14 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds data type (Either {@link EDataType} or {@link EGenericType}) to an {@link ETypedElement} from an
+     * Adds data type (Either {@link EClassifier} or {@link EGenericType}) to an {@link ETypedElement} from an
      * {@link ExtractedDataType}.
      * @param element is the {@link ETypedElement}.
      * @param dataType is the {@link EDataType}.
      * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
      */
     public void addDataType(ETypedElement element, ExtractedDataType dataType, TypeParameterSource source) {
-        if (source.containsTypeParameter(dataType)) {
+        if (source.containsTypeParameter(dataType)) { // check if is type parameter
             element.setEGenericType(generateGeneric(dataType, source));
         } else {
             element.setEType(generate(dataType)); // generate data type
@@ -76,7 +76,7 @@ public class EDataTypeGenerator {
      * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
      */
     public void addException(EOperation operation, ExtractedDataType exception, TypeParameterSource source) {
-        if (source.containsTypeParameter(exception)) {
+        if (source.containsTypeParameter(exception)) { // check if is type parameter
             operation.getEGenericExceptions().add(generateGeneric(exception, source));
         } else {
             operation.getEExceptions().add(generate(exception)); // generate data type
