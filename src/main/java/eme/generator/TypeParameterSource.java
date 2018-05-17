@@ -1,5 +1,6 @@
 package eme.generator;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
@@ -75,6 +76,13 @@ public class TypeParameterSource {
             return find(name, classifier.getETypeParameters());
         }
         return parameter;
+    }
+
+    @Override
+    public String toString() {
+        List<ETypeParameter> classParameters = new LinkedList<>(classifier.getETypeParameters());
+        List<ETypeParameter> operationParameters = new LinkedList<>(operation.getETypeParameters());
+        return getClass().getSimpleName() + "(fromClass" + classParameters + " fromMethod" + operationParameters + ")";
     }
 
     /**
