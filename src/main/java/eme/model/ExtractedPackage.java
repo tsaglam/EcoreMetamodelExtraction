@@ -137,8 +137,8 @@ public class ExtractedPackage extends ExtractedElement {
     @Override
     public String toString() {
         if ("".equals(name)) {
-            return "DEFAULT";
+            return getClass().getSimpleName() + "(default package)";
         }
-        return getFullName();
+        return super.toString();
     }
 }
