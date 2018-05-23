@@ -1,5 +1,7 @@
 package eme;
 
+import static eme.properties.BinaryProperty.CUSTOM_EXTRACTION_SCOPE;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -11,6 +13,7 @@ import eme.generator.EcoreMetamodelGenerator;
 import eme.generator.GeneratedEcoreMetamodel;
 import eme.model.IntermediateModel;
 import eme.properties.ExtractionProperties;
+import eme.ui.SelectionWindow;
 
 /**
  * Main class for Ecore metamodel extraction.
@@ -18,8 +21,8 @@ import eme.properties.ExtractionProperties;
  */
 public class EcoreMetamodelExtraction {
     private static final Logger logger = LogManager.getLogger(EcoreMetamodelExtraction.class.getName());
-    private final EcoreMetamodelGenerator generator;
     private final JavaProjectExtractor extractor;
+    private final EcoreMetamodelGenerator generator;
     private final ExtractionProperties properties;
 
     /**
@@ -44,6 +47,7 @@ public class EcoreMetamodelExtraction {
         check(project); // check if valid.
         IJavaProject javaProject = JavaCore.create(project); // create java project
         IntermediateModel model = extractor.buildIntermediateModel(javaProject);
+        selectExtractionScope(model); // select scope if enabled in properties
         GeneratedEcoreMetamodel metamodel = generator.generateMetamodel(model);
         generator.saveMetamodel(); // save metamodel
         return metamodel;
@@ -66,6 +70,17 @@ public class EcoreMetamodelExtraction {
             throw new IllegalArgumentException("Project can't be null!");
         } else if (!project.exists()) {
             throw new IllegalArgumentException("Project " + project.toString() + "does not exist!");
+        }
+    }
+
+    /**
+     * Opens a window for specifying a custom extraction scope. The scope is manifested in the correlating
+     * {@link IntermediateModel} through enabling and disabling specific model elements.
+     * @param model is the {@link IntermediateModel} for which the extraction scope is specified.
+     */
+    private void selectExtractionScope(IntermediateModel model) {
+        if (properties.get(CUSTOM_EXTRACTION_SCOPE)) {
+            new SelectionWindow().open(model);
         }
     }
 }
