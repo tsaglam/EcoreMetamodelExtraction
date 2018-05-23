@@ -14,29 +14,51 @@ import eme.model.ExtractedPackage;
  */
 public class TreeContentProvider implements ITreeContentProvider {
 
+    @Override
     public boolean hasChildren(Object element) {
         if (element instanceof ExtractedPackage) {
-            return !((ExtractedPackage) element).isEmpty();
+            return hasChildren((ExtractedPackage) element);
         }
         return false;
     }
 
+    @Override
     public Object getParent(Object element) {
-        return null;
+        return null; // parent cannot be computed.
     }
 
+    @Override
     public Object[] getElements(Object inputElement) {
         return ArrayContentProvider.getInstance().getElements(inputElement);
     }
 
+    @Override
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof ExtractedPackage) {
-            ExtractedPackage extractedPackage = (ExtractedPackage) parentElement;
-            ArrayList<ExtractedElement> list = new ArrayList<ExtractedElement>();
-            list.addAll(extractedPackage.getSubpackages());
-            list.addAll(extractedPackage.getTypes());
-            return list.toArray();
+            return getChildren((ExtractedPackage) parentElement);
         }
         return null;
     }
+
+    /**
+     * Checks whether an {@link ExtractedPackage} is not empty.
+     * @param extractedPackage is the {@link ExtractedPackage}.
+     * @return true if the {@link ExtractedPackage} contains types or subpackages.
+     */
+    private boolean hasChildren(ExtractedPackage extractedPackage) {
+        return !extractedPackage.isEmpty();
+    }
+
+    /**
+     * Returns all subpackages and type of a {@link ExtractedPackage}.
+     * @param extractedPackage is the {@link ExtractedPackage}
+     * @return every subpackage and contained types.
+     */
+    private Object[] getChildren(ExtractedPackage extractedPackage) {
+        ArrayList<ExtractedElement> children = new ArrayList<ExtractedElement>();
+        children.addAll(extractedPackage.getSubpackages());
+        children.addAll(extractedPackage.getTypes());
+        return children.toArray();
+    }
+
 }

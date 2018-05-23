@@ -1,10 +1,7 @@
 package eme.ui;
 
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -21,10 +18,11 @@ import eme.model.IntermediateModel;
  * @author Timur Saglam
  */
 public class SelectionWindow {
-    protected Shell shell;
+    private Shell shell;
 
     /**
-     * Opens the window for a specific intermediate model.
+     * Opens the scope selection window for a specific {@link IntermediateModel}.
+     * @param model is the specific {@link IntermediateModel}.
      */
     public void open(IntermediateModel model) {
         Display display = Display.getDefault();
@@ -39,49 +37,30 @@ public class SelectionWindow {
     }
 
     /**
-     * Create contents of the window.
+     * Create contents of the window by using the model elements of the {@link IntermediateModel}.
+     * @param model is the {@link IntermediateModel}.
      */
     protected void createContents(IntermediateModel model) {
+        // Shell:
         shell = new Shell();
         shell.setSize(1024, 768);
         shell.setText("Select extraction scope");
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
-
-        final CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
-        final TreeContentProvider treeContentProvider = new TreeContentProvider();
-        treeViewer.setContentProvider(treeContentProvider);
+        // Tree viewer:
+        CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
+        treeViewer.setContentProvider(new TreeContentProvider());
+        treeViewer.addCheckStateListener(new CheckStateListener());
+        treeViewer.setCheckStateProvider(new CheckStateProvider());
+        treeViewer.setInput(new ExtractedElement[] { model.getRoot() });
+        // Tree:
         Tree tree = treeViewer.getTree();
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
-
-        treeViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                if (event.getElement() instanceof ExtractedElement) {
-                    System.err.println("Selection: " + event.getChecked());
-                    ((ExtractedElement) event.getElement()).setSelected(event.getChecked());
-                }
-            }
-        });
-
-        treeViewer.setCheckStateProvider(new ICheckStateProvider() {
-            public boolean isGrayed(Object element) {
-                return false;
-            }
-
-            public boolean isChecked(Object element) {
-                System.err.println(element);
-                if (element instanceof ExtractedElement) {
-                    return ((ExtractedElement) element).isSelected();
-                }
-                return false;
-            }
-        });
-
+        // Tree viewer column
         TreeViewerColumn treeViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
         treeViewerColumn.setLabelProvider(new ColumnLabelProvider());
         TreeColumn treeColumn = treeViewerColumn.getColumn();
         treeColumn.setWidth(1024);
         treeColumn.setText("Extracted Element");
-        treeViewer.setInput(new ExtractedElement[] { model.getRoot() });
     }
 }

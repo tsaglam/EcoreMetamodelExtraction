@@ -130,7 +130,7 @@ public class ExtractedPackage extends ExtractedElement {
         Collections.sort(enumerations);
         Collections.sort(subpackages);
         for (ExtractedPackage subpackage : subpackages) {
-            subpackage.sort(); // sort the content of alles subpackages.
+            subpackage.sort(); // sort the content of all subpackages.
         }
     }
 
