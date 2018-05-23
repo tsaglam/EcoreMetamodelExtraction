@@ -29,7 +29,8 @@ public enum BinaryProperty implements IBinaryProperty {
     FINAL_AS_UNCHANGEABLE("FinalAsUnchangeable", true),
     FIELD_MULTIPLICITIES("FieldMultiplicities", true),
     PARAMETER_MULTIPLICITIES("ParameterMultiplicities", true),
-    RETURN_TYPE_MULTIPLICITIES("ReturnTypeMultiplicities", true);
+    RETURN_TYPE_MULTIPLICITIES("ReturnTypeMultiplicities", true),
+    CUSTOM_EXTRACTION_SCOPE("CustomExtractionScope", true);
 
     private final boolean defaultValue;
     private final String key;
