@@ -11,7 +11,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 import eme.model.ExtractedElement;
+import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Selection window for disabling and enabling any {@link ExtractedElement} in a {@link IntermediateModel}.
@@ -23,6 +25,7 @@ public class SelectionWindow {
     /**
      * Opens the scope selection window for a specific {@link IntermediateModel}.
      * @param model is the specific {@link IntermediateModel}.
+     * @wbp.parser.entryPoint (entry point for the window builder plug-in)
      */
     public void open(IntermediateModel model) {
         Display display = Display.getDefault();
@@ -43,15 +46,17 @@ public class SelectionWindow {
     protected void createContents(IntermediateModel model) {
         // Shell:
         shell = new Shell();
-        shell.setSize(1024, 768);
+        shell.setMinimumSize(new Point(400, 300));
+        shell.setSize(1024, 768); // TODO (MEDIUM) implement full auto scaling.
         shell.setText("Select extraction scope");
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         // Tree viewer:
         CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
+        treeViewer.setAutoExpandLevel(3);
         treeViewer.setContentProvider(new TreeContentProvider());
         treeViewer.addCheckStateListener(new CheckStateListener());
         treeViewer.setCheckStateProvider(new CheckStateProvider());
-        treeViewer.setInput(new ExtractedElement[] { model.getRoot() });
+        treeViewer.setInput(new ExtractedPackage[] { model.getRoot() });
         // Tree:
         Tree tree = treeViewer.getTree();
         tree.setHeaderVisible(true);
@@ -60,7 +65,10 @@ public class SelectionWindow {
         TreeViewerColumn treeViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
         treeViewerColumn.setLabelProvider(new ColumnLabelProvider());
         TreeColumn treeColumn = treeViewerColumn.getColumn();
-        treeColumn.setWidth(1024);
+        treeColumn.setResizable(false);
+        treeColumn.setWidth(shell.getSize().x);
         treeColumn.setText("Extracted Element");
+        // Auto scaling:
+        shell.addListener(SWT.Resize, new ResizeListener(shell, treeColumn));
     }
 }
