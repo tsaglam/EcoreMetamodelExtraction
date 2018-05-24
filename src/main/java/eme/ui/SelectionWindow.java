@@ -1,7 +1,6 @@
 package eme.ui;
 
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -11,7 +10,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 import eme.model.ExtractedElement;
-import eme.model.ExtractedPackage;
 import eme.model.IntermediateModel;
 import org.eclipse.swt.graphics.Point;
 
@@ -56,19 +54,25 @@ public class SelectionWindow {
         treeViewer.setContentProvider(new TreeContentProvider());
         treeViewer.addCheckStateListener(new CheckStateListener());
         treeViewer.setCheckStateProvider(new CheckStateProvider());
-        treeViewer.setInput(new ExtractedPackage[] { model.getRoot() });
         // Tree:
         Tree tree = treeViewer.getTree();
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
-        // Tree viewer column
-        TreeViewerColumn treeViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        treeViewerColumn.setLabelProvider(new ColumnLabelProvider());
-        TreeColumn treeColumn = treeViewerColumn.getColumn();
-        treeColumn.setResizable(false);
-        treeColumn.setWidth(shell.getSize().x);
-        treeColumn.setText("Extracted Element");
-        // Auto scaling:
-        shell.addListener(SWT.Resize, new ResizeListener(shell, treeColumn));
+        // Name column:
+        TreeViewerColumn nameViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
+        nameViewerColumn.setLabelProvider(new NameLabelProvider());
+        TreeColumn nameColumn = nameViewerColumn.getColumn();
+        nameColumn.setWidth(shell.getSize().x / 2);
+        nameColumn.setText("Element Name");
+        // Type column:
+        TreeViewerColumn typeViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
+        typeViewerColumn.setLabelProvider(new TypeLabelProvider());
+        TreeColumn typeColumn = typeViewerColumn.getColumn();
+        typeColumn.setWidth(shell.getSize().x / 2);
+        typeColumn.setText("Element Type");
+        // Finish content:
+        shell.addListener(SWT.Resize, new ResizeListener(shell, nameColumn));
+        shell.addListener(SWT.Resize, new ResizeListener(shell, typeColumn));
+        treeViewer.setInput(model); // needs to be called last
     }
 }

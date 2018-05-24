@@ -16,12 +16,12 @@ import eme.model.ExtractedPackage;
  * show specific text for intermediate model elements.
  * @author Timur Saglam
  */
-public class LabelProvider extends ColumnLabelProvider {
+public class NameLabelProvider extends ColumnLabelProvider {
 
     /**
      * Basic constructor, creates a column label provider for intermediate model elements.
      */
-    public LabelProvider() {
+    public NameLabelProvider() {
         super();
     }
 
@@ -55,21 +55,13 @@ public class LabelProvider extends ColumnLabelProvider {
     }
 
     /**
-     * Creates the name for the column text of a {@link ExtractedElement}. Contains special case for the default
-     * package.
-     */
-    private String getName(ExtractedElement element) {
-        if (element.getName().isEmpty() && element instanceof ExtractedPackage) {
-            return "(default package)";
-        }
-        return element.getName();
-    }
-
-    /**
      * Provides the column text for every {@link ExtractedElement} by using its name and class. This avoids using the
      * method {@link ExtractedElement#toString()} which is not as readable in a tree view.
      */
     private String getText(ExtractedElement element) {
-        return getName(element) + " [" + element.getClass().getSimpleName() + "]";
+        if (element.getName().isEmpty() && element instanceof ExtractedPackage) {
+            return "(default package)";
+        }
+        return element.getName();
     }
 }

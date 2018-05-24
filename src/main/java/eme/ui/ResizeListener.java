@@ -25,6 +25,6 @@ public class ResizeListener implements Listener {
 
     @Override
     public void handleEvent(Event event) {
-        treeColumn.setWidth(shell.getSize().x); // column width set to shell width
+        treeColumn.setWidth((int) Math.floor(shell.getSize().x / 2.0)); // column width set to shell width
     }
 }
