@@ -1,30 +1,31 @@
 package eme.ui;
 
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * Listener that automatically resizes a {@link TreeColumn} to the width of a {@link Shell}.
+ * Listener that automatically resizes a {@link TreeViewerColumn} to the width of a {@link Shell}.
  * @author Timur Saglam
  */
 public class ResizeListener implements Listener {
     private Shell shell;
-    private TreeColumn treeColumn;
+    private TreeViewerColumn column;
 
     /**
-     * Basic constructor, sets the tracked {@link Shell} and the influenced the {@link TreeColumn}.
+     * Basic constructor, sets the tracked {@link Shell} and the influenced the {@link TreeViewerColumn}.
      * @param shell is the tracked {@link Shell}.
-     * @param treeColumn is the influenced {@link TreeColumn}.
+     * @param column is the influenced {@link TreeViewerColumn}.
      */
-    public ResizeListener(Shell shell, TreeColumn treeColumn) {
+    public ResizeListener(Shell shell, TreeViewerColumn column) {
         this.shell = shell;
-        this.treeColumn = treeColumn;
+        this.column = column;
     }
 
     @Override
     public void handleEvent(Event event) {
-        treeColumn.setWidth((int) Math.floor(shell.getSize().x / 2.0)); // column width set to shell width
+        int width = (int) Math.floor(shell.getSize().x / 2.0); // calculate new width from new shell size
+        column.getColumn().setWidth(width); // update column width
     }
 }

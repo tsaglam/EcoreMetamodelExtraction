@@ -7,7 +7,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 
 import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
@@ -59,17 +58,15 @@ public class SelectionWindow {
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
         // Name column:
-        TreeViewerColumn nameViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        nameViewerColumn.setLabelProvider(new NameLabelProvider());
-        TreeColumn nameColumn = nameViewerColumn.getColumn();
-        nameColumn.setWidth(shell.getSize().x / 2);
-        nameColumn.setText("Element Name");
+        TreeViewerColumn nameColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
+        nameColumn.setLabelProvider(new NameLabelProvider());
+        nameColumn.getColumn().setWidth(shell.getSize().x / 2);
+        nameColumn.getColumn().setText("Element Name");
         // Type column:
-        TreeViewerColumn typeViewerColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        typeViewerColumn.setLabelProvider(new TypeLabelProvider());
-        TreeColumn typeColumn = typeViewerColumn.getColumn();
-        typeColumn.setWidth(shell.getSize().x / 2);
-        typeColumn.setText("Element Type");
+        TreeViewerColumn typeColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
+        typeColumn.setLabelProvider(new TypeLabelProvider());
+        typeColumn.getColumn().setWidth(shell.getSize().x / 2);
+        typeColumn.getColumn().setText("Element Type");
         // Finish content:
         shell.addListener(SWT.Resize, new ResizeListener(shell, nameColumn));
         shell.addListener(SWT.Resize, new ResizeListener(shell, typeColumn));
