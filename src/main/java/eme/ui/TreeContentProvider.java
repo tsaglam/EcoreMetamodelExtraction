@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import eme.model.ExtractedElement;
 import eme.model.ExtractedPackage;
+import eme.model.IntermediateModel;
 
 /**
  * Intermediate model tree content provider. Provides tree view with content from an intermediate model.
@@ -29,6 +30,9 @@ public class TreeContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof IntermediateModel) {
+            return new ExtractedPackage[] { ((IntermediateModel) inputElement).getRoot() };
+        }
         return ArrayContentProvider.getInstance().getElements(inputElement);
     }
 
