@@ -51,7 +51,7 @@ public class SelectionWindow {
         CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
         treeViewer.setAutoExpandLevel(3);
         treeViewer.setContentProvider(new TreeContentProvider());
-        treeViewer.addCheckStateListener(new CheckStateListener());
+        treeViewer.addCheckStateListener(new CheckStateListener(model));
         treeViewer.setCheckStateProvider(new CheckStateProvider());
         // Tree:
         Tree tree = treeViewer.getTree();
