@@ -36,8 +36,10 @@ public final class JDTUtil {
             return AccessLevelModifier.PRIVATE;
         } else if (Flags.isProtected(flags)) {
             return AccessLevelModifier.PROTECTED;
+        } else if (member.getDeclaringType().isInterface()) {
+            return AccessLevelModifier.PUBLIC; // default visibility in interface is public.
         }
-        return AccessLevelModifier.NO_MODIFIER;
+        return AccessLevelModifier.NO_MODIFIER; // default visibility in any other case is package visibility.
     }
 
     /**
