@@ -10,7 +10,8 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     protected boolean selected; // selection for saving.
 
     /**
-     * Basic constructor which extracts the name and the parents name from the full name.
+     * Basic constructor which extracts the name and the parents name from the full
+     * name.
      * @param fullName is the full name.
      */
     public ExtractedElement(String fullName) {
@@ -43,8 +44,8 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
 
     /**
      * Asccessor for the full element name.
-     * @return the full name of the element, consisting out of the package path and the element name separated by an
-     * dot.
+     * @return the full name of the element, consisting out of the package path and
+     * the element name separated by an dot.
      */
     public String getFullName() {
         if ("".equals(parent)) {
@@ -89,8 +90,9 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Sets whether is element is selected or not.
-     * @param selected true to select the element, false to unselect.
+     * Sets whether is element is selected or not. All child elements like types or
+     * subpackages will be (de)selected.
+     * @param selected true to select the element, false to deselect.
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
@@ -111,7 +113,8 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Creates the name of a class or package from a full qualified name with both path and name.
+     * Creates the name of a class or package from a full qualified name with both
+     * path and name.
      * @param fullName is the full qualified name.
      * @return the name.
      */
@@ -124,7 +127,8 @@ public abstract class ExtractedElement implements Comparable<ExtractedElement> {
     }
 
     /**
-     * Creates the path of a class or package from a full qualified name with both path and name.
+     * Creates the path of a class or package from a full qualified name with both
+     * path and name.
      * @param fullName is the full qualified name.
      * @return the path.
      */
