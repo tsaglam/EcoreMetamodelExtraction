@@ -51,7 +51,7 @@ public class SelectionWindow {
         CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
         treeViewer.setAutoExpandLevel(3);
         treeViewer.setContentProvider(new TreeContentProvider());
-        treeViewer.addCheckStateListener(new CheckStateListener(model));
+        treeViewer.addCheckStateListener(new CheckStateListener(model, treeViewer));
         treeViewer.setCheckStateProvider(new CheckStateProvider());
         // Tree:
         Tree tree = treeViewer.getTree();
@@ -67,6 +67,7 @@ public class SelectionWindow {
         typeColumn.setLabelProvider(new TypeLabelProvider());
         typeColumn.getColumn().setWidth(shell.getSize().x / 2);
         typeColumn.getColumn().setText("Element Type");
+        // TODO (HIGH) Third column for full name? Especially to detect nested types.
         // Finish content:
         shell.addListener(SWT.Resize, new ResizeListener(shell, nameColumn));
         shell.addListener(SWT.Resize, new ResizeListener(shell, typeColumn));
