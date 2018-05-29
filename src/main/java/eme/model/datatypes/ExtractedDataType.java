@@ -18,8 +18,10 @@ public class ExtractedDataType {
 
     /**
      * Basic constructor, takes the full and the simple name.
-     * @param fullName is the full name of the data type, like "java.lang.String", "java.util.list" and "char".
-     * @param arrayDimension is the amount of array dimensions, should be 0 if it is not an array.
+     * @param fullName is the full name of the data type, like "java.lang.String",
+     * "java.util.list" and "char".
+     * @param arrayDimension is the amount of array dimensions, should be 0 if it is
+     * not an array.
      */
     public ExtractedDataType(String fullName, int arrayDimension) {
         this.fullTypeName = fullName;
@@ -38,7 +40,8 @@ public class ExtractedDataType {
     }
 
     /**
-     * accessor for the full array type name, which includes the packages but NOT array brackets.
+     * accessor for the full array type name, which includes the packages but NOT
+     * array brackets.
      * @return the full type name.
      */
     public String getFullArrayType() { // TODO (MEDIUM) remove this and move [] naming to generator.
@@ -49,7 +52,8 @@ public class ExtractedDataType {
     }
 
     /**
-     * accessor for the full type name, which includes the packages and the array brackets.
+     * accessor for the full type name, which includes the packages and the array
+     * brackets.
      * @return the full type name.
      */
     public String getFullType() {
@@ -65,12 +69,31 @@ public class ExtractedDataType {
     }
 
     /**
-     * accessor for the simple type name, which is the basic name. If it is an array it is the special array name which
-     * does not match the Java code (e.g. intArray2D).
+     * accessor for the simple type name, which is the basic name. If it is an array
+     * it is the special array name which does not match the Java code (e.g.
+     * intArray2D).
      * @return the simple type name or, if it is an array type, the array type name.
      */
     public String getType() {
         return typeName;
+    }
+
+    /**
+     * Generates a type string for this {@link ExtractedDataType}. It contains
+     * information about the data type and its generic arguments. For example
+     * "Map<String, Object>".
+     * @return the type string.
+     */
+    public String getTypeString() {
+        String result = fullTypeName;
+        if (!genericArguments.isEmpty()) {
+            result += '<';
+            for (ExtractedDataType argument : genericArguments) {
+                result += argument.getFullType() + ", ";
+            }
+            result = result.substring(0, result.length() - 2) + '>';
+        }
+        return result;
     }
 
     /**
@@ -98,7 +121,8 @@ public class ExtractedDataType {
     }
 
     /**
-     * Checks whether the data type is a list type, which means it is of type {@link List}.
+     * Checks whether the data type is a list type, which means it is of type
+     * {@link List}.
      * @return true if it is.
      */
     public boolean isListType() {
@@ -131,27 +155,12 @@ public class ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + typeString() + ")";
+        return getClass().getSimpleName() + "(" + getTypeString() + ")";
     }
 
     /**
-     * Generates a type string for this {@link ExtractedDataType}. For example "Map<String, Object>".
-     * @return the type string.
-     */
-    protected String typeString() {
-        String result = fullTypeName;
-        if (!genericArguments.isEmpty()) {
-            result += '<';
-            for (ExtractedDataType argument : genericArguments) {
-                result += argument.getFullType() + ", ";
-            }
-            result = result.substring(0, result.length() - 2) + '>';
-        }
-        return result;
-    }
-
-    /**
-     * Builds the full and simple name from the initial full name. The full name has to be set.
+     * Builds the full and simple name from the initial full name. The full name has
+     * to be set.
      */
     private void buildNames() {
         typeName = fullTypeName.contains(".") ? fullTypeName.substring(fullTypeName.lastIndexOf('.') + 1) : fullTypeName;

@@ -31,6 +31,6 @@ public class ExtractedVariable extends ExtractedDataType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + typeString() + " " + identifier + ")";
+        return getClass().getSimpleName() + "(" + getTypeString() + " " + identifier + ")";
     }
 }
