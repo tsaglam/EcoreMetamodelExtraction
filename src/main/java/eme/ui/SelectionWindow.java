@@ -15,8 +15,7 @@ import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
 
 /**
- * Selection window for disabling and enabling any {@link ExtractedElement} in a
- * {@link IntermediateModel}.
+ * Selection window for disabling and enabling any {@link ExtractedElement} in a {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class SelectionWindow {
@@ -44,8 +43,7 @@ public class SelectionWindow {
     }
 
     /**
-     * Create contents of the window by using the model elements of the
-     * {@link IntermediateModel}.
+     * Create contents of the window by using the model elements of the {@link IntermediateModel}.
      * @param model is the {@link IntermediateModel}.
      */
     protected void createContents(IntermediateModel model) {
@@ -67,8 +65,8 @@ public class SelectionWindow {
         tree.setLinesVisible(true);
         // Columns:
         createColumn(treeViewer, new MainLabelProvider(), "ElementName");
-        createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         createColumn(treeViewer, new FullNameLabelProvider(), "Full Name");
+        createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         // Finish content:
         treeViewer.setInput(model); // needs to be called last
     }
@@ -83,6 +81,6 @@ public class SelectionWindow {
         TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
         column.setLabelProvider(provider);
         column.getColumn().setText(title);
-        shell.addListener(SWT.Resize, new ResizeListener(shell, column));
+        shell.addListener(SWT.Resize, new ResizeListener(shell, treeViewer, column));
     }
 }
