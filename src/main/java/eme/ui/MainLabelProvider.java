@@ -12,16 +12,18 @@ import eme.model.ExtractedInterface;
 import eme.model.ExtractedPackage;
 
 /**
- * Label provider adapter for {@link ColumnLabelProvider} that uses the information given by the intermediate model to
- * show specific text for intermediate model elements.
+ * Label provider that uses the information given by the intermediate model to
+ * show specific text for intermediate model elements. It shows the simple name
+ * of the element as column text and a correlating icon.
  * @author Timur Saglam
  */
-public class NameLabelProvider extends ColumnLabelProvider {
+public class MainLabelProvider extends ColumnLabelProvider {
 
     /**
-     * Basic constructor, creates a column label provider for intermediate model elements.
+     * Basic constructor, creates a column label provider for intermediate model
+     * elements.
      */
-    public NameLabelProvider() {
+    public MainLabelProvider() {
         super();
     }
 
@@ -48,15 +50,17 @@ public class NameLabelProvider extends ColumnLabelProvider {
     }
 
     /**
-     * Grants access to the Eclipse {@link JavaUI} shared images with the String contained in {@link ISharedImages}.
+     * Grants access to the Eclipse {@link JavaUI} shared images with the String
+     * contained in {@link ISharedImages}.
      */
     private Image getEclipseImage(String symbolicName) {
         return JavaUI.getSharedImages().getImage(symbolicName);
     }
 
     /**
-     * Provides the column text for every {@link ExtractedElement} by using its name and class. This avoids using the
-     * method {@link ExtractedElement#toString()} which is not as readable in a tree view.
+     * Provides the column text for every {@link ExtractedElement} by using its name
+     * and class. This avoids using the method {@link ExtractedElement#toString()}
+     * which is not as readable in a tree view.
      */
     private String getText(ExtractedElement element) {
         if (element.getName().isEmpty() && element instanceof ExtractedPackage) {

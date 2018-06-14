@@ -1,8 +1,11 @@
 package eme.ui;
 
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -10,13 +13,17 @@ import org.eclipse.swt.widgets.Tree;
 
 import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
-import org.eclipse.swt.graphics.Point;
 
 /**
- * Selection window for disabling and enabling any {@link ExtractedElement} in a {@link IntermediateModel}.
+ * Selection window for disabling and enabling any {@link ExtractedElement} in a
+ * {@link IntermediateModel}.
  * @author Timur Saglam
  */
 public class SelectionWindow {
+    private static final int MIN_HEIGHT = 300;
+    private static final int MIN_WIDTH = 400;
+    private static final int HEIGHT = 768;
+    private static final int WIDTH = 1024;
     private Shell shell;
 
     /**
@@ -37,14 +44,15 @@ public class SelectionWindow {
     }
 
     /**
-     * Create contents of the window by using the model elements of the {@link IntermediateModel}.
+     * Create contents of the window by using the model elements of the
+     * {@link IntermediateModel}.
      * @param model is the {@link IntermediateModel}.
      */
     protected void createContents(IntermediateModel model) {
         // Shell:
         shell = new Shell();
-        shell.setMinimumSize(new Point(400, 300));
-        shell.setSize(1024, 768); // TODO (MEDIUM) implement full auto scaling.
+        shell.setMinimumSize(new Point(MIN_WIDTH, MIN_HEIGHT));
+        shell.setSize(WIDTH, HEIGHT); // TODO (MEDIUM) implement full auto scaling.
         shell.setText("Select extraction scope");
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         // Tree viewer:
@@ -57,20 +65,24 @@ public class SelectionWindow {
         Tree tree = treeViewer.getTree();
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
-        // Name column:
-        TreeViewerColumn nameColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        nameColumn.setLabelProvider(new NameLabelProvider());
-        nameColumn.getColumn().setWidth(shell.getSize().x / 2);
-        nameColumn.getColumn().setText("Element Name");
-        // Type column:
-        TreeViewerColumn typeColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        typeColumn.setLabelProvider(new TypeLabelProvider());
-        typeColumn.getColumn().setWidth(shell.getSize().x / 2);
-        typeColumn.getColumn().setText("Element Type");
-        // TODO (HIGH) Third column for full name? Especially to detect nested types.
+        // Columns:
+        createColumn(treeViewer, new MainLabelProvider(), "ElementName");
+        createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
+        createColumn(treeViewer, new FullNameLabelProvider(), "Full Name");
         // Finish content:
-        shell.addListener(SWT.Resize, new ResizeListener(shell, nameColumn));
-        shell.addListener(SWT.Resize, new ResizeListener(shell, typeColumn));
         treeViewer.setInput(model); // needs to be called last
+    }
+
+    /**
+     * Creates a new {@link TreeViewerColumn} and adds it to the {@link TreeViewer}.
+     * @param treeViewer is the {@link TreeViewer}.
+     * @param provider is the content provider for the {@link TreeViewerColumn}.
+     * @param title is the title of the {@link TreeViewerColumn}.
+     */
+    private void createColumn(CheckboxTreeViewer treeViewer, CellLabelProvider provider, String title) {
+        TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
+        column.setLabelProvider(provider);
+        column.getColumn().setText(title);
+        shell.addListener(SWT.Resize, new ResizeListener(shell, column));
     }
 }
