@@ -1,4 +1,4 @@
-package eme.ui;
+package eme.ui.providers;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.graphics.Image;

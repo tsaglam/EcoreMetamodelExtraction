@@ -1,4 +1,4 @@
-package eme.ui;
+package eme.ui.providers;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;

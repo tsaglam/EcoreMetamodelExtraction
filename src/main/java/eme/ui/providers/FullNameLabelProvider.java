@@ -1,27 +1,27 @@
-package eme.ui;
+package eme.ui.providers;
 
 import eme.model.ExtractedElement;
 
 /**
- * Label provider adapter that shows the simple name of the elements type as column text.
+ * Label provider adapter that shows the full name of the elements as column text.
  * @author Timur Saglam
  */
-public class TypeLabelProvider extends GenericColumnLabelProvider<ExtractedElement> {
+public class FullNameLabelProvider extends GenericColumnLabelProvider<ExtractedElement> {
 
     /**
      * Basic constructor, creates a type label provider.
      */
-    public TypeLabelProvider() {
+    public FullNameLabelProvider() {
         super(ExtractedElement.class);
     }
 
     @Override
     public String getColumnText(ExtractedElement element) {
-        return element.getClass().getSimpleName();
+        return element.getFullName();
     }
 
     @Override
     public String getColumnToolTip(ExtractedElement element) {
-        return "element type: " + getColumnText(element);
+        return  "full name: " + getColumnText(element);
     }
 }

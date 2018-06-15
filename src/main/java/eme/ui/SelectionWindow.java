@@ -13,6 +13,11 @@ import org.eclipse.swt.widgets.Tree;
 
 import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
+import eme.ui.providers.CheckStateProvider;
+import eme.ui.providers.FullNameLabelProvider;
+import eme.ui.providers.MainLabelProvider;
+import eme.ui.providers.TreeContentProvider;
+import eme.ui.providers.TypeLabelProvider;
 
 /**
  * Selection window for disabling and enabling any {@link ExtractedElement} in a {@link IntermediateModel}.
