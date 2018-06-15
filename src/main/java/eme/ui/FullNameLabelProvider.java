@@ -1,28 +1,27 @@
 package eme.ui;
 
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-
 import eme.model.ExtractedElement;
 
 /**
- * Label provider adapter that shows the full name of the elements as column
- * text.
+ * Label provider adapter that shows the full name of the elements as column text.
  * @author Timur Saglam
  */
-public class FullNameLabelProvider extends ColumnLabelProvider {
+public class FullNameLabelProvider extends GenericColumnLabelProvider<ExtractedElement> {
 
     /**
      * Basic constructor, creates a type label provider.
      */
     public FullNameLabelProvider() {
-        super();
+        super(ExtractedElement.class);
     }
 
     @Override
-    public String getText(Object element) {
-        if (element instanceof ExtractedElement) { // if is intermediate model element
-            return ((ExtractedElement) element).getFullName(); // user other naming scheme
-        }
-        return super.getText(element);
+    public String getColumnText(ExtractedElement element) {
+        return element.getFullName();
+    }
+
+    @Override
+    public String getColumnToolTip(ExtractedElement element) {
+        return  "full name: " + getColumnText(element);
     }
 }

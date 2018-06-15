@@ -16,16 +16,11 @@ import eme.model.IntermediateModel;
 public class TreeContentProvider implements ITreeContentProvider {
 
     @Override
-    public boolean hasChildren(Object element) {
-        if (element instanceof ExtractedPackage) {
-            return hasChildren((ExtractedPackage) element);
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof ExtractedPackage) {
+            return getChildren((ExtractedPackage) parentElement);
         }
-        return false;
-    }
-
-    @Override
-    public Object getParent(Object element) {
-        return null; // parent cannot be computed.
+        return null;
     }
 
     @Override
@@ -37,20 +32,16 @@ public class TreeContentProvider implements ITreeContentProvider {
     }
 
     @Override
-    public Object[] getChildren(Object parentElement) {
-        if (parentElement instanceof ExtractedPackage) {
-            return getChildren((ExtractedPackage) parentElement);
-        }
-        return null;
+    public Object getParent(Object element) {
+        return null; // parent cannot be computed.
     }
 
-    /**
-     * Checks whether an {@link ExtractedPackage} is not empty.
-     * @param extractedPackage is the {@link ExtractedPackage}.
-     * @return true if the {@link ExtractedPackage} contains types or subpackages.
-     */
-    private boolean hasChildren(ExtractedPackage extractedPackage) {
-        return !extractedPackage.isEmpty();
+    @Override
+    public boolean hasChildren(Object element) {
+        if (element instanceof ExtractedPackage) {
+            return hasChildren((ExtractedPackage) element);
+        }
+        return false;
     }
 
     /**
@@ -63,6 +54,15 @@ public class TreeContentProvider implements ITreeContentProvider {
         children.addAll(extractedPackage.getSubpackages());
         children.addAll(extractedPackage.getTypes());
         return children.toArray();
+    }
+
+    /**
+     * Checks whether an {@link ExtractedPackage} is not empty.
+     * @param extractedPackage is the {@link ExtractedPackage}.
+     * @return true if the {@link ExtractedPackage} contains types or subpackages.
+     */
+    private boolean hasChildren(ExtractedPackage extractedPackage) {
+        return !extractedPackage.isEmpty();
     }
 
 }

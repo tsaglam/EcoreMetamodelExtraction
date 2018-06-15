@@ -43,6 +43,19 @@ public class SelectionWindow {
     }
 
     /**
+     * Creates a new {@link TreeViewerColumn} and adds it to the {@link TreeViewer}.
+     * @param treeViewer is the {@link TreeViewer}.
+     * @param provider is the content provider for the {@link TreeViewerColumn}.
+     * @param title is the title of the {@link TreeViewerColumn}.
+     */
+    private void createColumn(CheckboxTreeViewer treeViewer, CellLabelProvider provider, String title) {
+        TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
+        column.setLabelProvider(provider);
+        column.getColumn().setText(title);
+        shell.addListener(SWT.Resize, new ResizeListener(shell, treeViewer, column));
+    }
+
+    /**
      * Create contents of the window by using the model elements of the {@link IntermediateModel}.
      * @param model is the {@link IntermediateModel}.
      */
@@ -69,18 +82,5 @@ public class SelectionWindow {
         createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         // Finish content:
         treeViewer.setInput(model); // needs to be called last
-    }
-
-    /**
-     * Creates a new {@link TreeViewerColumn} and adds it to the {@link TreeViewer}.
-     * @param treeViewer is the {@link TreeViewer}.
-     * @param provider is the content provider for the {@link TreeViewerColumn}.
-     * @param title is the title of the {@link TreeViewerColumn}.
-     */
-    private void createColumn(CheckboxTreeViewer treeViewer, CellLabelProvider provider, String title) {
-        TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
-        column.setLabelProvider(provider);
-        column.getColumn().setText(title);
-        shell.addListener(SWT.Resize, new ResizeListener(shell, treeViewer, column));
     }
 }

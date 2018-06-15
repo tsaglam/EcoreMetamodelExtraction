@@ -8,9 +8,8 @@ import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
 
 /**
- * A listener which is notified of changes to the checked state of items in
- * check box viewers. Updates the selected state of the correlating intermediate
- * model element.
+ * A listener which is notified of changes to the checked state of items in check box viewers. Updates the selected
+ * state of the correlating intermediate model element.
  * @author Timur Saglam
  */
 public class CheckStateListener implements ICheckStateListener {
@@ -19,8 +18,7 @@ public class CheckStateListener implements ICheckStateListener {
 
     /**
      * Basic constructor, creates the listener.
-     * @param model is the intermediate model which whose root element shall be
-     * excluded from the listeners functionality.
+     * @param model is the intermediate model which whose root element shall be excluded from the listeners functionality.
      */
     public CheckStateListener(IntermediateModel model, CheckboxTreeViewer treeViewer) {
         this.model = model;
@@ -36,9 +34,8 @@ public class CheckStateListener implements ICheckStateListener {
     }
 
     /**
-     * Updates the selection of the intermediate model according to a
-     * {@link CheckStateChangedEvent}, if the checked element is not the root
-     * package.
+     * Updates the selection of the intermediate model according to a {@link CheckStateChangedEvent}, if the checked element
+     * is not the root package.
      */
     private void updateSelection(ExtractedElement element, CheckStateChangedEvent event) {
         if (model.getRoot().equals(element)) { // if is root package
