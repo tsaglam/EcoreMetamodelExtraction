@@ -83,8 +83,7 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * accessor for the {@link ExtractedType}s (interfaces, classes and
-     * enumerations).
+     * accessor for the {@link ExtractedType}s (interfaces, classes and enumerations).
      * @return the types.
      */
     public List<ExtractedType> getTypes() {
@@ -116,16 +115,14 @@ public class ExtractedPackage extends ExtractedElement {
     }
 
     /**
-     * Sets the package as root package, marking it as default package by changing
-     * its name.
+     * Sets the package as root package, marking it as default package by changing its name.
      */
     public void setAsRoot() {
         root = true;
     }
 
     /**
-     * Sorts the content of the package. Sorts its types, its subpackages and all
-     * the content of every subpackage.
+     * Sorts the content of the package. Sorts its types, its subpackages and all the content of every subpackage.
      */
     public void sort() {
         Collections.sort(interfaces);
@@ -139,7 +136,9 @@ public class ExtractedPackage extends ExtractedElement {
 
     @Override
     public void setSelected(boolean selected) {
-        super.setSelected(selected);
+        if (!root) { // root cannot be deselected.
+            super.setSelected(selected);
+        }
         getTypes().forEach(type -> type.setSelected(selected));
         getSubpackages().forEach(subpackage -> subpackage.setSelected(selected));
     }
