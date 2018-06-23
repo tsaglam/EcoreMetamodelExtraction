@@ -15,6 +15,7 @@ import eme.model.IntermediateModel;
 public class CheckStateListener implements ICheckStateListener {
     private IntermediateModel model;
     private CheckboxTreeViewer treeViewer;
+    private boolean rootChecked;
 
     /**
      * Basic constructor, creates the listener.
@@ -23,6 +24,7 @@ public class CheckStateListener implements ICheckStateListener {
     public CheckStateListener(IntermediateModel model, CheckboxTreeViewer treeViewer) {
         this.model = model;
         this.treeViewer = treeViewer;
+        rootChecked = true;
     }
 
     @Override
@@ -38,11 +40,13 @@ public class CheckStateListener implements ICheckStateListener {
      * is not the root package.
      */
     private void updateSelection(ExtractedElement element, CheckStateChangedEvent event) {
+        element.setSelected(event.getChecked()); // set selected if checked and vice versa
         if (model.getRoot().equals(element)) { // if is root package
+            treeViewer.setSubtreeChecked(element, !rootChecked); // show selection for subtree with root state
+            rootChecked = !rootChecked;
             event.getCheckable().setChecked(element, true); // check the check box again
-        } else { // if is not the root package
-            element.setSelected(event.getChecked()); // set selected if checked and vice versa
-            treeViewer.setSubtreeChecked(element, event.getChecked());
+        } else {
+            treeViewer.setSubtreeChecked(element, event.getChecked()); // show selection for subtree
         }
     }
 
