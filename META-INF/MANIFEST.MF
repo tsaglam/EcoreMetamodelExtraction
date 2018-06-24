@@ -23,3 +23,4 @@ Export-Package: eme,
  eme.model,
  eme.model.datatypes,
  eme.properties
+Automatic-Module-Name: EcoreMetamodelExtraction
