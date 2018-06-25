@@ -48,6 +48,7 @@ public class CheckStateListener implements ICheckStateListener {
         } else {
             treeViewer.setSubtreeChecked(element, event.getChecked()); // show selection for subtree
         }
+        treeViewer.refresh();
     }
 
 }
