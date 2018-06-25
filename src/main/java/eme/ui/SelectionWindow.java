@@ -16,6 +16,7 @@ import eme.model.IntermediateModel;
 import eme.ui.providers.CheckStateProvider;
 import eme.ui.providers.FullNameLabelProvider;
 import eme.ui.providers.MainLabelProvider;
+import eme.ui.providers.SuperTypeLabelProvider;
 import eme.ui.providers.TreeContentProvider;
 import eme.ui.providers.TypeLabelProvider;
 
@@ -85,6 +86,7 @@ public class SelectionWindow {
         createColumn(treeViewer, new MainLabelProvider(), "ElementName");
         createColumn(treeViewer, new FullNameLabelProvider(), "Full Name");
         createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
+        createColumn(treeViewer, new SuperTypeLabelProvider(model), "Super Types");
         // Finish content:
         treeViewer.setInput(model); // needs to be called last
     }

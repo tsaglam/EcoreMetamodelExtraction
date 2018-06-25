@@ -1,6 +1,7 @@
 package eme.ui.providers;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -43,6 +44,13 @@ public abstract class GenericColumnLabelProvider<T> extends ColumnLabelProvider 
         return super.getToolTipText(element); // default implementation, delegates to super class.
     }
 
+    /**
+     * @see ColumnLabelProvider#getBackground(Object)
+     */
+    public Color getColumnBackground(T element) {
+        return super.getBackground(element); // default implementation, delegates to super class.
+    }
+
     @Override
     public final Image getImage(Object element) {
         T casted = cast(element); // call typed method if cast was successful:
@@ -59,6 +67,12 @@ public abstract class GenericColumnLabelProvider<T> extends ColumnLabelProvider 
     public final String getToolTipText(Object element) {
         T casted = cast(element); // call typed method if cast was successful:
         return casted == null ? super.getToolTipText(element) : getColumnToolTip(casted);
+    }
+
+    @Override
+    public Color getBackground(Object element) {
+        T casted = cast(element); // call typed method if cast was successful:
+        return casted == null ? super.getBackground(element) : getColumnBackground(casted);
     }
 
     /**
