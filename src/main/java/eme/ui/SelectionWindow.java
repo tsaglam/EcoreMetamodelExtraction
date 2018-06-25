@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Tree;
 import eme.model.ExtractedElement;
 import eme.model.IntermediateModel;
 import eme.ui.providers.CheckStateProvider;
-import eme.ui.providers.FullNameLabelProvider;
 import eme.ui.providers.MainLabelProvider;
 import eme.ui.providers.SuperTypeLabelProvider;
 import eme.ui.providers.TreeContentProvider;
@@ -84,9 +83,8 @@ public class SelectionWindow {
         tree.setLinesVisible(true);
         // Columns:
         createColumn(treeViewer, new MainLabelProvider(), "ElementName");
-        createColumn(treeViewer, new FullNameLabelProvider(), "Full Name");
-        createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         createColumn(treeViewer, new SuperTypeLabelProvider(model), "Super Types");
+        createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         // Finish content:
         treeViewer.setInput(model); // needs to be called last
     }

@@ -48,7 +48,7 @@ public class MainLabelProvider extends GenericColumnLabelProvider<ExtractedEleme
 
     @Override
     public String getColumnToolTip(ExtractedElement element) {
-        return getColumnText(element); // same output as getColumnText()
+        return "full name: " + element.getFullName();
     }
 
     /**

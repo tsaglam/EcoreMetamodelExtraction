@@ -36,13 +36,10 @@ public class SuperTypeLabelProvider extends GenericColumnLabelProvider<Extracted
 
     @Override
     public Color getColumnBackground(ExtractedElement element) {
-        for (ExtractedDataType type : getSuperTypes(element)) {
-            if (model.contains(type.getFullType()) && !model.getType(type.getFullType()).isSelected()) {
+        if (element.isSelected()) { // only show warnings/errors for selected elements.
+            if (hasUnselectedSupertype(element)) {
                 return errorColor; // at least one super type is not selected
-            }
-        }
-        for (ExtractedDataType type : getSuperTypes(element)) {
-            if (model.containsExternal(type.getFullType())) {
+            } else if (hasExternalSupertype(element)) {
                 return warningColor; // at least one super type is an external type
             }
         }
@@ -73,10 +70,34 @@ public class SuperTypeLabelProvider extends GenericColumnLabelProvider<Extracted
         }
         if (element instanceof ExtractedClass) { // add super classes
             ExtractedDataType superClass = ((ExtractedClass) element).getSuperClass();
-            if (superClass != null) {
+            if (superClass != null) { // super class reference can be null
                 superTypes.add(superClass);
             }
         }
         return superTypes;
+    }
+
+    /**
+     * Checks whether at least one referenced super type is an external type.
+     */
+    private boolean hasExternalSupertype(ExtractedElement element) {
+        for (ExtractedDataType type : getSuperTypes(element)) {
+            if (model.containsExternal(type.getFullType())) {
+                return true; // at least one super type is an external type
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether at least one referenced super type is not selected.
+     */
+    private boolean hasUnselectedSupertype(ExtractedElement element) {
+        for (ExtractedDataType type : getSuperTypes(element)) {
+            if (model.contains(type.getFullType()) && !model.getType(type.getFullType()).isSelected()) {
+                return true; // at least one super type is not selected
+            }
+        }
+        return false;
     }
 }
