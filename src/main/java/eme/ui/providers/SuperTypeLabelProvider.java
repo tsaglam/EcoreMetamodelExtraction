@@ -18,7 +18,7 @@ import eme.model.datatypes.ExtractedDataType;
  * @author Timur Saglam
  */
 public class SuperTypeLabelProvider extends GenericColumnLabelProvider<ExtractedElement> {
-    private static String TOOL_TIP_INFO = "(yellow means at least one is an external type, red means at least one is not selected.)";
+    private static String TOOL_TIP_INFO = "Yellow means at least one is an external type, red means at least one is not selected.";
     private final IntermediateModel model;
     private final Color errorColor;
     private final Color warningColor;
@@ -57,7 +57,7 @@ public class SuperTypeLabelProvider extends GenericColumnLabelProvider<Extracted
 
     @Override
     public String getColumnToolTip(ExtractedElement element) {
-        return "super types: " + getColumnText(element) + TOOL_TIP_INFO;
+        return TOOL_TIP_INFO;
     }
 
     /**

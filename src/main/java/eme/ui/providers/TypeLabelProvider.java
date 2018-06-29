@@ -22,6 +22,6 @@ public class TypeLabelProvider extends GenericColumnLabelProvider<ExtractedEleme
 
     @Override
     public String getColumnToolTip(ExtractedElement element) {
-        return "element type: " + getColumnText(element);
+        return "element type in the intermediate model: " + getColumnText(element);
     }
 }

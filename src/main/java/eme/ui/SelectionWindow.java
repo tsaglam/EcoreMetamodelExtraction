@@ -39,7 +39,7 @@ public class SelectionWindow {
         Display display = Display.getDefault();
         createContents(model);
         shell.open();
-        shell.layout();
+        shell.requestLayout();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
                 display.sleep();
@@ -57,7 +57,6 @@ public class SelectionWindow {
         TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
         column.setLabelProvider(provider);
         column.getColumn().setText(title);
-        shell.addListener(SWT.Resize, new ResizeListener(shell, treeViewer, column));
     }
 
     /**
@@ -68,7 +67,7 @@ public class SelectionWindow {
         // Shell:
         shell = new Shell();
         shell.setMinimumSize(new Point(MIN_WIDTH, MIN_HEIGHT));
-        shell.setSize(WIDTH, HEIGHT); // TODO (MEDIUM) implement full auto scaling.
+        shell.setSize(WIDTH, HEIGHT);
         shell.setText("Select extraction scope");
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         // Tree viewer:
@@ -86,6 +85,7 @@ public class SelectionWindow {
         createColumn(treeViewer, new SuperTypeLabelProvider(model), "Super Types");
         createColumn(treeViewer, new TypeLabelProvider(), "Element Type");
         // Finish content:
-        treeViewer.setInput(model); // needs to be called last
+        treeViewer.setInput(model); // needs to be called after column creation
+        shell.addListener(SWT.Resize, new ResizeListener(shell, treeViewer.getTree()));
     }
 }
