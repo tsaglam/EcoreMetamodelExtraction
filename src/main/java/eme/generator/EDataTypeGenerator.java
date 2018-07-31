@@ -84,8 +84,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Adds all generic arguments from an {@link ExtractedDataType} to an {@link EGenericType}. For all generic
-     * arguments add their generic arguments recursively.
+     * Adds all generic arguments from an {@link ExtractedDataType} to an {@link EGenericType}. For all generic arguments
+     * add their generic arguments recursively.
      * @param genericType is the generic type of an attribute, a parameter or a method.
      * @param dataType is the extracted data type, an attribute, a parameter or a return type.
      * @param source is the source of {@link ETypeParameter}s, an {@link TypeParameterSource}.
@@ -192,8 +192,8 @@ public class EDataTypeGenerator {
 
     /**
      * Returns an {@link EClassifier} for an {@link ExtractedDataType} that can be used as data type for methods and
-     * attributes. The {@link EClassifier} is either (1.) a custom class from the model, or (2.) or an external class
-     * that has to be created as data type, or (3.) an already known data type (Basic type or already created)
+     * attributes. The {@link EClassifier} is either (1.) a custom class from the model, or (2.) or an external class that
+     * has to be created as data type, or (3.) an already known data type (Basic type or already created)
      */
     private EClassifier generate(ExtractedDataType extractedDataType) {
         EDataType eDataType;
@@ -237,8 +237,8 @@ public class EDataTypeGenerator {
     }
 
     /**
-     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map or
-     * array type map.
+     * Creates a new EDataType from an ExtractedDataType. The new EDataType can then be accessed from the type map or array
+     * type map.
      */
     private EDataType generateExternalType(ExtractedDataType extractedDataType) {
         if (dataTypeMap.containsKey(extractedDataType.getFullType())) { // if already created:
@@ -250,6 +250,8 @@ public class EDataTypeGenerator {
         String dataTypeName = extractedDataType.getFullArrayType(); // get type name without array brackets.
         if (model.containsExternal(dataTypeName)) {
             addTypeParameters(eDataType, model.getExternalType(dataTypeName)); // add parameters from external type
+        } else if (model.contains(dataTypeName)) {
+            addTypeParameters(eDataType, model.getType(dataTypeName)); // add parameters from external type
         } else if (!extractedDataType.getGenericArguments().isEmpty()) { // if external type is unknown
             logger.error("Can not resolve type parameters for " + extractedDataType.toString());
         }

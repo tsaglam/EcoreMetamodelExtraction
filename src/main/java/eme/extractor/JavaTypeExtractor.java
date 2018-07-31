@@ -49,9 +49,9 @@ public class JavaTypeExtractor {
 
     /**
      * Parses a list of potential external types. If the model is a external type, and an IType can be found, it will be
-     * added as an external ExtractedType to the model. An external type is either not part of the intermediate model or
-     * it is part of the intermediate model and is a inner type, which means he can be treated as a external type in the
-     * case that external types are not supposed to be extracted.
+     * added as an external ExtractedType to the model. An external type is either not part of the intermediate model or it
+     * is part of the intermediate model and is a inner type, which means he can be treated as a external type in the case
+     * that external types are not supposed to be extracted.
      * @param externalTypes is the set of external types to extract.
      * @throws JavaModelException if there are problem with the JDT API.
      */
@@ -162,7 +162,8 @@ public class JavaTypeExtractor {
     }
 
     /**
-     * Adds a inner type which is a pseudo external type to the {@link IntermediateModel}.
+     * Adds a inner type which is a pseudo external type to the {@link IntermediateModel}. These are generally nested types,
+     * which are included in the intermediate model but not always generated. Therefore they can be external types.
      */
     private void extractPseudoExternal(String typeName) {
         ExtractedType type = model.getType(typeName);
