@@ -133,7 +133,6 @@ public class JavaMemberExtractor {
     private boolean isAccessor(IMethod method) throws JavaModelException {
         if (isAccessMethod(method, "get", "is") && method.getNumberOfParameters() == 0 && !isVoid(method.getReturnType())) { // if name fits
             String field = findReferencedField(method, "get", "is").getTypeSignature();
-            System.err.println(method.getElementName() + " cmp: " + method.getReturnType() + " <> " + field);
             return method.getReturnType().equals(field);
         }
         return false;
@@ -145,7 +144,6 @@ public class JavaMemberExtractor {
     private boolean isMutator(IMethod method) throws JavaModelException {
         if (isAccessMethod(method, "set") && method.getNumberOfParameters() == 1 && isVoid(method.getReturnType())) { // if name fits
             String field = findReferencedField(method, "set").getTypeSignature();
-            System.err.println(method.getElementName() + " cmp: " + method.getParameters()[0].getTypeSignature() + " <> " + field);
             return method.getParameters()[0].getTypeSignature().equals(field);
         }
         return false;
