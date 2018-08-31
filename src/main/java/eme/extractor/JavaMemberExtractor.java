@@ -106,24 +106,35 @@ public class JavaMemberExtractor {
     }
 
     /**
-     * Checks whether a {@link IMethod} is an access method (either an accessor or an mutator, depending on the prefix).
+     * Retrieves the correlating field of a method from its access method naming scheme (depending on the prefixes).
      */
-    private boolean isAccessMethod(String prefix, IMethod method) throws JavaModelException {
+    private IField findReferencedField(IMethod method, String... prefixes) throws JavaModelException {
         IType type = method.getDeclaringType();
         for (IField field : type.getFields()) { // for ever field of IType:
-            if (method.getElementName().equalsIgnoreCase(prefix + field.getElementName())) {
-                return true; // is access method if name scheme fits for one field
+            for (String prefix : prefixes) { // for every given prefix
+                if (method.getElementName().equalsIgnoreCase(prefix + field.getElementName())) { // fits method name?
+                    return field; // is access method if name scheme fits for one field
+                }
             }
         }
-        return false; // is not an access method if no field fits
+        return null; // is not an access method if no field fits
+    }
+
+    /**
+     * Checks whether a {@link IMethod} is an access method (either an accessor or an mutator, depending on the prefixes).
+     */
+    private boolean isAccessMethod(IMethod method, String... prefixes) throws JavaModelException {
+        return findReferencedField(method, prefixes) != null;
     }
 
     /**
      * Checks whether a {@link IMethod} is an accessor method.
      */
     private boolean isAccessor(IMethod method) throws JavaModelException {
-        if (isAccessMethod("get", method) || isAccessMethod("is", method)) { // if name fits
-            return method.getNumberOfParameters() == 0 && !isVoid(method.getReturnType());
+        if (isAccessMethod(method, "get", "is") && method.getNumberOfParameters() == 0 && !isVoid(method.getReturnType())) { // if name fits
+            String field = findReferencedField(method, "get", "is").getTypeSignature();
+            System.err.println(method.getElementName() + " cmp: " + method.getReturnType() + " <> " + field);
+            return method.getReturnType().equals(field);
         }
         return false;
     }
@@ -132,8 +143,10 @@ public class JavaMemberExtractor {
      * Checks whether a {@link IMethod} is a mutator method.
      */
     private boolean isMutator(IMethod method) throws JavaModelException {
-        if (isAccessMethod("set", method)) { // if name fits
-            return method.getNumberOfParameters() == 1 && isVoid(method.getReturnType());
+        if (isAccessMethod(method, "set") && method.getNumberOfParameters() == 1 && isVoid(method.getReturnType())) { // if name fits
+            String field = findReferencedField(method, "set").getTypeSignature();
+            System.err.println(method.getElementName() + " cmp: " + method.getParameters()[0].getTypeSignature() + " <> " + field);
+            return method.getParameters()[0].getTypeSignature().equals(field);
         }
         return false;
     }
