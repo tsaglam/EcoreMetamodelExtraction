@@ -198,11 +198,11 @@ public class EDataTypeGenerator {
     private EClassifier generate(ExtractedDataType extractedDataType) {
         EDataType eDataType;
         String fullName = extractedDataType.getFullType();
-        if (eClassifierMap.containsKey(fullName)) { // if is custom class
+        if (eClassifierMap.containsKey(fullName)) { // if is custom classifier (1.)
             return eClassifierMap.get(fullName);
-        } else if (dataTypeMap.containsKey(fullName)) { // if is basic type or already known
+        } else if (dataTypeMap.containsKey(fullName)) { // if is basic type or already known EDataType (3.)
             return dataTypeMap.get(fullName); // access EDataType
-        } else { // if its an external type
+        } else { // if its an external type (2.)
             eDataType = generateExternalType(extractedDataType); // create new EDataType
             typeHierarchy.add(eDataType);
             return eDataType;
@@ -226,10 +226,9 @@ public class EDataTypeGenerator {
      * Generates list of {@link ETypeParameter}s from list of {@link ExtractedTypeParameter}s.
      */
     private List<ETypeParameter> generateETypeParameters(List<ExtractedTypeParameter> typeParameters) {
-        ETypeParameter eTypeParameter; // ecore type parameter
         List<ETypeParameter> eTypeParameters = new LinkedList<ETypeParameter>();
         for (ExtractedTypeParameter typeParameter : typeParameters) { // for all type parameters
-            eTypeParameter = ecoreFactory.createETypeParameter(); // create object
+            ETypeParameter eTypeParameter = ecoreFactory.createETypeParameter(); // create object
             eTypeParameter.setName(typeParameter.getIdentifier()); // set name
             eTypeParameters.add(eTypeParameter);
         }
@@ -248,14 +247,14 @@ public class EDataTypeGenerator {
         eDataType.setName(extractedDataType.getType());
         eDataType.setInstanceTypeName(extractedDataType.getFullType()); // set full name
         String dataTypeName = extractedDataType.getFullArrayType(); // get type name without array brackets.
-        if (model.containsExternal(dataTypeName)) {
+        dataTypeMap.put(extractedDataType.getFullType(), eDataType); // store in map for later use
+        if (model.containsExternal(dataTypeName)) { // external type
             addTypeParameters(eDataType, model.getExternalType(dataTypeName)); // add parameters from external type
-        } else if (model.contains(dataTypeName)) {
+        } else if (model.contains(dataTypeName)) { // internal type, but not selected
             addTypeParameters(eDataType, model.getType(dataTypeName)); // add parameters from external type
         } else if (!extractedDataType.getGenericArguments().isEmpty()) { // if external type is unknown
             logger.error("Can not resolve type parameters for " + extractedDataType.toString());
         }
-        dataTypeMap.put(extractedDataType.getFullType(), eDataType); // store in map for later use
         return eDataType;
     }
 
