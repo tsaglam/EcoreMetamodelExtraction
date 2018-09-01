@@ -23,7 +23,7 @@ import eme.ui.providers.TypeLabelProvider;
  * Selection window for disabling and enabling any {@link ExtractedElement} in a {@link IntermediateModel}.
  * @author Timur Saglam
  */
-public class SelectionWindow {
+public class SelectionWindow { // TODO (HIGH) enable all packages of a type when enabled!
     private static final int MIN_HEIGHT = 300;
     private static final int MIN_WIDTH = 400;
     private static final int HEIGHT = 768;
