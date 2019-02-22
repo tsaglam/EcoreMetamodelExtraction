@@ -4,8 +4,8 @@ This project is a reverse engineering tool for Ecore metamodels. It allows extra
 Open Java projects in the Eclipse IDE can be selected to extract an Ecore Metamodel, which can be saved as an Ecore file. See the [wiki](https://github.com/tsaglam/EcoreMetamodelExtraction/wiki) for more details on the reverse engineering of Ecore metamodels.
 
 ## How to install:
-1. Clone or download the project
-2. Import as existing project into the Eclipse IDE
+1. Clone or download the project.
+2. Import as existing project into the Eclipse IDE (preferably Eclipse 2018-09 or newer).
 3. You need the [Eclipse Modeling Framework](https://www.eclipse.org/modeling/emf/) and the [Eclipse Java Development Tools](https://www.eclipse.org/jdt/), make sure that both are installed.
 4. Run the project as Eclipse Application.
 5. You can start the extraction from the context menu of a Java project or from the toolbar (provisional UI).
