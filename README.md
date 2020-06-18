@@ -5,8 +5,9 @@ Open Java projects in the Eclipse IDE can be selected to extract an Ecore Metamo
 
 ## How to install:
 1. Clone or download the project.
-2. Import as existing project into the Eclipse IDE (preferably Eclipse 2018-09 or newer).
-3. You need the [Eclipse Modeling Framework](https://www.eclipse.org/modeling/emf/) and the [Eclipse Java Development Tools](https://www.eclipse.org/jdt/), make sure that both are installed.
-4. Run the project as Eclipse Application.
-5. You can start the extraction from the context menu of a Java project or from the toolbar (provisional UI).
-6. Extracting metamodels from projects with errors can cause problems while resolving types (or other problems). It is recommended to use code for the reverse engineering of Ecore metamodels that compiles without problems.
+2. Import as existing project into the Eclipse IDE (preferably Eclipse 2018-09 or newer, tested up to 2020-06).
+3. Make sure your IDE installation has log4j installed. If not you can get it from the latest [Orbit Build Repository](https://download.eclipse.org/tools/orbit/downloads/).
+4. You need the [Eclipse Modeling Framework](https://www.eclipse.org/modeling/emf/) and the [Eclipse Java Development Tools](https://www.eclipse.org/jdt/), make sure that both are installed.
+5. Run the project as Eclipse Application.
+6. You can start the extraction from the context menu of a Java project or from the toolbar (provisional UI).
+7. Extracting metamodels from projects with errors can cause problems while resolving types (or other problems). It is recommended to use code for the reverse engineering of Ecore metamodels that compiles without problems.
