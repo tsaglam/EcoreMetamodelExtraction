@@ -68,7 +68,7 @@ public class SelectionWindow { // TODO (HIGH) enable all packages of a type when
         shell = new Shell();
         shell.setMinimumSize(new Point(MIN_WIDTH, MIN_HEIGHT));
         shell.setSize(WIDTH, HEIGHT);
-        shell.setText("Select extraction scope");
+        shell.setText("Select extraction scope for project: " + model.getProjectName());
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         // Tree viewer:
         CheckboxTreeViewer treeViewer = new CheckboxTreeViewer(shell, SWT.BORDER);
